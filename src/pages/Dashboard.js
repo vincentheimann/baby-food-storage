@@ -1,3 +1,4 @@
+// src/pages/Dashboard.js
 import React from "react";
 import BacCard from "../components/BacCard";
 import AlimentList from "../components/AlimentList";
@@ -42,7 +43,7 @@ const Dashboard = () => {
     const today = new Date();
     const peremptionDate = new Date(aliment.datePeremption);
     const diffDays = (peremptionDate - today) / (1000 * 60 * 60 * 24);
-    return diffDays <= 7;
+    return diffDays <= 7; // Aliments dont la date de péremption est dans 7 jours ou moins
   });
 
   return (

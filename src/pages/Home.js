@@ -1,3 +1,4 @@
+// src/pages/Home.js
 import React, { useState } from "react";
 import BacCard from "../components/BacCard";
 import AlimentList from "../components/AlimentList";

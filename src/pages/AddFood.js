@@ -1,3 +1,4 @@
+// src/pages/AddFood.js
 import React from "react";
 import AlimentForm from "../components/AlimentForm";
 
