@@ -1,4 +1,3 @@
-// Dashboard.js
 import React from "react";
 import BacCard from "../components/BacCard";
 import AlimentList from "../components/AlimentList";
