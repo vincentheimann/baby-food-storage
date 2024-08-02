@@ -1,5 +1,13 @@
 // src/pages/Home.js
 import React, { useState } from "react";
+import {
+  Grid,
+  Typography,
+  Box,
+  Card,
+  CardContent,
+  Container,
+} from "@mui/material";
 import BacCard from "../components/BacCard";
 import AlimentList from "../components/AlimentList";
 import AlimentForm from "../components/AlimentForm";
@@ -33,39 +41,61 @@ const Home = () => {
   };
 
   return (
-    <div>
-      <h1>Accueil</h1>
-      <div>
-        <BacCard
-          color="blue"
-          type="Proteins"
-          aliments={filterAlimentsByType("Proteins")}
-        />
-        <BacCard
-          color="green"
-          type="Vegetables"
-          aliments={filterAlimentsByType("Vegetables")}
-        />
-        <BacCard
-          color="red"
-          type="Carbs"
-          aliments={filterAlimentsByType("Carbs")}
-        />
-        <BacCard
-          color="pink"
-          type="Others"
-          aliments={filterAlimentsByType("Others")}
-        />
-      </div>
-      <div>
-        <h2>Ajouter un aliment</h2>
-        <AlimentForm onSubmit={handleAddAliment} />
-      </div>
-      <div>
-        <h2>Liste des aliments</h2>
-        <AlimentList aliments={aliments} />
-      </div>
-    </div>
+    <Container maxWidth="lg">
+      <Typography variant="h3" component="h1" gutterBottom>
+        Accueil
+      </Typography>
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={6}>
+          <BacCard
+            color="blue"
+            type="Proteins"
+            aliments={filterAlimentsByType("Proteins")}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <BacCard
+            color="green"
+            type="Vegetables"
+            aliments={filterAlimentsByType("Vegetables")}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <BacCard
+            color="red"
+            type="Carbs"
+            aliments={filterAlimentsByType("Carbs")}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <BacCard
+            color="pink"
+            type="Others"
+            aliments={filterAlimentsByType("Others")}
+          />
+        </Grid>
+      </Grid>
+      <Box mt={5}>
+        <Card>
+          <CardContent>
+            <Typography variant="h4" component="h2" gutterBottom>
+              Ajouter un aliment
+            </Typography>
+            <AlimentForm onSubmit={handleAddAliment} />
+          </CardContent>
+        </Card>
+      </Box>
+      <Box mt={5}>
+        <Card>
+          <CardContent>
+            <Typography variant="h4" component="h2" gutterBottom>
+              Liste des aliments
+            </Typography>
+            <AlimentList aliments={aliments} />
+          </CardContent>
+        </Card>
+      </Box>
+    </Container>
   );
 };
 
