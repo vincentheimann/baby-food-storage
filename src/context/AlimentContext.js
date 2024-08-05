@@ -1,5 +1,6 @@
 // src/context/AlimentContext.js
 import React, { createContext, useState, useEffect } from "react";
+import { differenceInDays } from "date-fns";
 
 export const AlimentContext = createContext();
 
@@ -30,16 +31,31 @@ export const AlimentProvider = ({ children }) => {
     const updatedNotifications = aliments
       .filter((aliment) => {
         const peremptionDate = new Date(aliment.datePeremption);
-        const diffDays = (peremptionDate - today) / (1000 * 60 * 60 * 24);
-        return diffDays <= 10;
+        const diffDays = differenceInDays(peremptionDate, today);
+        return diffDays <= 10 || diffDays < 0;
       })
       .map((aliment) => {
         const peremptionDate = new Date(aliment.datePeremption);
-        const diffDays = (peremptionDate - today) / (1000 * 60 * 60 * 24);
+        const diffDays = differenceInDays(peremptionDate, today);
         let color = "green";
-        if (diffDays <= 3) color = "orange";
-        if (diffDays < 0) color = "red";
-        return { ...aliment, color };
+        let message = "";
+
+        if (diffDays < 0) {
+          color = "red";
+          message = `Expiré depuis ${Math.abs(diffDays)} jour${
+            Math.abs(diffDays) !== 1 ? "s" : ""
+          }`;
+        } else if (diffDays === 0) {
+          color = "orange";
+          message = "Péremption aujourd'hui";
+        } else if (diffDays <= 3) {
+          color = "orange";
+          message = `Expire dans ${diffDays} jour${diffDays !== 1 ? "s" : ""}`;
+        } else {
+          message = `Expire dans ${diffDays} jour${diffDays !== 1 ? "s" : ""}`;
+        }
+
+        return { ...aliment, color, message };
       });
     setNotifications(updatedNotifications);
   }, [aliments]);

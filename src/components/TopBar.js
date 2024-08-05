@@ -21,7 +21,6 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate } from "react-router-dom";
 import { AlimentContext } from "../context/AlimentContext";
-import { formatDate } from "../utils/dateUtils";
 
 const TopBar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -104,9 +103,7 @@ const TopBar = () => {
                 >
                   <ListItemText
                     primary={notification.nom}
-                    secondary={`Expire le ${formatDate(
-                      notification.datePeremption
-                    )}`}
+                    secondary={notification.message}
                     style={{
                       textDecoration: notification.lue
                         ? "line-through"
