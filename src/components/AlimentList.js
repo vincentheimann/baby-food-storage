@@ -12,6 +12,7 @@ import {
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import AlimentModal from "./AlimentModal";
+import { formatDate } from "../utils/dateUtils";
 
 const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
   const [selectedAliment, setSelectedAliment] = useState(null);
@@ -40,7 +41,11 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
             >
               <ListItemText
                 primary={`${aliment.nom} (${aliment.type})`}
-                secondary={`Congelé le : ${aliment.dateCongelation} | Péremption : ${aliment.datePeremption} | Quantité : ${aliment.quantite} glaçons`}
+                secondary={`Congelé le : ${formatDate(
+                  aliment.dateCongelation
+                )} | Péremption : ${formatDate(
+                  aliment.datePeremption
+                )} | Quantité : ${aliment.quantite} glaçons`}
               />
               <ListItemSecondaryAction>
                 <IconButton

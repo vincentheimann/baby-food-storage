@@ -8,6 +8,7 @@ import {
   ListItem,
   ListItemText,
 } from "@mui/material";
+import { formatDate } from "../utils/dateUtils";
 
 const BacCard = ({ color, type, aliments }) => {
   return (
@@ -21,7 +22,9 @@ const BacCard = ({ color, type, aliments }) => {
             <ListItem key={aliment.id}>
               <ListItemText
                 primary={`${aliment.nom}`}
-                secondary={`Quantité : ${aliment.quantite} glaçons`}
+                secondary={`Quantité : ${
+                  aliment.quantite
+                } glaçons, Péremption : ${formatDate(aliment.datePeremption)}`}
               />
             </ListItem>
           ))}
