@@ -6,6 +6,8 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   IconButton,
+  Typography,
+  Box,
 } from "@mui/material";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -24,36 +26,42 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
 
   return (
     <>
-      <List>
-        {aliments.map((aliment) => (
-          <ListItem
-            button
-            key={aliment.id}
-            onClick={() => handleItemClick(aliment)}
-          >
-            <ListItemText
-              primary={`${aliment.nom} (${aliment.type})`}
-              secondary={`Congelé le : ${aliment.dateCongelation} | Péremption : ${aliment.datePeremption} | Quantité : ${aliment.quantite} glaçons`}
-            />
-            <ListItemSecondaryAction>
-              <IconButton
-                edge="end"
-                aria-label="decrement"
-                onClick={() => onDecrement(aliment.id)}
-              >
-                <RemoveCircleOutlineIcon />
-              </IconButton>
-              <IconButton
-                edge="end"
-                aria-label="increment"
-                onClick={() => onIncrement(aliment.id)}
-              >
-                <AddCircleOutlineIcon />
-              </IconButton>
-            </ListItemSecondaryAction>
-          </ListItem>
-        ))}
-      </List>
+      {aliments.length === 0 ? (
+        <Box textAlign="center" mt={2}>
+          <Typography variant="h6">Oups, il n'y a rien à manger !</Typography>
+        </Box>
+      ) : (
+        <List>
+          {aliments.map((aliment) => (
+            <ListItem
+              button
+              key={aliment.id}
+              onClick={() => handleItemClick(aliment)}
+            >
+              <ListItemText
+                primary={`${aliment.nom} (${aliment.type})`}
+                secondary={`Congelé le : ${aliment.dateCongelation} | Péremption : ${aliment.datePeremption} | Quantité : ${aliment.quantite} glaçons`}
+              />
+              <ListItemSecondaryAction>
+                <IconButton
+                  edge="end"
+                  aria-label="decrement"
+                  onClick={() => onDecrement(aliment.id)}
+                >
+                  <RemoveCircleOutlineIcon />
+                </IconButton>
+                <IconButton
+                  edge="end"
+                  aria-label="increment"
+                  onClick={() => onIncrement(aliment.id)}
+                >
+                  <AddCircleOutlineIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          ))}
+        </List>
+      )}
       {selectedAliment && (
         <AlimentModal
           open={Boolean(selectedAliment)}
