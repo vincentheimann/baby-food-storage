@@ -11,17 +11,26 @@ import {
   List,
   ListItem,
   ListItemText,
+  ListItemSecondaryAction,
+  Badge,
+  Box,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
+import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate } from "react-router-dom";
 import { AlimentContext } from "../context/AlimentContext";
 
 const TopBar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { notifications } = useContext(AlimentContext);
+  const {
+    notifications,
+    markNotificationAsRead,
+    deleteNotification,
+    unreadNotificationsCount,
+  } = useContext(AlimentContext);
   const navigate = useNavigate();
 
   const handleMenuOpen = (event) => {
@@ -68,7 +77,9 @@ const TopBar = () => {
           <SettingsIcon />
         </IconButton>
         <IconButton color="inherit" onClick={toggleDrawer(true)}>
-          <NotificationsIcon />
+          <Badge badgeContent={unreadNotificationsCount} color="secondary">
+            <NotificationsIcon />
+          </Badge>
         </IconButton>
         <Menu
           anchorEl={anchorEl}
@@ -83,12 +94,31 @@ const TopBar = () => {
         <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
           <List>
             {notifications.length > 0 ? (
-              notifications.map((notification, index) => (
-                <ListItem button key={index}>
+              notifications.map((notification) => (
+                <ListItem
+                  button
+                  key={notification.id}
+                  onClick={() => markNotificationAsRead(notification.id)}
+                  style={{ backgroundColor: notification.color }}
+                >
                   <ListItemText
                     primary={notification.nom}
                     secondary={`Expire le ${notification.datePeremption}`}
+                    style={{
+                      textDecoration: notification.lue
+                        ? "line-through"
+                        : "none",
+                    }}
                   />
+                  <ListItemSecondaryAction>
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => deleteNotification(notification.id)}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </ListItemSecondaryAction>
                 </ListItem>
               ))
             ) : (

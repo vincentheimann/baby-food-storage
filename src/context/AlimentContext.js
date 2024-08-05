@@ -1,5 +1,5 @@
 // src/context/AlimentContext.js
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 
 export const AlimentContext = createContext();
 
@@ -22,6 +22,27 @@ export const AlimentProvider = ({ children }) => {
       quantite: 8,
     },
   ]);
+
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    const today = new Date();
+    const updatedNotifications = aliments
+      .filter((aliment) => {
+        const peremptionDate = new Date(aliment.datePeremption);
+        const diffDays = (peremptionDate - today) / (1000 * 60 * 60 * 24);
+        return diffDays <= 10;
+      })
+      .map((aliment) => {
+        const peremptionDate = new Date(aliment.datePeremption);
+        const diffDays = (peremptionDate - today) / (1000 * 60 * 60 * 24);
+        let color = "green";
+        if (diffDays <= 3) color = "orange";
+        if (diffDays < 0) color = "red";
+        return { ...aliment, color };
+      });
+    setNotifications(updatedNotifications);
+  }, [aliments]);
 
   const addAliment = (newAliment) => {
     setAliments([...aliments, { ...newAliment, id: aliments.length + 1 }]);
@@ -57,12 +78,23 @@ export const AlimentProvider = ({ children }) => {
     );
   };
 
-  const notifications = aliments.filter((aliment) => {
-    const today = new Date();
-    const peremptionDate = new Date(aliment.datePeremption);
-    const diffDays = (peremptionDate - today) / (1000 * 60 * 60 * 24);
-    return diffDays <= 7;
-  });
+  const markNotificationAsRead = (id) => {
+    setNotifications(
+      notifications.map((notification) =>
+        notification.id === id ? { ...notification, lue: true } : notification
+      )
+    );
+  };
+
+  const deleteNotification = (id) => {
+    setNotifications(
+      notifications.filter((notification) => notification.id !== id)
+    );
+  };
+
+  const unreadNotificationsCount = notifications.filter(
+    (notification) => !notification.lue
+  ).length;
 
   return (
     <AlimentContext.Provider
@@ -73,6 +105,9 @@ export const AlimentProvider = ({ children }) => {
         incrementAlimentQuantity,
         updateAliment,
         notifications,
+        markNotificationAsRead,
+        deleteNotification,
+        unreadNotificationsCount,
       }}
     >
       {children}
