@@ -1,5 +1,5 @@
 // src/pages/Home.js
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import {
   Grid,
   Typography,
@@ -11,30 +11,17 @@ import {
 import BacCard from "../components/BacCard";
 import AlimentList from "../components/AlimentList";
 import AlimentForm from "../components/AlimentForm";
-
-const initialAliments = [
-  {
-    id: 1,
-    nom: "Poulet",
-    dateCongelation: "2024-07-01",
-    datePeremption: "2024-08-01",
-    type: "Proteins",
-  },
-  {
-    id: 2,
-    nom: "Carottes",
-    dateCongelation: "2024-07-05",
-    datePeremption: "2024-08-05",
-    type: "Vegetables",
-  },
-];
+import { BacContext } from "../context/BacContext";
+import { AlimentContext } from "../context/AlimentContext";
 
 const Home = () => {
-  const [aliments, setAliments] = useState(initialAliments);
-
-  const handleAddAliment = (newAliment) => {
-    setAliments([...aliments, { ...newAliment, id: aliments.length + 1 }]);
-  };
+  const { bacs } = useContext(BacContext);
+  const {
+    aliments,
+    addAliment,
+    decrementAlimentQuantity,
+    incrementAlimentQuantity,
+  } = useContext(AlimentContext);
 
   const filterAlimentsByType = (type) => {
     return aliments.filter((aliment) => aliment.type === type);
@@ -46,34 +33,15 @@ const Home = () => {
         Accueil
       </Typography>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          <BacCard
-            color="blue"
-            type="Proteins"
-            aliments={filterAlimentsByType("Proteins")}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <BacCard
-            color="green"
-            type="Vegetables"
-            aliments={filterAlimentsByType("Vegetables")}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <BacCard
-            color="red"
-            type="Carbs"
-            aliments={filterAlimentsByType("Carbs")}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <BacCard
-            color="pink"
-            type="Others"
-            aliments={filterAlimentsByType("Others")}
-          />
-        </Grid>
+        {bacs.map((bac) => (
+          <Grid item xs={12} md={6} key={bac.id}>
+            <BacCard
+              color={bac.color}
+              type={bac.type}
+              aliments={filterAlimentsByType(bac.type)}
+            />
+          </Grid>
+        ))}
       </Grid>
       <Box mt={5}>
         <Card>
@@ -81,7 +49,7 @@ const Home = () => {
             <Typography variant="h4" component="h2" gutterBottom>
               Ajouter un aliment
             </Typography>
-            <AlimentForm onSubmit={handleAddAliment} />
+            <AlimentForm onSubmit={addAliment} />
           </CardContent>
         </Card>
       </Box>
@@ -91,7 +59,11 @@ const Home = () => {
             <Typography variant="h4" component="h2" gutterBottom>
               Liste des aliments
             </Typography>
-            <AlimentList aliments={aliments} />
+            <AlimentList
+              aliments={aliments}
+              onDecrement={decrementAlimentQuantity}
+              onIncrement={incrementAlimentQuantity}
+            />
           </CardContent>
         </Card>
       </Box>

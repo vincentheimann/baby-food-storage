@@ -1,20 +1,30 @@
 // src/components/AlimentForm.js
-import React, { useState } from 'react';
-import { TextField, Button, Box, Grid, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
+import React, { useState } from "react";
+import {
+  TextField,
+  Button,
+  Grid,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
 
 const AlimentForm = ({ onSubmit }) => {
-  const [nom, setNom] = useState('');
-  const [dateCongelation, setDateCongelation] = useState('');
-  const [datePeremption, setDatePeremption] = useState('');
-  const [type, setType] = useState('');
+  const [nom, setNom] = useState("");
+  const [dateCongelation, setDateCongelation] = useState("");
+  const [datePeremption, setDatePeremption] = useState("");
+  const [type, setType] = useState("");
+  const [quantite, setQuantite] = useState(1);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ nom, dateCongelation, datePeremption, type });
-    setNom('');
-    setDateCongelation('');
-    setDatePeremption('');
-    setType('');
+    onSubmit({ nom, dateCongelation, datePeremption, type, quantite });
+    setNom("");
+    setDateCongelation("");
+    setDatePeremption("");
+    setType("");
+    setQuantite(1);
   };
 
   return (
@@ -54,16 +64,22 @@ const AlimentForm = ({ onSubmit }) => {
         <Grid item xs={12} md={3}>
           <FormControl fullWidth required>
             <InputLabel>Type</InputLabel>
-            <Select
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-            >
+            <Select value={type} onChange={(e) => setType(e.target.value)}>
               <MenuItem value="Proteins">Proteins</MenuItem>
               <MenuItem value="Vegetables">Vegetables</MenuItem>
               <MenuItem value="Carbs">Carbs</MenuItem>
               <MenuItem value="Others">Others</MenuItem>
             </Select>
           </FormControl>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            label="Nombre de glaçons"
+            type="number"
+            value={quantite}
+            onChange={(e) => setQuantite(e.target.value)}
+            fullWidth
+          />
         </Grid>
         <Grid item xs={12}>
           <Button type="submit" variant="contained" color="primary" fullWidth>

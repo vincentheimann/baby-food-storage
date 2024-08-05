@@ -1,5 +1,5 @@
 // src/components/TopBar.js
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   AppBar,
   Toolbar,
@@ -14,11 +14,14 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import SettingsIcon from "@mui/icons-material/Settings";
 import { useNavigate } from "react-router-dom";
+import { AlimentContext } from "../context/AlimentContext";
 
-const TopBar = ({ notifications }) => {
+const TopBar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const { notifications } = useContext(AlimentContext);
   const navigate = useNavigate();
 
   const handleMenuOpen = (event) => {
@@ -58,6 +61,12 @@ const TopBar = ({ notifications }) => {
         <Typography variant="h6" style={{ flexGrow: 1 }}>
           Baby Food Storage
         </Typography>
+        <IconButton
+          color="inherit"
+          onClick={() => handleNavigation("/config-bacs")}
+        >
+          <SettingsIcon />
+        </IconButton>
         <IconButton color="inherit" onClick={toggleDrawer(true)}>
           <NotificationsIcon />
         </IconButton>

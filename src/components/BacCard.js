@@ -1,25 +1,31 @@
 // src/components/BacCard.js
 import React from "react";
-import { Card, CardContent, Typography } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
 
 const BacCard = ({ color, type, aliments }) => {
   return (
-    <Card variant="outlined" style={{ borderColor: color, borderWidth: 2 }}>
+    <Card style={{ borderColor: color, borderWidth: 2, borderStyle: "solid" }}>
       <CardContent>
-        <Typography variant="h5" component="div">
+        <Typography variant="h5" component="h2" gutterBottom>
           {type}
         </Typography>
-        {aliments.length > 0 ? (
-          aliments.map((aliment) => (
-            <Typography key={aliment.id} variant="body2" color="text.secondary">
-              {aliment.nom} (Expire le {aliment.datePeremption})
-            </Typography>
-          ))
-        ) : (
-          <Typography variant="body2" color="text.secondary">
-            Aucun aliment
-          </Typography>
-        )}
+        <List>
+          {aliments.map((aliment) => (
+            <ListItem key={aliment.id}>
+              <ListItemText
+                primary={`${aliment.nom}`}
+                secondary={`Quantité : ${aliment.quantite} glaçons`}
+              />
+            </ListItem>
+          ))}
+        </List>
       </CardContent>
     </Card>
   );
