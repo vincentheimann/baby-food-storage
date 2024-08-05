@@ -21,6 +21,7 @@ const Home = () => {
     addAliment,
     decrementAlimentQuantity,
     incrementAlimentQuantity,
+    updateAliment,
   } = useContext(AlimentContext);
 
   const filterAlimentsByType = (type) => {
@@ -63,6 +64,7 @@ const Home = () => {
               aliments={aliments}
               onDecrement={decrementAlimentQuantity}
               onIncrement={incrementAlimentQuantity}
+              onUpdate={updateAliment}
             />
           </CardContent>
         </Card>

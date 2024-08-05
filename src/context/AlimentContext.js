@@ -49,6 +49,14 @@ export const AlimentProvider = ({ children }) => {
     );
   };
 
+  const updateAliment = (updatedAliment) => {
+    setAliments(
+      aliments.map((aliment) =>
+        aliment.id === updatedAliment.id ? updatedAliment : aliment
+      )
+    );
+  };
+
   const notifications = aliments.filter((aliment) => {
     const today = new Date();
     const peremptionDate = new Date(aliment.datePeremption);
@@ -63,6 +71,7 @@ export const AlimentProvider = ({ children }) => {
         addAliment,
         decrementAlimentQuantity,
         incrementAlimentQuantity,
+        updateAliment,
         notifications,
       }}
     >
