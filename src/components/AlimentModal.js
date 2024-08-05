@@ -1,6 +1,17 @@
 // src/components/AlimentModal.js
 import React, { useState, useEffect } from "react";
-import { Modal, Box, Typography, TextField, Button, Grid } from "@mui/material";
+import {
+  Modal,
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Grid,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
 
 const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
   const [updatedAliment, setUpdatedAliment] = useState({ ...aliment });
@@ -70,13 +81,19 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <TextField
-              label="Type"
-              name="type"
-              value={updatedAliment.type}
-              onChange={handleChange}
-              fullWidth
-            />
+            <FormControl fullWidth>
+              <InputLabel>Type</InputLabel>
+              <Select
+                name="type"
+                value={updatedAliment.type}
+                onChange={handleChange}
+              >
+                <MenuItem value="Proteins">Protéines</MenuItem>
+                <MenuItem value="Vegetables">Légumes</MenuItem>
+                <MenuItem value="Carbs">Féculents</MenuItem>
+                <MenuItem value="Others">Autres</MenuItem>
+              </Select>
+            </FormControl>
           </Grid>
           <Grid item xs={12}>
             <TextField

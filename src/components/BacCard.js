@@ -11,11 +11,26 @@ import {
 import { formatDate } from "../utils/dateUtils";
 
 const BacCard = ({ color, type, aliments }) => {
+  const getTypeTranslation = (type) => {
+    switch (type) {
+      case "Proteins":
+        return "Protéines";
+      case "Vegetables":
+        return "Légumes";
+      case "Carbs":
+        return "Féculents";
+      case "Others":
+        return "Autres";
+      default:
+        return type;
+    }
+  };
+
   return (
     <Card style={{ borderColor: color, borderWidth: 2, borderStyle: "solid" }}>
       <CardContent>
         <Typography variant="h5" component="h2" gutterBottom>
-          {type}
+          {getTypeTranslation(type)}
         </Typography>
         <List>
           {aliments.map((aliment) => (

@@ -25,6 +25,21 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
     setSelectedAliment(null);
   };
 
+  const getTypeTranslation = (type) => {
+    switch (type) {
+      case "Proteins":
+        return "Protéines";
+      case "Vegetables":
+        return "Légumes";
+      case "Carbs":
+        return "Féculents";
+      case "Others":
+        return "Autres";
+      default:
+        return type;
+    }
+  };
+
   return (
     <>
       {aliments.length === 0 ? (
@@ -40,7 +55,7 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
               onClick={() => handleItemClick(aliment)}
             >
               <ListItemText
-                primary={`${aliment.nom} (${aliment.type})`}
+                primary={`${aliment.nom} (${getTypeTranslation(aliment.type)})`}
                 secondary={`Congelé le : ${formatDate(
                   aliment.dateCongelation
                 )} | Péremption : ${formatDate(

@@ -65,10 +65,10 @@ const AlimentForm = ({ onSubmit }) => {
           <FormControl fullWidth required>
             <InputLabel>Type</InputLabel>
             <Select value={type} onChange={(e) => setType(e.target.value)}>
-              <MenuItem value="Proteins">Proteins</MenuItem>
-              <MenuItem value="Vegetables">Vegetables</MenuItem>
-              <MenuItem value="Carbs">Carbs</MenuItem>
-              <MenuItem value="Others">Others</MenuItem>
+              <MenuItem value="Proteins">Protéines</MenuItem>
+              <MenuItem value="Vegetables">Légumes</MenuItem>
+              <MenuItem value="Carbs">Féculents</MenuItem>
+              <MenuItem value="Others">Autres</MenuItem>
             </Select>
           </FormControl>
         </Grid>
