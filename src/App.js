@@ -18,7 +18,6 @@ import { BacProvider } from "./context/BacContext";
 import { AlimentProvider } from "./context/AlimentContext";
 import { UserProvider, useUser } from "./context/UserContext";
 import LoginPage from "./pages/LoginPage";
-import ProtectedRoute from "./components/ProtectedRoute";
 
 const AppContent = () => {
   const { isAuthenticated } = useUser();
