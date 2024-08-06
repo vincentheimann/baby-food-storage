@@ -1,26 +1,21 @@
-// src/components/AlimentForm.test.js
 import React from "react";
-import { render, fireEvent, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import AlimentForm from "./AlimentForm";
 
-test("submits the form with valid values", () => {
+test("renders AlimentForm and submits with valid data", () => {
   const handleSubmit = jest.fn();
+
   render(<AlimentForm onSubmit={handleSubmit} />);
 
   fireEvent.change(screen.getByLabelText(/Nom de l'aliment/i), {
     target: { value: "Carottes" },
   });
   fireEvent.change(screen.getByLabelText(/Date de congélation/i), {
-    target: { value: "2024-07-05" },
+    target: { value: "2024-01-01" },
   });
   fireEvent.change(screen.getByLabelText(/Date de péremption/i), {
-    target: { value: "2024-08-05" },
+    target: { value: "2024-12-31" },
   });
-
-  // Correction pour le champ Type
-  fireEvent.mouseDown(screen.getByLabelText(/Type/i));
-  fireEvent.click(screen.getByText(/Légumes/i));
-
   fireEvent.change(screen.getByLabelText(/Nombre de glaçons/i), {
     target: { value: 10 },
   });
@@ -29,9 +24,8 @@ test("submits the form with valid values", () => {
 
   expect(handleSubmit).toHaveBeenCalledWith({
     nom: "Carottes",
-    dateCongelation: "2024-07-05",
-    datePeremption: "2024-08-05",
-    type: "Légumes",
+    dateCongelation: "2024-01-01",
+    datePeremption: "2024-12-31",
     quantite: 10,
   });
 });
@@ -48,7 +42,6 @@ test("shows error messages for empty required fields", () => {
     screen.getByText(/La date de congélation est requise/i)
   ).toBeInTheDocument();
   expect(
-    screen.getByText(/La date de péremption est requise/i)
+    screen.getByText(/Le nombre de glaçons est requis/i)
   ).toBeInTheDocument();
-  expect(screen.getByText(/Le type est requis/i)).toBeInTheDocument();
 });

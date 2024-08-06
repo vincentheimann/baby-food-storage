@@ -1,5 +1,5 @@
 // src/context/AlimentContext.js
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useContext } from "react";
 import { differenceInDays } from "date-fns";
 import { useUser } from "./UserContext";
 

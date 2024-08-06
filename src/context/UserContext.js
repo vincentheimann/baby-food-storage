@@ -1,4 +1,4 @@
-// src/context/UserContext.js
+// src/contexts/UserContext.js
 import React, { createContext, useState, useContext } from "react";
 import { login, logout, demoLogin } from "../services/authService";
 

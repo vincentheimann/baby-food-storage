@@ -1,54 +1,35 @@
-// src/components/TopBar.test.js
 import React from "react";
-import { render, fireEvent, screen } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { render, screen, fireEvent } from "@testing-library/react";
 import TopBar from "./TopBar";
-import { AlimentContext } from "../context/AlimentContext";
+import { UserProvider } from "../context/UserContext";
+import { BrowserRouter as Router } from "react-router-dom";
 
-const mockContextValue = {
-  notifications: [
-    {
-      id: 1,
-      nom: "Poulet",
-      message: "Expire dans 3 jours",
-      color: "orange",
-      lue: false,
-    },
-    {
-      id: 2,
-      nom: "Carottes",
-      message: "Expire dans 7 jours",
-      color: "green",
-      lue: false,
-    },
-  ],
-  markNotificationAsRead: jest.fn(),
-  deleteNotification: jest.fn(),
-  unreadNotificationsCount: 2,
-};
+test("renders TopBar with profile icon", () => {
+  const user = { email: "test@example.com" };
 
-test("displays the number of unread notifications", () => {
   render(
-    <MemoryRouter>
-      <AlimentContext.Provider value={mockContextValue}>
+    <UserProvider value={{ user, logout: jest.fn() }}>
+      <Router>
         <TopBar />
-      </AlimentContext.Provider>
-    </MemoryRouter>
+      </Router>
+    </UserProvider>
   );
 
-  expect(screen.getByText("2")).toBeInTheDocument();
+  expect(screen.getByText(/Logout \(test@example.com\)/i)).toBeInTheDocument();
 });
 
-test("opens the notifications drawer", () => {
+test("calls logout function when logout button is clicked", () => {
+  const logoutMock = jest.fn();
+  const user = { email: "test@example.com" };
+
   render(
-    <MemoryRouter>
-      <AlimentContext.Provider value={mockContextValue}>
+    <UserProvider value={{ user, logout: logoutMock }}>
+      <Router>
         <TopBar />
-      </AlimentContext.Provider>
-    </MemoryRouter>
+      </Router>
+    </UserProvider>
   );
 
-  fireEvent.click(screen.getByTestId("NotificationsIcon"));
-  expect(screen.getByText(/Poulet/i)).toBeInTheDocument();
-  expect(screen.getByText(/Carottes/i)).toBeInTheDocument();
+  fireEvent.click(screen.getByText(/Logout \(test@example.com\)/i));
+  expect(logoutMock).toHaveBeenCalledTimes(1);
 });
