@@ -9,10 +9,10 @@ import {
   Container,
 } from "@mui/material";
 import BacCard from "../components/BacCard";
-import AlimentList from "../components/AlimentList";
 import { BacContext } from "../context/BacContext";
 import { AlimentContext } from "../context/AlimentContext";
 import { PieChart } from "@mui/x-charts/PieChart";
+import AlimentPriorityList from "../components/AlimentPriorityList";
 
 const Dashboard = () => {
   const { bacs } = useContext(BacContext);
@@ -110,7 +110,7 @@ const Dashboard = () => {
             <Typography variant="h4" component="h2" gutterBottom>
               Aliments à consommer en priorité
             </Typography>
-            <AlimentList aliments={alimentsProchesDePeremption} />
+            <AlimentPriorityList aliments={alimentsProchesDePeremption} />
           </CardContent>
         </Card>
       </Box>
