@@ -7,22 +7,26 @@ import {
   Typography,
   Menu,
   MenuItem,
+  Badge,
   Drawer,
   List,
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
-  Badge,
+  Box,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
+import AccountCircle from "@mui/icons-material/AccountCircle";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate } from "react-router-dom";
 import { AlimentContext } from "../context/AlimentContext";
+import { useUser } from "../context/UserContext";
 
 const TopBar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const {
     notifications,
@@ -30,6 +34,7 @@ const TopBar = () => {
     deleteNotification,
     unreadNotificationsCount,
   } = useContext(AlimentContext);
+  const { logout } = useUser();
   const navigate = useNavigate();
 
   const handleMenuOpen = (event) => {
@@ -40,9 +45,27 @@ const TopBar = () => {
     setAnchorEl(null);
   };
 
+  const handleProfileMenuOpen = (event) => {
+    setProfileMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleProfileMenuClose = () => {
+    setProfileMenuAnchorEl(null);
+  };
+
   const handleNavigation = (path) => {
     navigate(path);
     handleMenuClose();
+    handleProfileMenuClose();
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   const toggleDrawer = (open) => (event) => {
@@ -69,17 +92,38 @@ const TopBar = () => {
         <Typography variant="h6" style={{ flexGrow: 1 }}>
           Baby Food Storage
         </Typography>
-        <IconButton
-          color="inherit"
-          onClick={() => handleNavigation("/config-bacs")}
-        >
-          <SettingsIcon />
-        </IconButton>
-        <IconButton color="inherit" onClick={toggleDrawer(true)}>
-          <Badge badgeContent={unreadNotificationsCount} color="secondary">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <IconButton
+            color="inherit"
+            onClick={() => handleNavigation("/config-bacs")}
+          >
+            <SettingsIcon />
+          </IconButton>
+          <IconButton color="inherit" onClick={toggleDrawer(true)}>
+            <Badge badgeContent={unreadNotificationsCount} color="secondary">
+              <NotificationsIcon />
+            </Badge>
+          </IconButton>
+          <Box
+            onMouseEnter={handleProfileMenuOpen}
+            onMouseLeave={handleProfileMenuClose}
+          >
+            <IconButton edge="end" color="inherit">
+              <AccountCircle />
+            </IconButton>
+            <Menu
+              anchorEl={profileMenuAnchorEl}
+              open={Boolean(profileMenuAnchorEl)}
+              onClose={handleProfileMenuClose}
+              MenuListProps={{ onMouseLeave: handleProfileMenuClose }}
+            >
+              <MenuItem onClick={() => handleNavigation("/profile")}>
+                Profil
+              </MenuItem>
+              <MenuItem onClick={handleLogout}>Déconnexion</MenuItem>
+            </Menu>
+          </Box>
+        </Box>
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}

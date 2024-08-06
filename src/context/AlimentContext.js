@@ -1,30 +1,39 @@
 // src/context/AlimentContext.js
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useContext } from "react";
 import { differenceInDays } from "date-fns";
+import { useUser } from "./UserContext";
 
 export const AlimentContext = createContext();
 
 export const AlimentProvider = ({ children }) => {
-  const [aliments, setAliments] = useState([
-    {
-      id: 1,
-      nom: "Poulet",
-      dateCongelation: "2024-07-01",
-      datePeremption: "2024-08-01",
-      type: "Proteins",
-      quantite: 10,
-    },
-    {
-      id: 2,
-      nom: "Carottes",
-      dateCongelation: "2024-07-05",
-      datePeremption: "2024-08-05",
-      type: "Vegetables",
-      quantite: 8,
-    },
-  ]);
-
+  const { user } = useUser();
+  const [aliments, setAliments] = useState([]);
   const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    if (user && user.email === "demo@example.com") {
+      setAliments([
+        {
+          id: 1,
+          nom: "Poulet",
+          dateCongelation: "2024-07-01",
+          datePeremption: "2024-08-01",
+          type: "Proteins",
+          quantite: 10,
+        },
+        {
+          id: 2,
+          nom: "Carottes",
+          dateCongelation: "2024-07-05",
+          datePeremption: "2024-08-05",
+          type: "Vegetables",
+          quantite: 8,
+        },
+      ]);
+    } else {
+      setAliments([]);
+    }
+  }, [user]);
 
   useEffect(() => {
     const today = new Date();
