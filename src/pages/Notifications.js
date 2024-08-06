@@ -30,7 +30,7 @@ const initialAliments = [
     nom: "Pommes",
     dateCongelation: "2024-07-15",
     datePeremption: "2024-08-15",
-    type: "Others",
+    type: "Fruits",
   },
 ];
 

@@ -33,8 +33,8 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
         return "Légumes";
       case "Carbs":
         return "Féculents";
-      case "Others":
-        return "Autres";
+      case "Fruits":
+        return "Fruits";
       default:
         return type;
     }

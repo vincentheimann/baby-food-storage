@@ -19,8 +19,8 @@ const BacCard = ({ color, type, aliments }) => {
         return "Légumes";
       case "Carbs":
         return "Féculents";
-      case "Others":
-        return "Prêt à manger"; // Change "Autres" to "Prêt à manger"
+      case "Fruits":
+        return "Fruits";
       default:
         return type;
     }

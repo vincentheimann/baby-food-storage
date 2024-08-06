@@ -8,7 +8,7 @@ export const BacProvider = ({ children }) => {
     { id: 1, color: "blue", type: "Proteins", capacity: 12 },
     { id: 2, color: "green", type: "Vegetables", capacity: 12 },
     { id: 3, color: "red", type: "Carbs", capacity: 12 },
-    { id: 4, color: "pink", type: "Others", capacity: 12 },
+    { id: 4, color: "pink", type: "Fruits", capacity: 12 },
   ]);
 
   const updateBac = (id, updatedBac) => {

@@ -6,8 +6,9 @@ import { useUser } from "./UserContext";
 export const AlimentContext = createContext();
 
 export const AlimentProvider = ({ children }) => {
-  const { user } = useUser();
   const [aliments, setAliments] = useState([]);
+  const { user } = useUser();
+
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
@@ -29,6 +30,71 @@ export const AlimentProvider = ({ children }) => {
           type: "Vegetables",
           quantite: 8,
         },
+        {
+          id: 3,
+          nom: "Pâtes",
+          dateCongelation: "2024-07-10",
+          datePeremption: "2024-08-10",
+          type: "Carbs",
+          quantite: 15,
+        },
+        {
+          id: 4,
+          nom: "Pommes",
+          dateCongelation: "2024-07-15",
+          datePeremption: "2024-08-15",
+          type: "Fruits",
+          quantite: 5,
+        },
+        {
+          id: 5,
+          nom: "Saumon",
+          dateCongelation: "2024-07-20",
+          datePeremption: "2024-08-20",
+          type: "Proteins",
+          quantite: 12,
+        },
+        {
+          id: 6,
+          nom: "Brocoli",
+          dateCongelation: "2024-07-25",
+          datePeremption: "2024-08-25",
+          type: "Vegetables",
+          quantite: 9,
+        },
+        {
+          id: 7,
+          nom: "Riz",
+          dateCongelation: "2024-07-30",
+          datePeremption: "2024-08-30",
+          type: "Carbs",
+          quantite: 20,
+        },
+        {
+          id: 8,
+          nom: "Fraises",
+          dateCongelation: "2024-07-05",
+          datePeremption: "2024-08-05",
+          type: "Fruits",
+          quantite: 6,
+        },
+        {
+          id: 9,
+          nom: "Boeuf",
+          dateCongelation: "2024-07-10",
+          datePeremption: "2024-08-10",
+          type: "Proteins",
+          quantite: 10,
+        },
+        {
+          id: 10,
+          nom: "Épinards",
+          dateCongelation: "2024-07-15",
+          datePeremption: "2024-08-15",
+          type: "Vegetables",
+          quantite: 7,
+        },
+        // Ajoutez plus d'aliments pour l'utilisateur de démo...
       ]);
     } else {
       setAliments([]);

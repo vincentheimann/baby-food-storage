@@ -91,7 +91,7 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
                 <MenuItem value="Proteins">Protéines</MenuItem>
                 <MenuItem value="Vegetables">Légumes</MenuItem>
                 <MenuItem value="Carbs">Féculents</MenuItem>
-                <MenuItem value="Others">Autres</MenuItem>
+                <MenuItem value="Fruits">Fruits</MenuItem>
               </Select>
             </FormControl>
           </Grid>

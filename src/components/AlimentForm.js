@@ -99,7 +99,7 @@ const AlimentForm = ({ onSubmit }) => {
             <MenuItem value="Protéines">Protéines</MenuItem>
             <MenuItem value="Légumes">Légumes</MenuItem>
             <MenuItem value="Féculents">Féculents</MenuItem>
-            <MenuItem value="Autres">Autres</MenuItem>
+            <MenuItem value="Fruits">Fruits</MenuItem>
           </TextField>
         </Grid>
         <Grid item xs={12} md={3}>
