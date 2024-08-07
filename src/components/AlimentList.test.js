@@ -1,7 +1,8 @@
 // src/components/AlimentList.test.js
 import React from "react";
-import { render, fireEvent, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import AlimentList from "./AlimentList";
+import "@testing-library/jest-dom/extend-expect"; // pour les matchers jest-dom
 
 const aliments = [
   {
@@ -9,7 +10,7 @@ const aliments = [
     nom: "Poulet",
     dateCongelation: "2024-07-01",
     datePeremption: "2024-08-01",
-    type: "Protéines",
+    type: "Proteins",
     quantite: 10,
   },
   {
@@ -17,51 +18,82 @@ const aliments = [
     nom: "Carottes",
     dateCongelation: "2024-07-05",
     datePeremption: "2024-08-05",
-    type: "Légumes",
+    type: "Vegetables",
     quantite: 8,
   },
 ];
 
-test("displays the list of aliments", () => {
-  render(
-    <AlimentList
-      aliments={aliments}
-      onDecrement={() => {}}
-      onIncrement={() => {}}
-      onUpdate={() => {}}
-    />
-  );
+const mockDecrement = jest.fn();
+const mockIncrement = jest.fn();
+const mockUpdate = jest.fn();
 
-  expect(screen.getByText(/Poulet/i)).toBeInTheDocument();
-  expect(screen.getByText(/Carottes/i)).toBeInTheDocument();
-});
+describe("AlimentList", () => {
+  test("renders a list of aliments", () => {
+    render(
+      <AlimentList
+        aliments={aliments}
+        onDecrement={mockDecrement}
+        onIncrement={mockIncrement}
+        onUpdate={mockUpdate}
+      />
+    );
 
-test("decrements the quantity of an aliment", () => {
-  const handleDecrement = jest.fn();
-  render(
-    <AlimentList
-      aliments={aliments}
-      onDecrement={handleDecrement}
-      onIncrement={() => {}}
-      onUpdate={() => {}}
-    />
-  );
+    aliments.forEach((aliment) => {
+      expect(
+        screen.getByText(aliment.nom, { exact: false })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(`Quantité : ${aliment.quantite} glaçons`, {
+          exact: false,
+        })
+      ).toBeInTheDocument();
+    });
+  });
 
-  fireEvent.click(screen.getAllByRole("button", { name: /decrement/i })[0]);
-  expect(handleDecrement).toHaveBeenCalledWith(1);
-});
+  test("calls onDecrement when decrement button is clicked", () => {
+    render(
+      <AlimentList
+        aliments={aliments}
+        onDecrement={mockDecrement}
+        onIncrement={mockIncrement}
+        onUpdate={mockUpdate}
+      />
+    );
 
-test("increments the quantity of an aliment", () => {
-  const handleIncrement = jest.fn();
-  render(
-    <AlimentList
-      aliments={aliments}
-      onDecrement={() => {}}
-      onIncrement={handleIncrement}
-      onUpdate={() => {}}
-    />
-  );
+    const decrementButtons = screen.getAllByLabelText("decrement");
+    fireEvent.click(decrementButtons[0]);
 
-  fireEvent.click(screen.getAllByRole("button", { name: /increment/i })[1]);
-  expect(handleIncrement).toHaveBeenCalledWith(2);
+    expect(mockDecrement).toHaveBeenCalledWith(aliments[0].id);
+  });
+
+  test("calls onIncrement when increment button is clicked", () => {
+    render(
+      <AlimentList
+        aliments={aliments}
+        onDecrement={mockDecrement}
+        onIncrement={mockIncrement}
+        onUpdate={mockUpdate}
+      />
+    );
+
+    const incrementButtons = screen.getAllByLabelText("increment");
+    fireEvent.click(incrementButtons[0]);
+
+    expect(mockIncrement).toHaveBeenCalledWith(aliments[0].id);
+  });
+
+  test("shows no aliments message when list is empty", () => {
+    render(
+      <AlimentList
+        aliments={[]}
+        onDecrement={mockDecrement}
+        onIncrement={mockIncrement}
+        onUpdate={mockUpdate}
+      />
+    );
+
+    expect(
+      screen.getByText("Oups, il n'y a rien à manger !")
+    ).toBeInTheDocument();
+  });
 });
