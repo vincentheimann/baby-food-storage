@@ -35,11 +35,16 @@ describe("BacConfig", () => {
     mockBacs.forEach((bac) => {
       const bacColorInput = screen.getByDisplayValue(bac.color);
       const bacTypeInput = screen.getByDisplayValue(bac.type);
-      const bacCapacityInput = screen.getByDisplayValue(String(bac.capacity));
+      const bacCapacityInputs = screen.getAllByDisplayValue(
+        String(bac.capacity)
+      );
 
       expect(bacColorInput).toBeInTheDocument();
       expect(bacTypeInput).toBeInTheDocument();
-      expect(bacCapacityInput).toBeInTheDocument();
+      // Ensure we find the correct capacity input for each bac by filtering
+      expect(
+        bacCapacityInputs.some((input) => input.value === String(bac.capacity))
+      ).toBeTruthy();
     });
   });
 
@@ -72,7 +77,6 @@ describe("BacConfig", () => {
 
   test("removes an existing bac", () => {
     renderBacConfig();
-    // Find the delete button by the icon inside it
     const deleteButtons = screen.getAllByRole("button", { name: /delete/i });
     fireEvent.click(deleteButtons[0]);
     expect(mockBacContextValue.removeBac).toHaveBeenCalledWith(1);
