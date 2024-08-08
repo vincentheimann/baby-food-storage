@@ -22,7 +22,7 @@ const BacConfig = () => {
   };
 
   const handleAddBac = () => {
-    addBac(newBac);
+    addBac({ ...newBac, capacity: parseInt(newBac.capacity, 10) }); // Ensure capacity is a number
     setNewBac({ color: "", type: "", capacity: 12 });
   };
 
@@ -63,7 +63,11 @@ const BacConfig = () => {
                 }
                 fullWidth
               />
-              <IconButton color="secondary" onClick={() => removeBac(bac.id)}>
+              <IconButton
+                aria-label="delete"
+                color="secondary"
+                onClick={() => removeBac(bac.id)}
+              >
                 <DeleteIcon />
               </IconButton>
             </Stack>
