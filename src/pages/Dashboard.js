@@ -90,6 +90,11 @@ const Dashboard = () => {
                   height={200}
                   colors={pieChartData.map((data) => data.color)}
                 />
+                <ul aria-label="Pie chart legend">
+                  {pieChartData.map((data) => (
+                    <li key={data.id}>{data.label}</li>
+                  ))}
+                </ul>
               </CardContent>
             </Card>
           </Box>
