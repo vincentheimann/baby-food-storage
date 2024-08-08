@@ -1,12 +1,6 @@
 // src/pages/SignUpPage.js
 import React, { useState } from "react";
-import {
-  TextField,
-  Button,
-  Container,
-  Typography,
-  Box,
-} from "@mui/material";
+import { TextField, Button, Container, Typography, Box } from "@mui/material";
 
 const SignUpPage = ({ onSignUp }) => {
   const [values, setValues] = useState({
@@ -29,11 +23,12 @@ const SignUpPage = ({ onSignUp }) => {
     const validationErrors = {};
     if (!values.nom) validationErrors.nom = "Le nom est requis";
     if (!values.email) validationErrors.email = "L'email est requis";
-    if (!values.password) validationErrors.password = "Le mot de passe est requis";
+    if (!values.password)
+      validationErrors.password = "Le mot de passe est requis";
 
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-    } else {
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length === 0) {
       onSignUp(values);
     }
   };
@@ -46,37 +41,34 @@ const SignUpPage = ({ onSignUp }) => {
         </Typography>
         <form onSubmit={handleSubmit}>
           <TextField
+            error={!!errors.nom}
             label="Nom"
             name="nom"
             value={values.nom}
             onChange={handleChange}
             fullWidth
-            required
-            error={!!errors.nom}
             helperText={errors.nom}
             margin="normal"
           />
           <TextField
+            error={!!errors.email}
             label="Email"
             name="email"
             type="email"
             value={values.email}
             onChange={handleChange}
             fullWidth
-            required
-            error={!!errors.email}
             helperText={errors.email}
             margin="normal"
           />
           <TextField
+            error={!!errors.password}
             label="Mot de passe"
             name="password"
             type="password"
             value={values.password}
             onChange={handleChange}
             fullWidth
-            required
-            error={!!errors.password}
             helperText={errors.password}
             margin="normal"
           />

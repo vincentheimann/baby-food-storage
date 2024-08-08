@@ -18,6 +18,8 @@ import { BacProvider } from "./context/BacContext";
 import { AlimentProvider } from "./context/AlimentContext";
 import { UserProvider, useUser } from "./context/UserContext";
 import LoginPage from "./pages/LoginPage";
+import SignUpPage from "./pages/SignUpPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 const AppContent = () => {
   const { isAuthenticated } = useUser();
@@ -27,6 +29,8 @@ const AppContent = () => {
       {isAuthenticated && <TopBar />}
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route
           path="/*"
           element={
