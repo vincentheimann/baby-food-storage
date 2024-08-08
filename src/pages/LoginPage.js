@@ -32,7 +32,6 @@ const LoginPage = () => {
   const handleDemoLogin = async () => {
     try {
       await demoLogin();
-      console.log("Demo user logged in successfully");
       navigate("/"); // Redirection vers la page d'accueil après connexion réussie
     } catch (error) {
       console.error("Demo login failed: ", error);
