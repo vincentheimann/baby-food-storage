@@ -30,9 +30,9 @@ const AlimentForm = ({ onSubmit }) => {
       validationErrors.datePeremption = "La date de péremption est requise";
     if (!values.type) validationErrors.type = "Le type est requis";
 
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-    } else {
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length === 0) {
       onSubmit(values);
     }
   };
@@ -42,58 +42,54 @@ const AlimentForm = ({ onSubmit }) => {
       <Grid container spacing={2}>
         <Grid item xs={12} md={3}>
           <TextField
+            error={!!errors.nom}
             label="Nom de l'aliment"
             name="nom"
             value={values.nom}
             onChange={handleChange}
             fullWidth
-            required
-            error={!!errors.nom}
             helperText={errors.nom}
           />
         </Grid>
         <Grid item xs={12} md={3}>
           <TextField
+            error={!!errors.dateCongelation}
             label="Date de congélation"
             name="dateCongelation"
             type="date"
             value={values.dateCongelation}
             onChange={handleChange}
             fullWidth
-            required
             InputLabelProps={{
               shrink: true,
             }}
-            error={!!errors.dateCongelation}
             helperText={errors.dateCongelation}
           />
         </Grid>
         <Grid item xs={12} md={3}>
           <TextField
+            error={!!errors.datePeremption}
             label="Date de péremption"
             name="datePeremption"
             type="date"
             value={values.datePeremption}
             onChange={handleChange}
             fullWidth
-            required
             InputLabelProps={{
               shrink: true,
             }}
-            error={!!errors.datePeremption}
             helperText={errors.datePeremption}
           />
         </Grid>
         <Grid item xs={12} md={3}>
           <TextField
+            error={!!errors.type}
             label="Type"
             name="type"
             select
             value={values.type}
             onChange={handleChange}
             fullWidth
-            required
-            error={!!errors.type}
             helperText={errors.type}
           >
             <MenuItem value="Protéines">Protéines</MenuItem>
@@ -104,13 +100,14 @@ const AlimentForm = ({ onSubmit }) => {
         </Grid>
         <Grid item xs={12} md={3}>
           <TextField
+            error={!!errors.quantite}
             label="Nombre de glaçons"
             name="quantite"
             type="number"
             value={values.quantite}
             onChange={handleChange}
             fullWidth
-            required
+            helperText={errors.quantite}
           />
         </Grid>
         <Grid item xs={12}>
