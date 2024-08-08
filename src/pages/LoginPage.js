@@ -110,7 +110,7 @@ const LoginPage = () => {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
-                dataTestid="login-button"
+                datatestid="login-button"
               >
                 Sign In
               </Button>
@@ -119,7 +119,7 @@ const LoginPage = () => {
                 fullWidth
                 variant="outlined"
                 sx={{ mt: 1, mb: 2 }}
-                dataTestid="demo-login-button"
+                datatestid="demo-login-button"
               >
                 Connexion au compte de démonstration
               </Button>
