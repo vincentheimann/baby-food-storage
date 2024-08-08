@@ -86,6 +86,7 @@ const TopBar = () => {
           color="inherit"
           aria-label="menu"
           onClick={handleMenuOpen}
+          data-testid="menu-button"
         >
           <MenuIcon />
         </IconButton>
@@ -96,10 +97,15 @@ const TopBar = () => {
           <IconButton
             color="inherit"
             onClick={() => handleNavigation("/config-bacs")}
+            data-testid="settings-button"
           >
             <SettingsIcon />
           </IconButton>
-          <IconButton color="inherit" onClick={toggleDrawer(true)}>
+          <IconButton
+            color="inherit"
+            onClick={toggleDrawer(true)}
+            data-testid="notifications-button"
+          >
             <Badge badgeContent={unreadNotificationsCount} color="secondary">
               <NotificationsIcon />
             </Badge>
@@ -108,7 +114,7 @@ const TopBar = () => {
             onMouseEnter={handleProfileMenuOpen}
             onMouseLeave={handleProfileMenuClose}
           >
-            <IconButton edge="end" color="inherit">
+            <IconButton edge="end" color="inherit" data-testid="profile-button">
               <AccountCircle />
             </IconButton>
             <Menu

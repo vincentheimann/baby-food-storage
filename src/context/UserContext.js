@@ -1,4 +1,4 @@
-// src/contexts/UserContext.js
+// src/context/UserContext.js
 import React, { createContext, useState, useContext } from "react";
 import { login, logout, demoLogin } from "../services/authService";
 
@@ -54,3 +54,4 @@ export const UserProvider = ({ children }) => {
 };
 
 export const useUser = () => useContext(UserContext);
+export { UserContext };

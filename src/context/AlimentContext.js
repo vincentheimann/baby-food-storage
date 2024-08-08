@@ -205,3 +205,5 @@ export const AlimentProvider = ({ children }) => {
     </AlimentContext.Provider>
   );
 };
+
+export default AlimentContext;

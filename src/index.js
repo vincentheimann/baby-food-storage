@@ -3,11 +3,20 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import { UserProvider } from "./context/UserContext";
+import { AlimentProvider } from "./context/AlimentContext";
+import { BacProvider } from "./context/BacContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <App />
+    <UserProvider>
+      <AlimentProvider>
+        <BacProvider>
+          <App />
+        </BacProvider>
+      </AlimentProvider>
+    </UserProvider>
   </React.StrictMode>
 );
 

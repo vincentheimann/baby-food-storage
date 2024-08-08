@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import BacCard from "../components/BacCard";
 import { BacContext } from "../context/BacContext";
-import { AlimentContext } from "../context/AlimentContext";
+import AlimentContext from "../context/AlimentContext";
 import { PieChart } from "@mui/x-charts/PieChart";
 import AlimentPriorityList from "../components/AlimentPriorityList";
 

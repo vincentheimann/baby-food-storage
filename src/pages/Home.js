@@ -12,7 +12,7 @@ import BacCard from "../components/BacCard";
 import AlimentList from "../components/AlimentList";
 import AlimentForm from "../components/AlimentForm";
 import { BacContext } from "../context/BacContext";
-import { AlimentContext } from "../context/AlimentContext";
+import AlimentContext from "../context/AlimentContext";
 
 const Home = () => {
   const { bacs } = useContext(BacContext);
