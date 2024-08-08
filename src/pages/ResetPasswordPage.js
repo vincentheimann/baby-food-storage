@@ -1,19 +1,33 @@
-// src/pages/ResetPasswordPage.js
 import React, { useState } from "react";
 import { TextField, Button, Container, Typography, Box } from "@mui/material";
 import { resetPassword } from "../services/authService";
 
 const ResetPasswordPage = () => {
   const [email, setEmail] = useState("");
+  const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
 
   const handleResetPassword = async (event) => {
     event.preventDefault();
-    try {
-      await resetPassword(email);
-      setMessage("Un email de réinitialisation de mot de passe a été envoyé.");
-    } catch (error) {
-      setMessage("Erreur lors de l'envoi de l'email.");
+    const validationErrors = {};
+
+    if (!email) {
+      validationErrors.email = "L'email est requis";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      validationErrors.email = "L'email est invalide";
+    }
+
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length === 0) {
+      try {
+        await resetPassword(email);
+        setMessage(
+          "Un email de réinitialisation de mot de passe a été envoyé."
+        );
+      } catch (error) {
+        setMessage("Erreur lors de l'envoi de l'email.");
+      }
     }
   };
 
@@ -25,14 +39,16 @@ const ResetPasswordPage = () => {
         </Typography>
         <form onSubmit={handleResetPassword}>
           <TextField
+            error={Boolean(errors.email)}
             label="Email"
             name="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             fullWidth
-            required
+            helperText={errors.email}
             margin="normal"
+            required
           />
           <Button type="submit" variant="contained" color="primary" fullWidth>
             Réinitialiser
