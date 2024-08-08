@@ -1,4 +1,3 @@
-// src/services/authService.js
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -18,7 +17,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+export const auth = getAuth(app); // Exportez l'objet auth
 
 export const signUp = (email, password) =>
   createUserWithEmailAndPassword(auth, email, password);
