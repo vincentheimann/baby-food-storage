@@ -1,13 +1,14 @@
+// src/services/notificationService.test.js
 import { getNotifications } from "./notificationService";
 
 describe("notificationService", () => {
   test("should return an empty array if no foods are close to expiration", () => {
-    const aliments = [
+    const foods = [
       { id: 1, name: "Chicken", expirationDate: "2024-12-01" },
       { id: 2, name: "Carrots", expirationDate: "2024-12-10" },
     ];
 
-    const result = getNotifications(aliments);
+    const result = getNotifications(foods);
     expect(result).toEqual([]);
   });
 
@@ -16,7 +17,7 @@ describe("notificationService", () => {
     const sevenDaysFromNow = new Date(today);
     sevenDaysFromNow.setDate(today.getDate() + 7);
 
-    const aliments = [
+    const foods = [
       {
         id: 1,
         name: "Chicken",
@@ -25,7 +26,7 @@ describe("notificationService", () => {
       { id: 2, name: "Carrots", expirationDate: "2024-12-10" },
     ];
 
-    const result = getNotifications(aliments);
+    const result = getNotifications(foods);
     expect(result).toEqual([
       {
         id: 1,
@@ -35,7 +36,7 @@ describe("notificationService", () => {
     ]);
   });
 
-  test("should handle an empty foods array", () => {
+  test("should handle empty foods array", () => {
     const result = getNotifications([]);
     expect(result).toEqual([]);
   });
@@ -43,12 +44,12 @@ describe("notificationService", () => {
   test("should handle foods with expiration today", () => {
     const today = new Date().toISOString().split("T")[0];
 
-    const aliments = [
+    const foods = [
       { id: 1, name: "Chicken", expirationDate: today },
       { id: 2, name: "Carrots", expirationDate: "2024-12-10" },
     ];
 
-    const result = getNotifications(aliments);
+    const result = getNotifications(foods);
     expect(result).toEqual([{ id: 1, name: "Chicken", expirationDate: today }]);
   });
 
@@ -59,7 +60,7 @@ describe("notificationService", () => {
     const fiveDaysFromNow = new Date(today);
     fiveDaysFromNow.setDate(today.getDate() + 5);
 
-    const aliments = [
+    const foods = [
       {
         id: 1,
         name: "Chicken",
@@ -73,7 +74,7 @@ describe("notificationService", () => {
       { id: 3, name: "Pasta", expirationDate: "2024-12-10" },
     ];
 
-    const result = getNotifications(aliments);
+    const result = getNotifications(foods);
     expect(result).toEqual([
       {
         id: 1,
