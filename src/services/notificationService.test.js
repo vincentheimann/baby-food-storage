@@ -1,3 +1,4 @@
+// src/services/notificationService.test.js
 import { getNotifications } from "./notificationService";
 
 describe("notificationService", () => {

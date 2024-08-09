@@ -1,3 +1,4 @@
+// src/services/authService.test.js
 import {
   getAuth,
   createUserWithEmailAndPassword,
