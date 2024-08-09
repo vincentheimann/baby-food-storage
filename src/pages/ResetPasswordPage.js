@@ -1,34 +1,53 @@
 import React, { useState } from "react";
-import { TextField, Button, Container, Typography, Box } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Container,
+  Typography,
+  Box,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import { resetPassword } from "../services/authService";
 
 const ResetPasswordPage = () => {
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [alertSeverity, setAlertSeverity] = useState("success");
+
+  const validateEmail = (email) => {
+    if (!email) {
+      return "L'email est requis";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return "L'email est invalide";
+    }
+    return null;
+  };
 
   const handleResetPassword = async (event) => {
     event.preventDefault();
-    const validationErrors = {};
 
-    if (!email) {
-      validationErrors.email = "L'email est requis";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      validationErrors.email = "L'email est invalide";
+    const emailError = validateEmail(email);
+    if (emailError) {
+      setErrors({ email: emailError });
+      return;
     }
 
-    setErrors(validationErrors);
+    setErrors({});
 
-    if (Object.keys(validationErrors).length === 0) {
-      try {
-        await resetPassword(email);
-        setMessage(
-          "Un email de réinitialisation de mot de passe a été envoyé."
-        );
-      } catch (error) {
-        setMessage("Erreur lors de l'envoi de l'email.");
-      }
+    try {
+      await resetPassword(email);
+      setMessage("Un email de réinitialisation de mot de passe a été envoyé.");
+      setAlertSeverity("success");
+    } catch (error) {
+      console.error("Erreur:", error);
+      setMessage("Erreur lors de l'envoi de l'email.");
+      setAlertSeverity("error");
     }
+
+    setSnackbarOpen(true);
   };
 
   return (
@@ -39,26 +58,31 @@ const ResetPasswordPage = () => {
         </Typography>
         <form onSubmit={handleResetPassword}>
           <TextField
-            error={Boolean(errors.email)}
+            error={!!errors.email}
             label="Email"
             name="email"
-            type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             fullWidth
             helperText={errors.email}
             margin="normal"
-            required
           />
           <Button type="submit" variant="contained" color="primary" fullWidth>
             Réinitialiser
           </Button>
         </form>
-        {message && (
-          <Box mt={2}>
-            <Typography>{message}</Typography>
-          </Box>
-        )}
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000}
+          onClose={() => setSnackbarOpen(false)}
+        >
+          <Alert
+            onClose={() => setSnackbarOpen(false)}
+            severity={alertSeverity}
+          >
+            {message}
+          </Alert>
+        </Snackbar>
       </Box>
     </Container>
   );

@@ -1,6 +1,6 @@
 // src/pages/ResetPasswordPage.test.js
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import ResetPasswordPage from "./ResetPasswordPage";
 import { resetPassword } from "../services/authService";
@@ -8,6 +8,14 @@ import { resetPassword } from "../services/authService";
 jest.mock("../services/authService");
 
 describe("ResetPasswordPage", () => {
+  beforeEach(() => {
+    jest.spyOn(console, "error").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    console.error.mockRestore();
+  });
+
   test("renders ResetPasswordPage component", () => {
     render(<ResetPasswordPage />);
     expect(
@@ -19,7 +27,7 @@ describe("ResetPasswordPage", () => {
     ).toBeInTheDocument();
   });
 
-  test("shows success message on successful password reset", async () => {
+  test("shows success Snackbar on successful password reset", async () => {
     resetPassword.mockResolvedValueOnce();
 
     render(<ResetPasswordPage />);
@@ -28,17 +36,19 @@ describe("ResetPasswordPage", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: /Réinitialiser/i }));
 
-    await waitFor(() =>
-      expect(resetPassword).toHaveBeenCalledWith("test@example.com")
-    );
+    expect(resetPassword).toHaveBeenCalledWith("test@example.com");
+
     expect(
-      screen.getByText(
+      await screen.findByText(
         /Un email de réinitialisation de mot de passe a été envoyé./i
       )
     ).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Un email de réinitialisation de mot de passe a été envoyé."
+    );
   });
 
-  test("shows error message on failed password reset", async () => {
+  test("shows error Snackbar on failed password reset", async () => {
     resetPassword.mockRejectedValueOnce(new Error("Failed to send email"));
 
     render(<ResetPasswordPage />);
@@ -47,11 +57,13 @@ describe("ResetPasswordPage", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: /Réinitialiser/i }));
 
-    await waitFor(() =>
-      expect(resetPassword).toHaveBeenCalledWith("test@example.com")
-    );
+    expect(resetPassword).toHaveBeenCalledWith("test@example.com");
+
     expect(
-      screen.getByText(/Erreur lors de l'envoi de l'email./i)
+      await screen.findByText(/Erreur lors de l'envoi de l'email./i)
     ).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Erreur lors de l'envoi de l'email."
+    );
   });
 });
