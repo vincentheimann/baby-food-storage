@@ -9,16 +9,16 @@ jest.mock("../services/notificationService");
 const mockNotifications = [
   {
     id: 1,
-    nom: "Chicken",
-    dateCongelation: "2024-07-01",
-    datePeremption: "2024-08-01",
+    name: "Chicken",
+    freezingDate: "2024-07-01",
+    expirationDate: "2024-08-01",
     type: "Proteins",
   },
   {
     id: 2,
-    nom: "Carrots",
-    dateCongelation: "2024-07-05",
-    datePeremption: "2024-08-05",
+    name: "Carrots",
+    freezingDate: "2024-07-05",
+    expirationDate: "2024-08-05",
     type: "Vegetables",
   },
 ];
@@ -35,7 +35,7 @@ describe("Notifications", () => {
     await waitFor(() => {
       mockNotifications.forEach((notif) => {
         expect(
-          screen.getByText(new RegExp(notif.nom, "i"))
+          screen.getByText(new RegExp(notif.name, "i"))
         ).toBeInTheDocument();
       });
     });
@@ -45,7 +45,9 @@ describe("Notifications", () => {
     getNotifications.mockReturnValue([]);
     render(<Notifications />);
 
-    expect(screen.getByText(/Notifications/i)).toBeInTheDocument();
+    const headings = screen.getAllByText(/Notifications/i);
+    expect(headings[0]).toBeInTheDocument();
+
     await waitFor(() => {
       expect(
         screen.getByText(/No notifications at the moment/i)

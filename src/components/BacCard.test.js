@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import BacCard from "./BacCard";
 
@@ -23,13 +23,26 @@ describe("BacCard", () => {
     render(<BacCard color="blue" type="Proteins" aliments={aliments} />);
 
     expect(screen.getByText(/Proteins/i)).toBeInTheDocument();
-    expect(screen.getByText(/Chicken/i)).toBeInTheDocument();
-    expect(screen.getByText(/Carrots/i)).toBeInTheDocument();
+
+    // Find all list items
+    const listItems = screen.getAllByRole("listitem");
+
+    // Verify Chicken item
+    const chickenItem = within(listItems[0]);
+    expect(chickenItem.getByText(/Chicken/i)).toBeInTheDocument();
     expect(
-      screen.getByText(/Quantity: 10 ice cubes, Best before: 07\/01\/2024/i)
+      chickenItem.getByText(/Quantity: 10 ice cubes/i)
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/Quantity: 8 ice cubes, Best before: 07\/05\/2024/i)
+      chickenItem.getByText(/Expiration: 01.07.2024/i)
+    ).toBeInTheDocument();
+
+    // Verify Carrots item
+    const carrotsItem = within(listItems[1]);
+    expect(carrotsItem.getByText(/Carrots/i)).toBeInTheDocument();
+    expect(carrotsItem.getByText(/Quantity: 8 ice cubes/i)).toBeInTheDocument();
+    expect(
+      carrotsItem.getByText(/Expiration: 05.07.2024/i)
     ).toBeInTheDocument();
   });
 
@@ -46,10 +59,12 @@ describe("BacCard", () => {
     render(<BacCard color="green" type="Fruits" aliments={aliments} />);
 
     expect(screen.getByText(/Fruits/i)).toBeInTheDocument();
-    expect(screen.getByText(/Banana/i)).toBeInTheDocument();
-    expect(
-      screen.getByText(/Quantity: 5 ice cubes, Best before: 08\/01\/2024/i)
-    ).toBeInTheDocument();
+
+    const listItems = screen.getAllByRole("listitem");
+    const bananaItem = within(listItems[0]);
+    expect(bananaItem.getByText(/Banana/i)).toBeInTheDocument();
+    expect(bananaItem.getByText(/Quantity: 5 ice cubes/i)).toBeInTheDocument();
+    expect(bananaItem.getByText(/Expiration: 01.08.2024/i)).toBeInTheDocument();
   });
 
   test("renders BacCard component with default type if type is unknown", () => {
@@ -65,9 +80,13 @@ describe("BacCard", () => {
     render(<BacCard color="grey" type="Unknown" aliments={aliments} />);
 
     expect(screen.getByText(/Unknown/i)).toBeInTheDocument();
-    expect(screen.getByText(/Mystery Food/i)).toBeInTheDocument();
+
+    const listItems = screen.getAllByRole("listitem");
+    const mysteryItem = within(listItems[0]);
+    expect(mysteryItem.getByText(/Mystery Food/i)).toBeInTheDocument();
+    expect(mysteryItem.getByText(/Quantity: 3 ice cubes/i)).toBeInTheDocument();
     expect(
-      screen.getByText(/Quantity: 3 ice cubes, Best before: 09\/01\/2024/i)
+      mysteryItem.getByText(/Expiration: 01.09.2024/i)
     ).toBeInTheDocument();
   });
 });

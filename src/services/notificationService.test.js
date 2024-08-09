@@ -3,8 +3,8 @@ import { getNotifications } from "./notificationService";
 describe("notificationService", () => {
   test("should return an empty array if no foods are close to expiration", () => {
     const aliments = [
-      { id: 1, nom: "Chicken", datePeremption: "2024-12-01" },
-      { id: 2, nom: "Carrots", datePeremption: "2024-12-10" },
+      { id: 1, name: "Chicken", expirationDate: "2024-12-01" },
+      { id: 2, name: "Carrots", expirationDate: "2024-12-10" },
     ];
 
     const result = getNotifications(aliments);
@@ -19,18 +19,18 @@ describe("notificationService", () => {
     const aliments = [
       {
         id: 1,
-        nom: "Chicken",
-        datePeremption: sevenDaysFromNow.toISOString().split("T")[0],
+        name: "Chicken",
+        expirationDate: sevenDaysFromNow.toISOString().split("T")[0],
       },
-      { id: 2, nom: "Carrots", datePeremption: "2024-12-10" },
+      { id: 2, name: "Carrots", expirationDate: "2024-12-10" },
     ];
 
     const result = getNotifications(aliments);
     expect(result).toEqual([
       {
         id: 1,
-        nom: "Chicken",
-        datePeremption: sevenDaysFromNow.toISOString().split("T")[0],
+        name: "Chicken",
+        expirationDate: sevenDaysFromNow.toISOString().split("T")[0],
       },
     ]);
   });
@@ -44,12 +44,12 @@ describe("notificationService", () => {
     const today = new Date().toISOString().split("T")[0];
 
     const aliments = [
-      { id: 1, nom: "Chicken", datePeremption: today },
-      { id: 2, nom: "Carrots", datePeremption: "2024-12-10" },
+      { id: 1, name: "Chicken", expirationDate: today },
+      { id: 2, name: "Carrots", expirationDate: "2024-12-10" },
     ];
 
     const result = getNotifications(aliments);
-    expect(result).toEqual([{ id: 1, nom: "Chicken", datePeremption: today }]);
+    expect(result).toEqual([{ id: 1, name: "Chicken", expirationDate: today }]);
   });
 
   test("should return multiple foods close to expiration", () => {
@@ -62,28 +62,28 @@ describe("notificationService", () => {
     const aliments = [
       {
         id: 1,
-        nom: "Chicken",
-        datePeremption: threeDaysFromNow.toISOString().split("T")[0],
+        name: "Chicken",
+        expirationDate: threeDaysFromNow.toISOString().split("T")[0],
       },
       {
         id: 2,
-        nom: "Carrots",
-        datePeremption: fiveDaysFromNow.toISOString().split("T")[0],
+        name: "Carrots",
+        expirationDate: fiveDaysFromNow.toISOString().split("T")[0],
       },
-      { id: 3, nom: "Pasta", datePeremption: "2024-12-10" },
+      { id: 3, name: "Pasta", expirationDate: "2024-12-10" },
     ];
 
     const result = getNotifications(aliments);
     expect(result).toEqual([
       {
         id: 1,
-        nom: "Chicken",
-        datePeremption: threeDaysFromNow.toISOString().split("T")[0],
+        name: "Chicken",
+        expirationDate: threeDaysFromNow.toISOString().split("T")[0],
       },
       {
         id: 2,
-        nom: "Carrots",
-        datePeremption: fiveDaysFromNow.toISOString().split("T")[0],
+        name: "Carrots",
+        expirationDate: fiveDaysFromNow.toISOString().split("T")[0],
       },
     ]);
   });

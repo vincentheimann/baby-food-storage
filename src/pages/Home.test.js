@@ -14,19 +14,19 @@ const mockBacs = [
 const mockAliments = [
   {
     id: 1,
-    nom: "Chicken",
+    name: "Chicken",
     type: "Proteins",
-    quantite: 10,
-    dateCongelation: "2024-07-01T00:00:00.000Z",
-    datePeremption: "2024-08-01T00:00:00.000Z",
+    quantity: 10,
+    freezingDate: "2024-07-01T00:00:00.000Z",
+    expirationDate: "2024-08-01T00:00:00.000Z",
   },
   {
     id: 2,
-    nom: "Carrots",
+    name: "Carrots",
     type: "Vegetables",
-    quantite: 8,
-    dateCongelation: "2024-07-05T00:00:00.000Z",
-    datePeremption: "2024-08-05T00:00:00.000Z",
+    quantity: 8,
+    freezingDate: "2024-07-05T00:00:00.000Z",
+    expirationDate: "2024-08-05T00:00:00.000Z",
   },
 ];
 
@@ -73,23 +73,23 @@ describe("Home", () => {
   test("renders AlimentList with aliments from context", () => {
     renderHome();
     mockAliments.forEach((aliment) => {
-      const elements = screen.getAllByText(new RegExp(aliment.nom, "i"));
+      const elements = screen.getAllByText(new RegExp(aliment.name, "i"));
       expect(elements.length).toBeGreaterThanOrEqual(1);
     });
   });
 
   test("calls addAliment on AlimentForm submit", async () => {
     renderHome();
-    const nomInput = screen.getByLabelText(/Food name/i);
+    const nameInput = screen.getByLabelText(/Food name/i);
     const typeSelect = screen.getByLabelText(/Type/i);
-    const dateCongelationInput = screen.getByLabelText(/Freezing date/i);
-    const datePeremptionInput = screen.getByLabelText(/Best before date/i);
-    const quantiteInput = screen.getByLabelText(/Number of ice cubes/i);
+    const freezingDateInput = screen.getByLabelText(/Freezing date/i);
+    const expirationDateInput = screen.getByLabelText(/Expiration date/i);
+    const quantityInput = screen.getByLabelText(/Number of ice cubes/i);
     const submitButton = screen.getByRole("button", { name: /Add/i });
 
-    fireEvent.change(nomInput, { target: { value: "Banana" } });
-    fireEvent.change(dateCongelationInput, { target: { value: "2024-07-10" } });
-    fireEvent.change(datePeremptionInput, { target: { value: "2024-08-10" } });
+    fireEvent.change(nameInput, { target: { value: "Banana" } });
+    fireEvent.change(freezingDateInput, { target: { value: "2024-07-10" } });
+    fireEvent.change(expirationDateInput, { target: { value: "2024-08-10" } });
 
     // Open the select dropdown
     fireEvent.mouseDown(typeSelect);
@@ -101,16 +101,16 @@ describe("Home", () => {
     );
     fireEvent.click(proteinsOption);
 
-    fireEvent.change(quantiteInput, { target: { value: 5 } });
+    fireEvent.change(quantityInput, { target: { value: 5 } });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
       expect(mockAlimentContextValue.addAliment).toHaveBeenCalledWith({
-        nom: "Banana",
+        name: "Banana",
         type: "Proteins",
-        quantite: 5,
-        dateCongelation: "2024-07-10",
-        datePeremption: "2024-08-10",
+        quantity: 5,
+        freezingDate: "2024-07-10",
+        expirationDate: "2024-08-10",
       });
     });
   });

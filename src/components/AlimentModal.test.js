@@ -26,7 +26,7 @@ describe("AlimentModal", () => {
 
     expect(screen.getByLabelText(/Food name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Freezing date/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Best before date/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Expiration date/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Type/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Number of ice cubes/i)).toBeInTheDocument();
     expect(screen.getByText(/Save/i)).toBeInTheDocument();
@@ -47,7 +47,7 @@ describe("AlimentModal", () => {
     expect(screen.getByText(/Food name is required/i)).toBeInTheDocument();
     expect(screen.getByText(/Freezing date is required/i)).toBeInTheDocument();
     expect(
-      screen.getByText(/Best before date is required/i)
+      screen.getByText(/Expiration date is required/i)
     ).toBeInTheDocument();
     expect(screen.getByText(/Type is required/i)).toBeInTheDocument();
   });
@@ -68,7 +68,7 @@ describe("AlimentModal", () => {
     fireEvent.change(screen.getByLabelText(/Freezing date/i), {
       target: { value: "2024-07-01" },
     });
-    fireEvent.change(screen.getByLabelText(/Best before date/i), {
+    fireEvent.change(screen.getByLabelText(/Expiration date/i), {
       target: { value: "2024-08-01" },
     });
 

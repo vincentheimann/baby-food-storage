@@ -23,9 +23,7 @@ const BacCard = ({ color, type, aliments }) => {
                 primary={`${aliment.name}`}
                 secondary={`Quantity: ${
                   aliment.quantity
-                } ice cubes, Best before: ${formatDate(
-                  aliment.expirationDate
-                )}`}
+                } ice cubes, Expiration: ${formatDate(aliment.expirationDate)}`}
               />
             </ListItem>
           ))}

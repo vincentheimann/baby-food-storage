@@ -35,7 +35,7 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
     if (!updatedAliment.freezingDate)
       validationErrors.freezingDate = "Freezing date is required";
     if (!updatedAliment.expirationDate)
-      validationErrors.expirationDate = "Best before date is required";
+      validationErrors.expirationDate = "Expiration date is required";
     if (!updatedAliment.type) validationErrors.type = "Type is required";
 
     setErrors(validationErrors);
@@ -92,7 +92,7 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
           <Grid item xs={12}>
             <TextField
               error={!!errors.expirationDate}
-              label="Best before date"
+              label="Expiration date"
               type="date"
               name="expirationDate"
               value={updatedAliment.expirationDate}

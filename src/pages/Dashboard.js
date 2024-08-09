@@ -21,11 +21,11 @@ const Dashboard = () => {
   const getTypeLabel = (type) => {
     switch (type) {
       case "Proteins":
-        return "Protéines";
+        return "Proteins";
       case "Vegetables":
-        return "Légumes";
+        return "Vegetables";
       case "Carbs":
-        return "Féculents";
+        return "Carbs";
       case "Fruits":
         return "Fruits";
       default:
@@ -52,15 +52,15 @@ const Dashboard = () => {
     return aliments.filter((aliment) => aliment.type === type);
   };
 
-  const alimentsProchesDePeremption = aliments.filter((aliment) => {
+  const alimentsCloseToExpiration = aliments.filter((aliment) => {
     const today = new Date();
-    const peremptionDate = new Date(aliment.datePeremption);
-    const diffDays = (peremptionDate - today) / (1000 * 60 * 60 * 24);
-    return diffDays <= 7; // Aliments dont la Best before date est dans 7 jours ou moins
+    const expirationDate = new Date(aliment.expirationDate);
+    const diffDays = (expirationDate - today) / (1000 * 60 * 60 * 24);
+    return diffDays <= 7; // Aliments whose expiration date is within 7 days or less
   });
 
   const alimentTypes = aliments.reduce((acc, aliment) => {
-    acc[aliment.type] = (acc[aliment.type] || 0) + aliment.quantite;
+    acc[aliment.type] = (acc[aliment.type] || 0) + aliment.quantity;
     return acc;
   }, {});
 
@@ -76,13 +76,13 @@ const Dashboard = () => {
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Typography variant="h3" component="h1" gutterBottom>
-            Tableau de bord
+            Dashboard
           </Typography>
           <Box mt={5}>
             <Card>
               <CardContent>
                 <Typography variant="h4" component="h2" gutterBottom>
-                  Répartition des Types d'Aliments
+                  Distribution of Food Types
                 </Typography>
                 <PieChart
                   series={[{ data: pieChartData }]}
@@ -113,9 +113,9 @@ const Dashboard = () => {
         <Card>
           <CardContent>
             <Typography variant="h4" component="h2" gutterBottom>
-              Aliments à consommer en priorité
+              Foods to Consume First
             </Typography>
-            <AlimentPriorityList aliments={alimentsProchesDePeremption} />
+            <AlimentPriorityList aliments={alimentsCloseToExpiration} />
           </CardContent>
         </Card>
       </Box>

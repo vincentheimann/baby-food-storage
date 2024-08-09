@@ -3,7 +3,7 @@ import { List, ListItem, ListItemText, Typography, Box } from "@mui/material";
 import { formatDate } from "../utils/dateUtils";
 
 const AlimentPriorityList = ({ aliments }) => {
-  // Sort foods by Best before date
+  // Sort foods by Expiration date
   const sortedAliments = aliments.sort(
     (a, b) => new Date(a.expirationDate) - new Date(b.expirationDate)
   );
@@ -24,7 +24,7 @@ const AlimentPriorityList = ({ aliments }) => {
                 primary={`${aliment.name} (${aliment.type})`}
                 secondary={`Frozen on: ${formatDate(
                   aliment.freezingDate
-                )} | Best before: ${formatDate(
+                )} | Expiration: ${formatDate(
                   aliment.expirationDate
                 )} | Quantity: ${aliment.quantity} cubes`}
               />

@@ -5,6 +5,7 @@ import Dashboard from "./Dashboard";
 import { BacContext } from "../context/BacContext";
 import AlimentContext from "../context/AlimentContext";
 
+// Mock data with properly formatted dates
 const mockBacs = [
   { id: 1, color: "blue", type: "Proteins" },
   { id: 2, color: "green", type: "Vegetables" },
@@ -13,19 +14,19 @@ const mockBacs = [
 const mockAliments = [
   {
     id: 1,
-    nom: "Chicken",
-    dateCongelation: "2024-07-01",
-    datePeremption: "2024-08-01",
+    name: "Chicken",
+    freezingDate: "2024-07-01", // YYYY-MM-DD format
+    expirationDate: "2024-08-01", // YYYY-MM-DD format
     type: "Proteins",
-    quantite: 10,
+    quantity: 10,
   },
   {
     id: 2,
-    nom: "Carrots",
-    dateCongelation: "2024-07-05",
-    datePeremption: "2024-08-05",
+    name: "Carrots",
+    freezingDate: "2024-07-05",
+    expirationDate: "2024-08-05",
     type: "Vegetables",
-    quantite: 8,
+    quantity: 8,
   },
 ];
 
@@ -37,6 +38,7 @@ const mockAlimentContextValue = {
   aliments: mockAliments,
 };
 
+// Utility function to render the Dashboard component within the necessary context providers
 const renderDashboard = () => {
   render(
     <BacContext.Provider value={mockBacContextValue}>
@@ -48,13 +50,15 @@ const renderDashboard = () => {
 };
 
 describe("Dashboard", () => {
+  // Test if the Dashboard component renders correctly
   test("renders Dashboard component", () => {
     renderDashboard();
     expect(screen.getByText(/Dashboard/i)).toBeInTheDocument();
-    expect(screen.getByText(/Food Type Distribution/i)).toBeInTheDocument();
-    expect(screen.getByText(/Priority Foods to Consume/i)).toBeInTheDocument();
+    expect(screen.getByText(/Distribution of Food Types/i)).toBeInTheDocument();
+    expect(screen.getByText(/Foods to Consume First/i)).toBeInTheDocument();
   });
 
+  // Test if the pie chart renders with the correct data
   test("renders pie chart with correct data", () => {
     renderDashboard();
     const pieChartLegend = screen.getByLabelText("Pie chart legend");
@@ -64,25 +68,29 @@ describe("Dashboard", () => {
     expect(screen.getAllByText(/Vegetables/i).length).toBeGreaterThan(0);
   });
 
+  // Test if the BacCard components are rendered based on the context data
   test("renders BacCard components based on bacs context", () => {
     renderDashboard();
     mockBacs.forEach((bac) => {
-      expect(screen.getByText(new RegExp(bac.type, "i"))).toBeInTheDocument();
+      expect(
+        screen.getAllByText(new RegExp(bac.type, "i")).length
+      ).toBeGreaterThanOrEqual(1);
     });
   });
 
+  // Test if the AlimentPriorityList renders aliments close to expiration
   test("renders AlimentPriorityList with aliments close to expiration", () => {
     renderDashboard();
     const alimentsCloseToExpiration = mockAliments.filter((aliment) => {
       const today = new Date();
-      const expirationDate = new Date(aliment.datePeremption);
+      const expirationDate = new Date(aliment.expirationDate);
       const diffDays = (expirationDate - today) / (1000 * 60 * 60 * 24);
-      return diffDays <= 7; // Aliments whose Best before date is in 7 days or less
+      return diffDays <= 7; // Aliments whose expiration date is in 7 days or less
     });
 
     alimentsCloseToExpiration.forEach((aliment) => {
       expect(
-        screen.getAllByText(new RegExp(aliment.nom, "i")).length
+        screen.getAllByText(new RegExp(aliment.name, "i")).length
       ).toBeGreaterThan(0);
     });
   });
