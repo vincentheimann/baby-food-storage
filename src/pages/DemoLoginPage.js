@@ -1,15 +1,14 @@
-// src/pages/DemoLoginPage.js
 import React, { useContext } from "react";
 import { Button, Container, Typography, Box } from "@mui/material";
 import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 
 const DemoLoginPage = () => {
-  const { loginDemoUser } = useContext(UserContext);
+  const { demoLogin } = useContext(UserContext);
   const navigate = useNavigate();
 
-  const handleDemoLogin = () => {
-    loginDemoUser();
+  const handleDemoLogin = async () => {
+    await demoLogin();
     navigate("/");
   };
 
@@ -17,7 +16,7 @@ const DemoLoginPage = () => {
     <Container maxWidth="sm">
       <Box mt={5} textAlign="center">
         <Typography variant="h4" component="h1" gutterBottom>
-          Compte de Démonstration
+          Demo Account
         </Typography>
         <Button
           variant="contained"
@@ -25,7 +24,7 @@ const DemoLoginPage = () => {
           onClick={handleDemoLogin}
           size="large"
         >
-          Connexion en tant que Démonstration
+          Login as Demo
         </Button>
       </Box>
     </Container>

@@ -1,4 +1,3 @@
-// src/components/AlimentList.js
 import React, { useState } from "react";
 import {
   List,
@@ -25,26 +24,11 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
     setSelectedAliment(null);
   };
 
-  const getTypeTranslation = (type) => {
-    switch (type) {
-      case "Proteins":
-        return "Protéines";
-      case "Vegetables":
-        return "Légumes";
-      case "Carbs":
-        return "Féculents";
-      case "Fruits":
-        return "Fruits";
-      default:
-        return type;
-    }
-  };
-
   return (
     <>
       {aliments.length === 0 ? (
         <Box textAlign="center" mt={2}>
-          <Typography variant="h6">Oups, il n'y a rien à manger !</Typography>
+          <Typography variant="h6">Oops, there's nothing to eat!</Typography>
         </Box>
       ) : (
         <List>
@@ -55,12 +39,12 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
               onClick={() => handleItemClick(aliment)}
             >
               <ListItemText
-                primary={`${aliment.nom} (${getTypeTranslation(aliment.type)})`}
-                secondary={`Congelé le : ${formatDate(
-                  aliment.dateCongelation
-                )} | Péremption : ${formatDate(
-                  aliment.datePeremption
-                )} | Quantité : ${aliment.quantite} glaçons`}
+                primary={`${aliment.name} (${aliment.type})`}
+                secondary={`Frozen on: ${formatDate(
+                  aliment.freezingDate
+                )} | Expiration: ${formatDate(
+                  aliment.expirationDate
+                )} | Quantity: ${aliment.quantity} ice cubes`}
               />
               <ListItemSecondaryAction>
                 <IconButton

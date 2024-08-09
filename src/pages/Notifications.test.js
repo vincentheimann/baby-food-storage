@@ -1,4 +1,3 @@
-// src/pages/Notifications.test.js
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
@@ -10,14 +9,14 @@ jest.mock("../services/notificationService");
 const mockNotifications = [
   {
     id: 1,
-    nom: "Poulet",
+    nom: "Chicken",
     dateCongelation: "2024-07-01",
     datePeremption: "2024-08-01",
     type: "Proteins",
   },
   {
     id: 2,
-    nom: "Carottes",
+    nom: "Carrots",
     dateCongelation: "2024-07-05",
     datePeremption: "2024-08-05",
     type: "Vegetables",
@@ -49,7 +48,7 @@ describe("Notifications", () => {
     expect(screen.getByText(/Notifications/i)).toBeInTheDocument();
     await waitFor(() => {
       expect(
-        screen.getByText(/Aucune notification pour le moment/i)
+        screen.getByText(/No notifications at the moment/i)
       ).toBeInTheDocument();
     });
   });

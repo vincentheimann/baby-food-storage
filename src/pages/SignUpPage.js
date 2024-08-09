@@ -4,7 +4,7 @@ import { TextField, Button, Container, Typography, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const SignUpPage = ({ onSignUp }) => {
-  const [values, setValues] = useState({ nom: "", email: "", password: "" });
+  const [values, setValues] = useState({ name: "", email: "", password: "" });
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
@@ -16,10 +16,9 @@ const SignUpPage = ({ onSignUp }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const validationErrors = {};
-    if (!values.nom) validationErrors.nom = "Le nom est requis";
-    if (!values.email) validationErrors.email = "L'email est requis";
-    if (!values.password)
-      validationErrors.password = "Le mot de passe est requis";
+    if (!values.name) validationErrors.name = "Name required";
+    if (!values.email) validationErrors.email = "Email is required";
+    if (!values.password) validationErrors.password = "Password required";
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length === 0) {
       onSignUp(values);
@@ -30,17 +29,17 @@ const SignUpPage = ({ onSignUp }) => {
     <Container maxWidth="sm">
       <Box mt={5}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Créer un compte
+          Create an account
         </Typography>
         <form onSubmit={handleSubmit}>
           <TextField
-            error={!!errors.nom}
-            label="Nom"
-            name="nom"
-            value={values.nom}
+            error={!!errors.name}
+            label="Name"
+            name="name"
+            value={values.name}
             onChange={handleChange}
             fullWidth
-            helperText={errors.nom}
+            helperText={errors.name}
             margin="normal"
           />
           <TextField
@@ -56,7 +55,7 @@ const SignUpPage = ({ onSignUp }) => {
           />
           <TextField
             error={!!errors.password}
-            label="Mot de passe"
+            label="Password"
             name="password"
             type="password"
             value={values.password}
@@ -66,7 +65,7 @@ const SignUpPage = ({ onSignUp }) => {
             margin="normal"
           />
           <Button type="submit" variant="contained" color="primary" fullWidth>
-            S'inscrire
+            Sign up
           </Button>
           <Button
             onClick={() => navigate("/login")}
@@ -74,7 +73,7 @@ const SignUpPage = ({ onSignUp }) => {
             variant="outlined"
             sx={{ mt: 2 }}
           >
-            Retour à la connexion
+            Back to login page
           </Button>
         </form>
       </Box>

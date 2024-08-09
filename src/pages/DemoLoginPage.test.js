@@ -1,4 +1,3 @@
-// src/pages/DemoLoginPage.test.js
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
@@ -6,10 +5,10 @@ import { BrowserRouter } from "react-router-dom";
 import DemoLoginPage from "./DemoLoginPage";
 import { UserContext } from "../context/UserContext";
 
-const mockLoginDemoUser = jest.fn();
+const mockDemoLogin = jest.fn();
 
 const mockUserContextValue = {
-  loginDemoUser: mockLoginDemoUser,
+  demoLogin: mockDemoLogin,
 };
 
 const renderDemoLoginPage = () => {
@@ -25,16 +24,14 @@ const renderDemoLoginPage = () => {
 describe("DemoLoginPage", () => {
   test("renders DemoLoginPage component", () => {
     renderDemoLoginPage();
-    expect(screen.getByText(/Compte de Démonstration/i)).toBeInTheDocument();
-    expect(
-      screen.getByText(/Connexion en tant que Démonstration/i)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Demo Account/i)).toBeInTheDocument();
+    expect(screen.getByText(/Login as Demo/i)).toBeInTheDocument();
   });
 
-  test("calls loginDemoUser and navigates on button click", () => {
+  test("calls demoLogin and navigates on button click", () => {
     renderDemoLoginPage();
-    const button = screen.getByText(/Connexion en tant que Démonstration/i);
+    const button = screen.getByText(/Login as Demo/i);
     fireEvent.click(button);
-    expect(mockLoginDemoUser).toHaveBeenCalled();
+    expect(mockDemoLogin).toHaveBeenCalled();
   });
 });

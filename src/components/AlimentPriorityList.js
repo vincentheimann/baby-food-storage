@@ -1,12 +1,11 @@
-// src/components/AlimentPriorityList.js
 import React from "react";
 import { List, ListItem, ListItemText, Typography, Box } from "@mui/material";
 import { formatDate } from "../utils/dateUtils";
 
 const AlimentPriorityList = ({ aliments }) => {
-  // Trier les aliments par date de péremption
+  // Sort foods by Best before date
   const sortedAliments = aliments.sort(
-    (a, b) => new Date(a.datePeremption) - new Date(b.datePeremption)
+    (a, b) => new Date(a.expirationDate) - new Date(b.expirationDate)
   );
 
   return (
@@ -14,7 +13,7 @@ const AlimentPriorityList = ({ aliments }) => {
       {sortedAliments.length === 0 ? (
         <Box textAlign="center" mt={2}>
           <Typography variant="h6">
-            Aucun aliment à consommer en priorité
+            No foods to prioritize for consumption
           </Typography>
         </Box>
       ) : (
@@ -22,12 +21,12 @@ const AlimentPriorityList = ({ aliments }) => {
           {sortedAliments.map((aliment) => (
             <ListItem key={aliment.id}>
               <ListItemText
-                primary={`${aliment.nom} (${aliment.type})`}
-                secondary={`Congelé le : ${formatDate(
-                  aliment.dateCongelation
-                )} | Péremption : ${formatDate(
-                  aliment.datePeremption
-                )} | Quantité : ${aliment.quantite} glaçons`}
+                primary={`${aliment.name} (${aliment.type})`}
+                secondary={`Frozen on: ${formatDate(
+                  aliment.freezingDate
+                )} | Best before: ${formatDate(
+                  aliment.expirationDate
+                )} | Quantity: ${aliment.quantity} cubes`}
               />
             </ListItem>
           ))}

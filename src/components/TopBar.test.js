@@ -1,4 +1,3 @@
-// src/components/TopBar.test.js
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
@@ -43,13 +42,13 @@ describe("TopBar", () => {
   test("opens menu on menu button click", () => {
     renderTopBar();
     fireEvent.click(screen.getByTestId("menu-button"));
-    expect(screen.getByText(/Accueil/i)).toBeInTheDocument();
-    expect(screen.getByText(/Tableau de bord/i)).toBeInTheDocument();
+    expect(screen.getByText(/Home/i)).toBeInTheDocument();
+    expect(screen.getByText(/Dashboard/i)).toBeInTheDocument();
   });
 
   test("opens notifications drawer on notifications icon click", () => {
     renderTopBar();
     fireEvent.click(screen.getByTestId("notifications-button"));
-    expect(screen.getByText(/Aucune notification/i)).toBeInTheDocument();
+    expect(screen.getByText(/No notifications/i)).toBeInTheDocument();
   });
 });

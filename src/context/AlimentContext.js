@@ -1,4 +1,3 @@
-// src/context/AlimentContext.js
 import React, { createContext, useState, useEffect } from "react";
 import { differenceInDays } from "date-fns";
 import { useUser } from "./UserContext";
@@ -16,85 +15,85 @@ export const AlimentProvider = ({ children }) => {
       setAliments([
         {
           id: 1,
-          nom: "Poulet",
-          dateCongelation: "2024-07-01",
-          datePeremption: "2024-08-01",
+          name: "Chicken",
+          freezingDate: "2024-07-01",
+          expirationDate: "2024-08-01",
           type: "Proteins",
-          quantite: 10,
+          quantity: 10,
         },
         {
           id: 2,
-          nom: "Carottes",
-          dateCongelation: "2024-07-05",
-          datePeremption: "2024-08-05",
+          name: "Carrots",
+          freezingDate: "2024-07-05",
+          expirationDate: "2024-08-05",
           type: "Vegetables",
-          quantite: 8,
+          quantity: 8,
         },
         {
           id: 3,
-          nom: "Pâtes",
-          dateCongelation: "2024-07-10",
-          datePeremption: "2024-08-10",
+          name: "Pasta",
+          freezingDate: "2024-07-10",
+          expirationDate: "2024-08-10",
           type: "Carbs",
-          quantite: 15,
+          quantity: 15,
         },
         {
           id: 4,
-          nom: "Pommes",
-          dateCongelation: "2024-07-15",
-          datePeremption: "2024-08-15",
+          name: "Apples",
+          freezingDate: "2024-07-15",
+          expirationDate: "2024-08-15",
           type: "Fruits",
-          quantite: 5,
+          quantity: 5,
         },
         {
           id: 5,
-          nom: "Saumon",
-          dateCongelation: "2024-07-20",
-          datePeremption: "2024-08-20",
+          name: "Salmon",
+          freezingDate: "2024-07-20",
+          expirationDate: "2024-08-20",
           type: "Proteins",
-          quantite: 12,
+          quantity: 12,
         },
         {
           id: 6,
-          nom: "Brocoli",
-          dateCongelation: "2024-07-25",
-          datePeremption: "2024-08-25",
+          name: "Broccoli",
+          freezingDate: "2024-07-25",
+          expirationDate: "2024-08-25",
           type: "Vegetables",
-          quantite: 9,
+          quantity: 9,
         },
         {
           id: 7,
-          nom: "Riz",
-          dateCongelation: "2024-07-30",
-          datePeremption: "2024-08-30",
+          name: "Rice",
+          freezingDate: "2024-07-30",
+          expirationDate: "2024-08-30",
           type: "Carbs",
-          quantite: 20,
+          quantity: 20,
         },
         {
           id: 8,
-          nom: "Fraises",
-          dateCongelation: "2024-07-05",
-          datePeremption: "2024-08-05",
+          name: "Strawberries",
+          freezingDate: "2024-07-05",
+          expirationDate: "2024-08-05",
           type: "Fruits",
-          quantite: 6,
+          quantity: 6,
         },
         {
           id: 9,
-          nom: "Boeuf",
-          dateCongelation: "2024-07-10",
-          datePeremption: "2024-08-10",
+          name: "Beef",
+          freezingDate: "2024-07-10",
+          expirationDate: "2024-08-10",
           type: "Proteins",
-          quantite: 10,
+          quantity: 10,
         },
         {
           id: 10,
-          nom: "Épinards",
-          dateCongelation: "2024-07-15",
-          datePeremption: "2024-08-15",
+          name: "Spinach",
+          freezingDate: "2024-07-15",
+          expirationDate: "2024-08-15",
           type: "Vegetables",
-          quantite: 7,
+          quantity: 7,
         },
-        // Ajoutez plus d'aliments pour l'utilisateur de démo...
+        // Add more food items for the demo user...
       ]);
     } else {
       setAliments([]);
@@ -105,29 +104,29 @@ export const AlimentProvider = ({ children }) => {
     const today = new Date();
     const updatedNotifications = aliments
       .filter((aliment) => {
-        const peremptionDate = new Date(aliment.datePeremption);
-        const diffDays = differenceInDays(peremptionDate, today);
+        const expirationDate = new Date(aliment.expirationDate);
+        const diffDays = differenceInDays(expirationDate, today);
         return diffDays <= 10 || diffDays < 0;
       })
       .map((aliment) => {
-        const peremptionDate = new Date(aliment.datePeremption);
-        const diffDays = differenceInDays(peremptionDate, today);
+        const expirationDate = new Date(aliment.expirationDate);
+        const diffDays = differenceInDays(expirationDate, today);
         let color = "green";
         let message = "";
 
         if (diffDays < 0) {
           color = "red";
-          message = `Expiré depuis ${Math.abs(diffDays)} jour${
+          message = `Expired ${Math.abs(diffDays)} day${
             Math.abs(diffDays) !== 1 ? "s" : ""
-          }`;
+          } ago`;
         } else if (diffDays === 0) {
           color = "orange";
-          message = "Péremption aujourd'hui";
+          message = "Expires today";
         } else if (diffDays <= 3) {
           color = "orange";
-          message = `Expire dans ${diffDays} jour${diffDays !== 1 ? "s" : ""}`;
+          message = `Expires in ${diffDays} day${diffDays !== 1 ? "s" : ""}`;
         } else {
-          message = `Expire dans ${diffDays} jour${diffDays !== 1 ? "s" : ""}`;
+          message = `Expires in ${diffDays} day${diffDays !== 1 ? "s" : ""}`;
         }
 
         return { ...aliment, color, message };
@@ -144,10 +143,10 @@ export const AlimentProvider = ({ children }) => {
       aliments
         .map((aliment) =>
           aliment.id === id
-            ? { ...aliment, quantite: aliment.quantite - 1 }
+            ? { ...aliment, quantity: aliment.quantity - 1 }
             : aliment
         )
-        .filter((aliment) => aliment.quantite > 0)
+        .filter((aliment) => aliment.quantity > 0)
     );
   };
 
@@ -155,7 +154,7 @@ export const AlimentProvider = ({ children }) => {
     setAliments(
       aliments.map((aliment) =>
         aliment.id === id
-          ? { ...aliment, quantite: aliment.quantite + 1 }
+          ? { ...aliment, quantity: aliment.quantity + 1 }
           : aliment
       )
     );
@@ -172,7 +171,7 @@ export const AlimentProvider = ({ children }) => {
   const markNotificationAsRead = (id) => {
     setNotifications(
       notifications.map((notification) =>
-        notification.id === id ? { ...notification, lue: true } : notification
+        notification.id === id ? { ...notification, read: true } : notification
       )
     );
   };
@@ -184,7 +183,7 @@ export const AlimentProvider = ({ children }) => {
   };
 
   const unreadNotificationsCount = notifications.filter(
-    (notification) => !notification.lue
+    (notification) => !notification.read
   ).length;
 
   return (

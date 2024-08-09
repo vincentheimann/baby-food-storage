@@ -31,7 +31,7 @@ const Home = () => {
   return (
     <Container maxWidth="lg">
       <Typography variant="h3" component="h1" gutterBottom>
-        Accueil
+        Home
       </Typography>
       <Grid container spacing={3}>
         {bacs.map((bac) => (
@@ -48,7 +48,7 @@ const Home = () => {
         <Card>
           <CardContent>
             <Typography variant="h4" component="h2" gutterBottom>
-              Ajouter un aliment
+              Add a food item
             </Typography>
             <AlimentForm onSubmit={addAliment} />
           </CardContent>
@@ -58,7 +58,7 @@ const Home = () => {
         <Card>
           <CardContent>
             <Typography variant="h4" component="h2" gutterBottom>
-              Liste des aliments
+              Food list
             </Typography>
             <AlimentList
               aliments={aliments}

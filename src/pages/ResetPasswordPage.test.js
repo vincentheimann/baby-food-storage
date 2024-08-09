@@ -26,15 +26,11 @@ describe("ResetPasswordPage", () => {
         <ResetPasswordPage />
       </MemoryRouter>
     );
-    expect(
-      screen.getByText(/Réinitialiser le mot de passe/i)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Reset password/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Email/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Reset/i })).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /Réinitialiser/i })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /Retour à la connexion/i })
+      screen.getByRole("button", { name: /Back to login page/i })
     ).toBeInTheDocument();
   });
 
@@ -49,12 +45,10 @@ describe("ResetPasswordPage", () => {
     fireEvent.change(screen.getByLabelText(/Email/i), {
       target: { value: "test@example.com" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /Réinitialiser/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Reset/i }));
 
     expect(
-      await screen.findByText(
-        /Un email de réinitialisation de mot de passe a été envoyé./i
-      )
+      await screen.findByText(/A password reset email has been sent./i)
     ).toBeInTheDocument();
   });
 
@@ -69,10 +63,10 @@ describe("ResetPasswordPage", () => {
     fireEvent.change(screen.getByLabelText(/Email/i), {
       target: { value: "test@example.com" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /Réinitialiser/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Reset/i }));
 
     expect(
-      await screen.findByText(/Erreur lors de l'envoi de l'email./i)
+      await screen.findByText(/Error sending email./i)
     ).toBeInTheDocument();
   });
 
@@ -84,7 +78,7 @@ describe("ResetPasswordPage", () => {
     );
 
     fireEvent.click(
-      screen.getByRole("button", { name: /Retour à la connexion/i })
+      screen.getByRole("button", { name: /Back to login page/i })
     );
 
     expect(mockNavigate).toHaveBeenCalledWith("/login");

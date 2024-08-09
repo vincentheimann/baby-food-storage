@@ -1,4 +1,3 @@
-// src/components/AlimentList.test.js
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import AlimentList from "./AlimentList";
@@ -7,19 +6,19 @@ import "@testing-library/jest-dom/extend-expect"; // pour les matchers jest-dom
 const aliments = [
   {
     id: 1,
-    nom: "Poulet",
-    dateCongelation: "2024-07-01",
-    datePeremption: "2024-08-01",
+    name: "Chicken",
+    freezingDate: "2024-07-01",
+    expirationDate: "2024-08-01",
     type: "Proteins",
-    quantite: 10,
+    quantity: 10,
   },
   {
     id: 2,
-    nom: "Carottes",
-    dateCongelation: "2024-07-05",
-    datePeremption: "2024-08-05",
+    name: "Carrots",
+    freezingDate: "2024-07-05",
+    expirationDate: "2024-08-05",
     type: "Vegetables",
-    quantite: 8,
+    quantity: 8,
   },
 ];
 
@@ -40,10 +39,10 @@ describe("AlimentList", () => {
 
     aliments.forEach((aliment) => {
       expect(
-        screen.getByText(aliment.nom, { exact: false })
+        screen.getByText(aliment.name, { exact: false })
       ).toBeInTheDocument();
       expect(
-        screen.getByText(`Quantité : ${aliment.quantite} glaçons`, {
+        screen.getByText(`Quantity: ${aliment.quantity} ice cubes`, {
           exact: false,
         })
       ).toBeInTheDocument();
@@ -93,7 +92,7 @@ describe("AlimentList", () => {
     );
 
     expect(
-      screen.getByText("Oups, il n'y a rien à manger !")
+      screen.getByText("Oops, there's nothing to eat!")
     ).toBeInTheDocument();
   });
 });

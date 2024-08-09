@@ -23,15 +23,15 @@ describe("SignUpPage", () => {
         <SignUpPage onSignUp={jest.fn()} />
       </MemoryRouter>
     );
-    expect(screen.getByText(/Créer un compte/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Nom/i)).toBeInTheDocument();
+    expect(screen.getByText(/Create an account/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Mot de passe/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Password/i)).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /S'inscrire/i })
+      screen.getByRole("button", { name: /Sign up/i })
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /Retour à la connexion/i })
+      screen.getByRole("button", { name: /Back to login page/i })
     ).toBeInTheDocument();
   });
 
@@ -43,20 +43,20 @@ describe("SignUpPage", () => {
       </MemoryRouter>
     );
 
-    fireEvent.change(screen.getByLabelText(/Nom/i), {
+    fireEvent.change(screen.getByLabelText(/Name/i), {
       target: { value: "Test User" },
     });
     fireEvent.change(screen.getByLabelText(/Email/i), {
       target: { value: "test@example.com" },
     });
-    fireEvent.change(screen.getByLabelText(/Mot de passe/i), {
+    fireEvent.change(screen.getByLabelText(/Password/i), {
       target: { value: "password123" },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: /S'inscrire/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Sign up/i }));
 
     expect(onSignUpMock).toHaveBeenCalledWith({
-      nom: "Test User",
+      name: "Test User",
       email: "test@example.com",
       password: "password123",
     });
@@ -70,7 +70,7 @@ describe("SignUpPage", () => {
     );
 
     fireEvent.click(
-      screen.getByRole("button", { name: /Retour à la connexion/i })
+      screen.getByRole("button", { name: /Back to login page/i })
     );
 
     expect(mockNavigate).toHaveBeenCalledWith("/login");

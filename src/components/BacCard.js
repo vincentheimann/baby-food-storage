@@ -1,4 +1,3 @@
-// src/components/BacCard.js
 import React from "react";
 import {
   Card,
@@ -11,35 +10,22 @@ import {
 import { formatDate } from "../utils/dateUtils";
 
 const BacCard = ({ color, type, aliments }) => {
-  const getTypeTranslation = (type) => {
-    switch (type) {
-      case "Proteins":
-        return "Protéines";
-      case "Vegetables":
-        return "Légumes";
-      case "Carbs":
-        return "Féculents";
-      case "Fruits":
-        return "Fruits";
-      default:
-        return type;
-    }
-  };
-
   return (
     <Card style={{ borderColor: color, borderWidth: 2, borderStyle: "solid" }}>
       <CardContent>
         <Typography variant="h5" component="h2" gutterBottom>
-          {getTypeTranslation(type)}
+          {type}
         </Typography>
         <List>
           {aliments.map((aliment) => (
             <ListItem key={aliment.id}>
               <ListItemText
-                primary={`${aliment.nom}`}
-                secondary={`Quantité : ${
-                  aliment.quantite
-                } glaçons, Péremption : ${formatDate(aliment.datePeremption)}`}
+                primary={`${aliment.name}`}
+                secondary={`Quantity: ${
+                  aliment.quantity
+                } ice cubes, Best before: ${formatDate(
+                  aliment.expirationDate
+                )}`}
               />
             </ListItem>
           ))}

@@ -1,4 +1,3 @@
-// src/components/AlimentModal.test.js
 import React, { useState, useEffect } from "react";
 import {
   Modal,
@@ -32,20 +31,19 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
 
   const handleSaveClick = () => {
     const validationErrors = {};
-    if (!updatedAliment.nom)
-      validationErrors.nom = "Le nom de l'aliment est requis";
-    if (!updatedAliment.dateCongelation)
-      validationErrors.dateCongelation = "La date de congélation est requise";
-    if (!updatedAliment.datePeremption)
-      validationErrors.datePeremption = "La date de péremption est requise";
-    if (!updatedAliment.type) validationErrors.type = "Le type est requis";
+    if (!updatedAliment.name) validationErrors.name = "Food name is required";
+    if (!updatedAliment.freezingDate)
+      validationErrors.freezingDate = "Freezing date is required";
+    if (!updatedAliment.expirationDate)
+      validationErrors.expirationDate = "Best before date is required";
+    if (!updatedAliment.type) validationErrors.type = "Type is required";
 
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
       handleSave({
         ...updatedAliment,
-        quantite: Number(updatedAliment.quantite),
+        quantity: Number(updatedAliment.quantity),
       });
       handleClose();
     }
@@ -64,44 +62,44 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
         }}
       >
         <Typography variant="h6" component="h2">
-          Modifier l'aliment
+          Edit Food Item
         </Typography>
         <Grid container spacing={2} mt={2}>
           <Grid item xs={12}>
             <TextField
-              error={!!errors.nom}
-              label="Nom de l'aliment"
-              name="nom"
-              value={updatedAliment.nom}
+              error={!!errors.name}
+              label="Food name"
+              name="name"
+              value={updatedAliment.name}
               onChange={handleChange}
               fullWidth
-              helperText={errors.nom}
+              helperText={errors.name}
             />
           </Grid>
           <Grid item xs={12}>
             <TextField
-              error={!!errors.dateCongelation}
-              label="Date de congélation"
+              error={!!errors.freezingDate}
+              label="Freezing date"
               type="date"
-              name="dateCongelation"
-              value={updatedAliment.dateCongelation}
+              name="freezingDate"
+              value={updatedAliment.freezingDate}
               onChange={handleChange}
               InputLabelProps={{ shrink: true }}
               fullWidth
-              helperText={errors.dateCongelation}
+              helperText={errors.freezingDate}
             />
           </Grid>
           <Grid item xs={12}>
             <TextField
-              error={!!errors.datePeremption}
-              label="Date de péremption"
+              error={!!errors.expirationDate}
+              label="Best before date"
               type="date"
-              name="datePeremption"
-              value={updatedAliment.datePeremption}
+              name="expirationDate"
+              value={updatedAliment.expirationDate}
               onChange={handleChange}
               InputLabelProps={{ shrink: true }}
               fullWidth
-              helperText={errors.datePeremption}
+              helperText={errors.expirationDate}
             />
           </Grid>
           <Grid item xs={12}>
@@ -114,9 +112,9 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
                 value={updatedAliment.type}
                 onChange={handleChange}
               >
-                <MenuItem value="Proteins">Protéines</MenuItem>
-                <MenuItem value="Vegetables">Légumes</MenuItem>
-                <MenuItem value="Carbs">Féculents</MenuItem>
+                <MenuItem value="Proteins">Proteins</MenuItem>
+                <MenuItem value="Vegetables">Vegetables</MenuItem>
+                <MenuItem value="Carbs">Carbs</MenuItem>
                 <MenuItem value="Fruits">Fruits</MenuItem>
               </Select>
               <FormHelperText>{errors.type}</FormHelperText>
@@ -124,10 +122,10 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
           </Grid>
           <Grid item xs={12}>
             <TextField
-              label="Nombre de glaçons"
+              label="Number of ice cubes"
               type="number"
-              name="quantite"
-              value={updatedAliment.quantite}
+              name="quantity"
+              value={updatedAliment.quantity}
               onChange={handleChange}
               fullWidth
             />
@@ -135,10 +133,10 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
         </Grid>
         <Box mt={2} display="flex" justifyContent="flex-end">
           <Button onClick={handleClose} color="secondary" sx={{ mr: 2 }}>
-            Annuler
+            Cancel
           </Button>
           <Button onClick={handleSaveClick} variant="contained" color="primary">
-            Sauvegarder
+            Save
           </Button>
         </Box>
       </Box>

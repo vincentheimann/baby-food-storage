@@ -1,4 +1,3 @@
-// src/pages/Dashboard.test.js
 import React from "react";
 import { render, screen, within } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
@@ -14,7 +13,7 @@ const mockBacs = [
 const mockAliments = [
   {
     id: 1,
-    nom: "Poulet",
+    nom: "Chicken",
     dateCongelation: "2024-07-01",
     datePeremption: "2024-08-01",
     type: "Proteins",
@@ -22,7 +21,7 @@ const mockAliments = [
   },
   {
     id: 2,
-    nom: "Carottes",
+    nom: "Carrots",
     dateCongelation: "2024-07-05",
     datePeremption: "2024-08-05",
     type: "Vegetables",
@@ -51,13 +50,9 @@ const renderDashboard = () => {
 describe("Dashboard", () => {
   test("renders Dashboard component", () => {
     renderDashboard();
-    expect(screen.getByText(/Tableau de bord/i)).toBeInTheDocument();
-    expect(
-      screen.getByText(/Répartition des Types d'Aliments/i)
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Aliments à consommer en priorité/i)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Dashboard/i)).toBeInTheDocument();
+    expect(screen.getByText(/Food Type Distribution/i)).toBeInTheDocument();
+    expect(screen.getByText(/Priority Foods to Consume/i)).toBeInTheDocument();
   });
 
   test("renders pie chart with correct data", () => {
@@ -65,8 +60,8 @@ describe("Dashboard", () => {
     const pieChartLegend = screen.getByLabelText("Pie chart legend");
     const legendItems = within(pieChartLegend).getAllByRole("listitem");
     expect(legendItems).toHaveLength(2); // Adjust this based on how many items you expect
-    expect(screen.getAllByText(/Protéines/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/Légumes/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Proteins/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Vegetables/i).length).toBeGreaterThan(0);
   });
 
   test("renders BacCard components based on bacs context", () => {
@@ -80,9 +75,9 @@ describe("Dashboard", () => {
     renderDashboard();
     const alimentsCloseToExpiration = mockAliments.filter((aliment) => {
       const today = new Date();
-      const peremptionDate = new Date(aliment.datePeremption);
-      const diffDays = (peremptionDate - today) / (1000 * 60 * 60 * 24);
-      return diffDays <= 7; // Aliments dont la date de péremption est dans 7 jours ou moins
+      const expirationDate = new Date(aliment.datePeremption);
+      const diffDays = (expirationDate - today) / (1000 * 60 * 60 * 24);
+      return diffDays <= 7; // Aliments whose Best before date is in 7 days or less
     });
 
     alimentsCloseToExpiration.forEach((aliment) => {

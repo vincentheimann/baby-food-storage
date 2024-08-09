@@ -34,7 +34,7 @@ describe("LoginPage", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", {
-        name: /Connexion au compte de démonstration/i,
+        name: /Demo account login/i,
       })
     ).toBeInTheDocument();
   });
@@ -60,7 +60,7 @@ describe("LoginPage", () => {
     renderLoginPage();
     fireEvent.click(
       screen.getByRole("button", {
-        name: /Connexion au compte de démonstration/i,
+        name: /Demo account login/i,
       })
     );
     await waitFor(() =>

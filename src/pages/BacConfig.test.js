@@ -1,4 +1,3 @@
-// src/pages/BacConfig.test.js
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
@@ -28,10 +27,8 @@ const renderBacConfig = () => {
 describe("BacConfig", () => {
   test("renders BacConfig component", () => {
     renderBacConfig();
-    expect(
-      screen.getByText(/Configuration des Bacs à Glaçons/i)
-    ).toBeInTheDocument();
-    expect(screen.getByText(/Ajouter un Nouveau Bac/i)).toBeInTheDocument();
+    expect(screen.getByText(/Ice Tray Configuration/i)).toBeInTheDocument();
+    expect(screen.getByText(/Add a New Tray/i)).toBeInTheDocument();
     mockBacs.forEach((bac) => {
       const bacColorInput = screen.getByDisplayValue(bac.color);
       const bacTypeInput = screen.getByDisplayValue(bac.type);
@@ -61,13 +58,13 @@ describe("BacConfig", () => {
 
   test("adds a new bac", () => {
     renderBacConfig();
-    const colorInput = screen.getAllByLabelText(/Couleur/i).pop();
+    const colorInput = screen.getAllByLabelText(/Color/i).pop();
     const typeInput = screen.getAllByLabelText(/Type/i).pop();
-    const capacityInput = screen.getAllByLabelText(/Capacité/i).pop();
+    const capacityInput = screen.getAllByLabelText(/Capacity/i).pop();
     fireEvent.change(colorInput, { target: { value: "yellow" } });
     fireEvent.change(typeInput, { target: { value: "Fruits" } });
     fireEvent.change(capacityInput, { target: { value: 20 } });
-    fireEvent.click(screen.getAllByText(/Ajouter/i).pop());
+    fireEvent.click(screen.getAllByText(/Add/i).pop());
     expect(mockBacContextValue.addBac).toHaveBeenCalledWith({
       color: "yellow",
       type: "Fruits",

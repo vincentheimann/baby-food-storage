@@ -1,4 +1,3 @@
-// src/context/AlimentContext.test.js
 import React from "react";
 import { render, screen, act } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
@@ -44,14 +43,16 @@ describe("AlimentContext", () => {
     );
 
     const notification = contextValue.notifications.find(
-      (notif) => notif.nom === "Poulet"
+      (notif) => notif.name === "Chicken"
     );
 
     const diffDays = differenceInDays(
-      new Date(notification.datePeremption),
+      new Date(notification.expirationDate),
       today
     );
-    expect(notification.message).toContain(diffDays < 0 ? "Expiré" : "Expire");
+    expect(notification.message).toContain(
+      diffDays < 0 ? "Expired" : "Expires"
+    );
   });
 
   test("should add a new aliment", () => {
@@ -69,16 +70,16 @@ describe("AlimentContext", () => {
 
     act(() => {
       contextValue.addAliment({
-        nom: "Nouvel Aliment",
-        dateCongelation: "2024-07-01",
-        datePeremption: "2024-08-01",
+        name: "New Food",
+        freezingDate: "2024-07-01",
+        expirationDate: "2024-08-01",
         type: "Proteins",
-        quantite: 5,
+        quantity: 5,
       });
     });
 
     expect(
-      contextValue.aliments.some((aliment) => aliment.nom === "Nouvel Aliment")
+      contextValue.aliments.some((aliment) => aliment.name === "New Food")
     ).toBe(true);
   });
 
@@ -96,7 +97,7 @@ describe("AlimentContext", () => {
     );
 
     const alimentId = contextValue.aliments[0].id;
-    const initialQuantite = contextValue.aliments[0].quantite;
+    const initialQuantity = contextValue.aliments[0].quantity;
 
     act(() => {
       contextValue.decrementAlimentQuantity(alimentId);
@@ -105,7 +106,7 @@ describe("AlimentContext", () => {
     const updatedAliment = contextValue.aliments.find(
       (aliment) => aliment.id === alimentId
     );
-    expect(updatedAliment.quantite).toBe(initialQuantite - 1);
+    expect(updatedAliment.quantity).toBe(initialQuantity - 1);
   });
 
   test("should increment aliment quantity", () => {
@@ -122,7 +123,7 @@ describe("AlimentContext", () => {
     );
 
     const alimentId = contextValue.aliments[0].id;
-    const initialQuantite = contextValue.aliments[0].quantite;
+    const initialQuantity = contextValue.aliments[0].quantity;
 
     act(() => {
       contextValue.incrementAlimentQuantity(alimentId);
@@ -131,7 +132,7 @@ describe("AlimentContext", () => {
     const updatedAliment = contextValue.aliments.find(
       (aliment) => aliment.id === alimentId
     );
-    expect(updatedAliment.quantite).toBe(initialQuantite + 1);
+    expect(updatedAliment.quantity).toBe(initialQuantity + 1);
   });
 
   test("should update an aliment", () => {
@@ -152,18 +153,18 @@ describe("AlimentContext", () => {
     act(() => {
       contextValue.updateAliment({
         id: alimentId,
-        nom: "Aliment Modifié",
-        dateCongelation: "2024-07-01",
-        datePeremption: "2024-08-01",
+        name: "Updated Food",
+        freezingDate: "2024-07-01",
+        expirationDate: "2024-08-01",
         type: "Proteins",
-        quantite: 5,
+        quantity: 5,
       });
     });
 
     const updatedAliment = contextValue.aliments.find(
       (aliment) => aliment.id === alimentId
     );
-    expect(updatedAliment.nom).toBe("Aliment Modifié");
+    expect(updatedAliment.name).toBe("Updated Food");
   });
 
   test("should mark a notification as read", () => {
@@ -188,7 +189,7 @@ describe("AlimentContext", () => {
     const updatedNotification = contextValue.notifications.find(
       (notif) => notif.id === notificationId
     );
-    expect(updatedNotification.lue).toBe(true);
+    expect(updatedNotification.read).toBe(true);
   });
 
   test("should delete a notification", () => {

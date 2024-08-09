@@ -18,7 +18,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app); // Exportez l'objet auth
+export const auth = getAuth(app);
 
 export const signUp = (email, password) =>
   createUserWithEmailAndPassword(auth, email, password);

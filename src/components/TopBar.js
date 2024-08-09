@@ -1,4 +1,3 @@
-// src/components/TopBar.js
 import React, { useState, useContext } from "react";
 import {
   AppBar,
@@ -124,9 +123,9 @@ const TopBar = () => {
               MenuListProps={{ onMouseLeave: handleProfileMenuClose }}
             >
               <MenuItem onClick={() => handleNavigation("/profile")}>
-                Profil
+                Profile
               </MenuItem>
-              <MenuItem onClick={handleLogout}>Déconnexion</MenuItem>
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
           </Box>
         </Box>
@@ -135,9 +134,9 @@ const TopBar = () => {
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}
         >
-          <MenuItem onClick={() => handleNavigation("/")}>Accueil</MenuItem>
+          <MenuItem onClick={() => handleNavigation("/")}>Home</MenuItem>
           <MenuItem onClick={() => handleNavigation("/dashboard")}>
-            Tableau de bord
+            Dashboard
           </MenuItem>
         </Menu>
         <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
@@ -151,10 +150,10 @@ const TopBar = () => {
                   style={{ backgroundColor: notification.color }}
                 >
                   <ListItemText
-                    primary={notification.nom}
+                    primary={notification.name}
                     secondary={notification.message}
                     style={{
-                      textDecoration: notification.lue
+                      textDecoration: notification.read
                         ? "line-through"
                         : "none",
                     }}
@@ -172,7 +171,7 @@ const TopBar = () => {
               ))
             ) : (
               <ListItem>
-                <ListItemText primary="Aucune notification" />
+                <ListItemText primary="No notifications" />
               </ListItem>
             )}
           </List>

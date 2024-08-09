@@ -1,4 +1,3 @@
-// src/context/UserContext.js
 import React from "react";
 import { render, act } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
@@ -54,7 +53,7 @@ describe("UserContext", () => {
   test("should logout a user", async () => {
     renderWithProvider();
 
-    // Simulez la connexion d'un utilisateur
+    // Simulate user login
     const mockUser = { email: "test@example.com" };
     login.mockResolvedValueOnce({ user: mockUser });
 
@@ -62,14 +61,14 @@ describe("UserContext", () => {
       await contextValue.login("test@example.com", "password");
     });
 
-    // Simulez la déconnexion
+    // Simulate logout
     logout.mockResolvedValueOnce();
 
     await act(async () => {
       await contextValue.logout();
     });
 
-    expect(contextValue.user).toBeNull(); // Vérifiez que l'utilisateur est bien null après déconnexion
+    expect(contextValue.user).toBeNull(); // Check that the user is null after logout
     expect(contextValue.isAuthenticated).toBe(false);
   });
 });

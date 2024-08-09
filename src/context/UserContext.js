@@ -4,7 +4,7 @@ import { login, logout, demoLogin } from "../services/authService";
 
 const UserContext = createContext();
 
-export const UserProvider = ({ children }) => {
+const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -54,4 +54,5 @@ export const UserProvider = ({ children }) => {
 };
 
 export const useUser = () => useContext(UserContext);
+export { UserProvider };
 export { UserContext };

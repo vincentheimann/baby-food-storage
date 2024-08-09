@@ -1,4 +1,3 @@
-// src/pages/BacConfig.js
 import React, { useContext, useState } from "react";
 import {
   Container,
@@ -29,7 +28,7 @@ const BacConfig = () => {
   return (
     <Container maxWidth="lg">
       <Typography variant="h3" component="h1" gutterBottom>
-        Configuration des Bacs à Glaçons
+        Ice Tray Configuration
       </Typography>
       <Stack spacing={3}>
         {bacs.map((bac) => (
@@ -39,7 +38,7 @@ const BacConfig = () => {
           >
             <Stack direction="row" spacing={2} alignItems="center">
               <TextField
-                label="Couleur"
+                label="Color"
                 value={bac.color}
                 onChange={(e) =>
                   handleUpdateBac(bac.id, "color", e.target.value)
@@ -55,7 +54,7 @@ const BacConfig = () => {
                 fullWidth
               />
               <TextField
-                label="Capacité"
+                label="Capacity"
                 type="number"
                 value={bac.capacity}
                 onChange={(e) =>
@@ -76,12 +75,12 @@ const BacConfig = () => {
       </Stack>
       <Box mt={5}>
         <Typography variant="h4" component="h2" gutterBottom>
-          Ajouter un Nouveau Bac
+          Add a New Tray
         </Typography>
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
             <TextField
-              label="Couleur"
+              label="Color"
               value={newBac.color}
               onChange={(e) => setNewBac({ ...newBac, color: e.target.value })}
               fullWidth
@@ -97,7 +96,7 @@ const BacConfig = () => {
           </Grid>
           <Grid item xs={12} md={4}>
             <TextField
-              label="Capacité"
+              label="Capacity"
               type="number"
               value={newBac.capacity}
               onChange={(e) =>
@@ -108,7 +107,7 @@ const BacConfig = () => {
           </Grid>
           <Grid item xs={12}>
             <Button variant="contained" color="primary" onClick={handleAddBac}>
-              Ajouter
+              Add
             </Button>
           </Grid>
         </Grid>

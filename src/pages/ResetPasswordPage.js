@@ -19,9 +19,9 @@ const ResetPasswordPage = () => {
   const navigate = useNavigate();
 
   const validateEmail = (email) => {
-    if (!email) return "L'email est requis";
+    if (!email) return "Email is required";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      return "L'email est invalide";
+      return "The email is invalid";
     return null;
   };
 
@@ -35,9 +35,9 @@ const ResetPasswordPage = () => {
     setErrors({});
     try {
       await resetPassword(email);
-      setMessage("Un email de réinitialisation de mot de passe a été envoyé.");
+      setMessage("A password reset email has been sent.");
     } catch (error) {
-      setMessage("Erreur lors de l'envoi de l'email.");
+      setMessage("Error sending email.");
     }
     setSnackbarOpen(true);
   };
@@ -46,7 +46,7 @@ const ResetPasswordPage = () => {
     <Container maxWidth="sm">
       <Box mt={5}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Réinitialiser le mot de passe
+          Reset password
         </Typography>
         <form onSubmit={handleResetPassword}>
           <TextField
@@ -61,7 +61,7 @@ const ResetPasswordPage = () => {
             margin="normal"
           />
           <Button type="submit" variant="contained" color="primary" fullWidth>
-            Réinitialiser
+            Reset
           </Button>
           <Button
             onClick={() => navigate("/login")}
@@ -69,7 +69,7 @@ const ResetPasswordPage = () => {
             variant="outlined"
             sx={{ mt: 2 }}
           >
-            Retour à la connexion
+            Back to login page
           </Button>
         </form>
         <Snackbar

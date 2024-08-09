@@ -1,4 +1,3 @@
-// src/components/BacCard.test.js
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
@@ -9,28 +8,28 @@ describe("BacCard", () => {
     const aliments = [
       {
         id: 1,
-        nom: "Poulet",
-        quantite: 10,
-        datePeremption: "2024-07-01",
+        name: "Chicken",
+        quantity: 10,
+        expirationDate: "2024-07-01",
       },
       {
         id: 2,
-        nom: "Carottes",
-        quantite: 8,
-        datePeremption: "2024-07-05",
+        name: "Carrots",
+        quantity: 8,
+        expirationDate: "2024-07-05",
       },
     ];
 
     render(<BacCard color="blue" type="Proteins" aliments={aliments} />);
 
-    expect(screen.getByText(/Protéines/i)).toBeInTheDocument();
-    expect(screen.getByText(/Poulet/i)).toBeInTheDocument();
-    expect(screen.getByText(/Carottes/i)).toBeInTheDocument();
+    expect(screen.getByText(/Proteins/i)).toBeInTheDocument();
+    expect(screen.getByText(/Chicken/i)).toBeInTheDocument();
+    expect(screen.getByText(/Carrots/i)).toBeInTheDocument();
     expect(
-      screen.getByText(/Quantité : 10 glaçons, Péremption : 01.07.2024/i)
+      screen.getByText(/Quantity: 10 ice cubes, Best before: 07\/01\/2024/i)
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/Quantité : 8 glaçons, Péremption : 05.07.2024/i)
+      screen.getByText(/Quantity: 8 ice cubes, Best before: 07\/05\/2024/i)
     ).toBeInTheDocument();
   });
 
@@ -38,18 +37,18 @@ describe("BacCard", () => {
     const aliments = [
       {
         id: 1,
-        nom: "Banane",
-        quantite: 5,
-        datePeremption: "2024-08-01",
+        name: "Banana",
+        quantity: 5,
+        expirationDate: "2024-08-01",
       },
     ];
 
     render(<BacCard color="green" type="Fruits" aliments={aliments} />);
 
     expect(screen.getByText(/Fruits/i)).toBeInTheDocument();
-    expect(screen.getByText(/Banane/i)).toBeInTheDocument();
+    expect(screen.getByText(/Banana/i)).toBeInTheDocument();
     expect(
-      screen.getByText(/Quantité : 5 glaçons, Péremption : 01.08.2024/i)
+      screen.getByText(/Quantity: 5 ice cubes, Best before: 08\/01\/2024/i)
     ).toBeInTheDocument();
   });
 
@@ -57,9 +56,9 @@ describe("BacCard", () => {
     const aliments = [
       {
         id: 1,
-        nom: "Mystery Food",
-        quantite: 3,
-        datePeremption: "2024-09-01",
+        name: "Mystery Food",
+        quantity: 3,
+        expirationDate: "2024-09-01",
       },
     ];
 
@@ -68,7 +67,7 @@ describe("BacCard", () => {
     expect(screen.getByText(/Unknown/i)).toBeInTheDocument();
     expect(screen.getByText(/Mystery Food/i)).toBeInTheDocument();
     expect(
-      screen.getByText(/Quantité : 3 glaçons, Péremption : 01.09.2024/i)
+      screen.getByText(/Quantity: 3 ice cubes, Best before: 09\/01\/2024/i)
     ).toBeInTheDocument();
   });
 });

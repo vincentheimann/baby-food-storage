@@ -18,7 +18,7 @@ const Dashboard = () => {
   const { bacs } = useContext(BacContext);
   const { aliments } = useContext(AlimentContext);
 
-  const getTypeTranslation = (type) => {
+  const getTypeLabel = (type) => {
     switch (type) {
       case "Proteins":
         return "Protéines";
@@ -56,7 +56,7 @@ const Dashboard = () => {
     const today = new Date();
     const peremptionDate = new Date(aliment.datePeremption);
     const diffDays = (peremptionDate - today) / (1000 * 60 * 60 * 24);
-    return diffDays <= 7; // Aliments dont la date de péremption est dans 7 jours ou moins
+    return diffDays <= 7; // Aliments dont la Best before date est dans 7 jours ou moins
   });
 
   const alimentTypes = aliments.reduce((acc, aliment) => {
@@ -67,7 +67,7 @@ const Dashboard = () => {
   const pieChartData = Object.keys(alimentTypes).map((key, index) => ({
     id: index,
     value: alimentTypes[key],
-    label: getTypeTranslation(key),
+    label: getTypeLabel(key),
     color: getColorByType(key),
   }));
 

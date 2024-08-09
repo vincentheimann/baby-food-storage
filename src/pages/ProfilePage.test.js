@@ -1,4 +1,3 @@
-// src/pages/ProfilePage.test.js
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
@@ -22,25 +21,25 @@ useUser.mockReturnValue({
 describe("ProfilePage", () => {
   test("renders ProfilePage component with user data", () => {
     render(<ProfilePage />);
-    expect(screen.getByText(/Mon Profil/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Nom/i).value).toBe(mockUser.displayName);
+    expect(screen.getByText(/My Profile/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Name/i).value).toBe(mockUser.displayName);
     expect(screen.getByLabelText(/Email/i).value).toBe(mockUser.email);
-    expect(screen.getByLabelText(/Mot de passe/i).value).toBe("");
+    expect(screen.getByLabelText(/Password/i).value).toBe("");
   });
 
   test("calls updateUser on form submit", async () => {
     render(<ProfilePage />);
-    fireEvent.change(screen.getByLabelText(/Nom/i), {
+    fireEvent.change(screen.getByLabelText(/Name/i), {
       target: { value: "Jane Doe" },
     });
     fireEvent.change(screen.getByLabelText(/Email/i), {
       target: { value: "jane@example.com" },
     });
-    fireEvent.change(screen.getByLabelText(/Mot de passe/i), {
+    fireEvent.change(screen.getByLabelText(/Password/i), {
       target: { value: "newpassword" },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: /Mettre à jour/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Update/i }));
 
     await waitFor(() => {
       expect(mockUpdateUser).toHaveBeenCalledWith({

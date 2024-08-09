@@ -1,14 +1,13 @@
-// src/components/AlimentForm.js
 import React, { useState } from "react";
 import { TextField, Button, Grid, MenuItem } from "@mui/material";
 
 const AlimentForm = ({ onSubmit }) => {
   const [values, setValues] = useState({
-    nom: "",
-    dateCongelation: "",
-    datePeremption: "",
+    name: "",
+    freezingDate: "",
+    expirationDate: "",
     type: "",
-    quantite: 1,
+    quantity: 1,
   });
   const [errors, setErrors] = useState({});
 
@@ -16,19 +15,19 @@ const AlimentForm = ({ onSubmit }) => {
     const { name, value } = event.target;
     setValues({
       ...values,
-      [name]: name === "quantite" ? Number(value) : value,
+      [name]: name === "quantity" ? Number(value) : value,
     });
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const validationErrors = {};
-    if (!values.nom) validationErrors.nom = "Le nom de l'aliment est requis";
-    if (!values.dateCongelation)
-      validationErrors.dateCongelation = "La date de congélation est requise";
-    if (!values.datePeremption)
-      validationErrors.datePeremption = "La date de péremption est requise";
-    if (!values.type) validationErrors.type = "Le type est requis";
+    if (!values.name) validationErrors.name = "The food name is required";
+    if (!values.freezingDate)
+      validationErrors.freezingDate = "The freezing date is required";
+    if (!values.expirationDate)
+      validationErrors.expirationDate = "The expiration date is required";
+    if (!values.type) validationErrors.type = "The type is required";
 
     setErrors(validationErrors);
 
@@ -42,43 +41,43 @@ const AlimentForm = ({ onSubmit }) => {
       <Grid container spacing={2}>
         <Grid item xs={12} md={3}>
           <TextField
-            error={!!errors.nom}
-            label="Nom de l'aliment"
-            name="nom"
-            value={values.nom}
+            error={!!errors.name}
+            label="Food Name"
+            name="name"
+            value={values.name}
             onChange={handleChange}
             fullWidth
-            helperText={errors.nom}
+            helperText={errors.name}
           />
         </Grid>
         <Grid item xs={12} md={3}>
           <TextField
-            error={!!errors.dateCongelation}
-            label="Date de congélation"
-            name="dateCongelation"
+            error={!!errors.freezingDate}
+            label="Freezing Date"
+            name="freezingDate"
             type="date"
-            value={values.dateCongelation}
+            value={values.freezingDate}
             onChange={handleChange}
             fullWidth
             InputLabelProps={{
               shrink: true,
             }}
-            helperText={errors.dateCongelation}
+            helperText={errors.freezingDate}
           />
         </Grid>
         <Grid item xs={12} md={3}>
           <TextField
-            error={!!errors.datePeremption}
-            label="Date de péremption"
-            name="datePeremption"
+            error={!!errors.expirationDate}
+            label="Expiration Date"
+            name="expirationDate"
             type="date"
-            value={values.datePeremption}
+            value={values.expirationDate}
             onChange={handleChange}
             fullWidth
             InputLabelProps={{
               shrink: true,
             }}
-            helperText={errors.datePeremption}
+            helperText={errors.expirationDate}
           />
         </Grid>
         <Grid item xs={12} md={3}>
@@ -92,27 +91,27 @@ const AlimentForm = ({ onSubmit }) => {
             fullWidth
             helperText={errors.type}
           >
-            <MenuItem value="Protéines">Protéines</MenuItem>
-            <MenuItem value="Légumes">Légumes</MenuItem>
-            <MenuItem value="Féculents">Féculents</MenuItem>
+            <MenuItem value="Proteins">Proteins</MenuItem>
+            <MenuItem value="Vegetables">Vegetables</MenuItem>
+            <MenuItem value="Carbs">Carbs</MenuItem>
             <MenuItem value="Fruits">Fruits</MenuItem>
           </TextField>
         </Grid>
         <Grid item xs={12} md={3}>
           <TextField
-            error={!!errors.quantite}
-            label="Nombre de glaçons"
-            name="quantite"
+            error={!!errors.quantity}
+            label="Number of Ice Cubes"
+            name="quantity"
             type="number"
-            value={values.quantite}
+            value={values.quantity}
             onChange={handleChange}
             fullWidth
-            helperText={errors.quantite}
+            helperText={errors.quantity}
           />
         </Grid>
         <Grid item xs={12}>
           <Button type="submit" variant="contained" color="primary">
-            Ajouter
+            Add
           </Button>
         </Grid>
       </Grid>

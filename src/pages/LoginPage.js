@@ -121,7 +121,7 @@ const LoginPage = () => {
                 sx={{ mt: 1, mb: 2 }}
                 datatestid="demo-login-button"
               >
-                Connexion au compte de démonstration
+                Demo account login
               </Button>
               <Grid container>
                 <Grid item xs>

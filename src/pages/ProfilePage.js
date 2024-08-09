@@ -1,4 +1,3 @@
-// src/pages/ProfilePage.js
 import React, { useState, useEffect } from "react";
 import { TextField, Button, Container, Typography, Box } from "@mui/material";
 import { useUser } from "../context/UserContext";
@@ -38,11 +37,11 @@ const ProfilePage = () => {
     <Container maxWidth="sm">
       <Box mt={5}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Mon Profil
+          My Profile
         </Typography>
         <form onSubmit={handleSubmit}>
           <TextField
-            label="Nom"
+            label="Name"
             name="name"
             value={values.name}
             onChange={handleChange}
@@ -61,7 +60,7 @@ const ProfilePage = () => {
             margin="normal"
           />
           <TextField
-            label="Mot de passe"
+            label="Password"
             name="password"
             type="password"
             value={values.password}
@@ -71,7 +70,7 @@ const ProfilePage = () => {
             margin="normal"
           />
           <Button type="submit" variant="contained" color="primary" fullWidth>
-            Mettre à jour
+            Update
           </Button>
         </form>
       </Box>
