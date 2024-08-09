@@ -9,11 +9,12 @@ import {
   Box,
   Grid,
   Typography,
+  Link,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useUser } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../context/UserContext";
 
 const theme = createTheme();
 
@@ -21,18 +22,18 @@ const LoginPage = () => {
   const { login, demoLogin } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate(); // Hook de navigation
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     await login(email, password);
-    navigate("/"); // Redirection vers la page d'accueil après connexion réussie
+    navigate("/");
   };
 
   const handleDemoLogin = async () => {
     try {
       await demoLogin();
-      navigate("/"); // Redirection vers la page d'accueil après connexion réussie
+      navigate("/");
     } catch (error) {
       console.error("Demo login failed: ", error);
     }
@@ -122,6 +123,18 @@ const LoginPage = () => {
               >
                 Connexion au compte de démonstration
               </Button>
+              <Grid container>
+                <Grid item xs>
+                  <Link href="/reset-password" variant="body2">
+                    Forgot password?
+                  </Link>
+                </Grid>
+                <Grid item>
+                  <Link href="/signup" variant="body2">
+                    {"Don't have an account? Sign Up"}
+                  </Link>
+                </Grid>
+              </Grid>
             </Box>
           </Box>
         </Grid>

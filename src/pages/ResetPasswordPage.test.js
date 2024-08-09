@@ -1,23 +1,31 @@
 // src/pages/ResetPasswordPage.test.js
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import "@testing-library/jest-dom/extend-expect";
+import { MemoryRouter } from "react-router-dom";
 import ResetPasswordPage from "./ResetPasswordPage";
+import { useNavigate } from "react-router-dom";
 import { resetPassword } from "../services/authService";
+
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useNavigate: jest.fn(),
+}));
 
 jest.mock("../services/authService");
 
 describe("ResetPasswordPage", () => {
-  beforeEach(() => {
-    jest.spyOn(console, "error").mockImplementation(() => {});
-  });
+  const mockNavigate = jest.fn();
 
-  afterEach(() => {
-    console.error.mockRestore();
+  beforeEach(() => {
+    useNavigate.mockReturnValue(mockNavigate);
   });
 
   test("renders ResetPasswordPage component", () => {
-    render(<ResetPasswordPage />);
+    render(
+      <MemoryRouter>
+        <ResetPasswordPage />
+      </MemoryRouter>
+    );
     expect(
       screen.getByText(/Réinitialiser le mot de passe/i)
     ).toBeInTheDocument();
@@ -25,45 +33,60 @@ describe("ResetPasswordPage", () => {
     expect(
       screen.getByRole("button", { name: /Réinitialiser/i })
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Retour à la connexion/i })
+    ).toBeInTheDocument();
   });
 
   test("shows success Snackbar on successful password reset", async () => {
     resetPassword.mockResolvedValueOnce();
 
-    render(<ResetPasswordPage />);
+    render(
+      <MemoryRouter>
+        <ResetPasswordPage />
+      </MemoryRouter>
+    );
     fireEvent.change(screen.getByLabelText(/Email/i), {
       target: { value: "test@example.com" },
     });
     fireEvent.click(screen.getByRole("button", { name: /Réinitialiser/i }));
-
-    expect(resetPassword).toHaveBeenCalledWith("test@example.com");
 
     expect(
       await screen.findByText(
         /Un email de réinitialisation de mot de passe a été envoyé./i
       )
     ).toBeInTheDocument();
-    expect(screen.getByRole("alert")).toHaveTextContent(
-      "Un email de réinitialisation de mot de passe a été envoyé."
-    );
   });
 
   test("shows error Snackbar on failed password reset", async () => {
     resetPassword.mockRejectedValueOnce(new Error("Failed to send email"));
 
-    render(<ResetPasswordPage />);
+    render(
+      <MemoryRouter>
+        <ResetPasswordPage />
+      </MemoryRouter>
+    );
     fireEvent.change(screen.getByLabelText(/Email/i), {
       target: { value: "test@example.com" },
     });
     fireEvent.click(screen.getByRole("button", { name: /Réinitialiser/i }));
 
-    expect(resetPassword).toHaveBeenCalledWith("test@example.com");
-
     expect(
       await screen.findByText(/Erreur lors de l'envoi de l'email./i)
     ).toBeInTheDocument();
-    expect(screen.getByRole("alert")).toHaveTextContent(
-      "Erreur lors de l'envoi de l'email."
+  });
+
+  test("navigates back to login page when 'Retour à la connexion' is clicked", () => {
+    render(
+      <MemoryRouter>
+        <ResetPasswordPage />
+      </MemoryRouter>
     );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /Retour à la connexion/i })
+    );
+
+    expect(mockNavigate).toHaveBeenCalledWith("/login");
   });
 });

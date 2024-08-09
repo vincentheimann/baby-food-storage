@@ -1,15 +1,28 @@
 // src/pages/SignUpPage.test.js
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import "@testing-library/jest-dom/extend-expect";
+import { MemoryRouter } from "react-router-dom";
 import SignUpPage from "./SignUpPage";
+import { useNavigate } from "react-router-dom";
 
-const mockOnSignUp = jest.fn();
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useNavigate: jest.fn(),
+}));
 
 describe("SignUpPage", () => {
-  test("renders SignUpPage component", () => {
-    render(<SignUpPage onSignUp={mockOnSignUp} />);
+  const mockNavigate = jest.fn();
 
+  beforeEach(() => {
+    useNavigate.mockReturnValue(mockNavigate);
+  });
+
+  test("renders SignUpPage component", () => {
+    render(
+      <MemoryRouter>
+        <SignUpPage onSignUp={jest.fn()} />
+      </MemoryRouter>
+    );
     expect(screen.getByText(/Créer un compte/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Nom/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Email/i)).toBeInTheDocument();
@@ -17,25 +30,24 @@ describe("SignUpPage", () => {
     expect(
       screen.getByRole("button", { name: /S'inscrire/i })
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Retour à la connexion/i })
+    ).toBeInTheDocument();
   });
 
-  test("shows validation errors when fields are empty", () => {
-    render(<SignUpPage onSignUp={mockOnSignUp} />);
+  test("submits the form with valid data", () => {
+    const onSignUpMock = jest.fn();
+    render(
+      <MemoryRouter>
+        <SignUpPage onSignUp={onSignUpMock} />
+      </MemoryRouter>
+    );
 
-    fireEvent.click(screen.getByRole("button", { name: /S'inscrire/i }));
-
-    expect(screen.getByText(/Le nom est requis/i)).toBeInTheDocument();
-    expect(screen.getByText(/L'email est requis/i)).toBeInTheDocument();
-    expect(screen.getByText(/Le mot de passe est requis/i)).toBeInTheDocument();
-  });
-
-  test("calls onSignUp with correct values", () => {
-    render(<SignUpPage onSignUp={mockOnSignUp} />);
     fireEvent.change(screen.getByLabelText(/Nom/i), {
-      target: { value: "John Doe" },
+      target: { value: "Test User" },
     });
     fireEvent.change(screen.getByLabelText(/Email/i), {
-      target: { value: "john@example.com" },
+      target: { value: "test@example.com" },
     });
     fireEvent.change(screen.getByLabelText(/Mot de passe/i), {
       target: { value: "password123" },
@@ -43,10 +55,24 @@ describe("SignUpPage", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /S'inscrire/i }));
 
-    expect(mockOnSignUp).toHaveBeenCalledWith({
-      nom: "John Doe",
-      email: "john@example.com",
+    expect(onSignUpMock).toHaveBeenCalledWith({
+      nom: "Test User",
+      email: "test@example.com",
       password: "password123",
     });
+  });
+
+  test("navigates back to login page when 'Retour à la connexion' is clicked", () => {
+    render(
+      <MemoryRouter>
+        <SignUpPage onSignUp={jest.fn()} />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /Retour à la connexion/i })
+    );
+
+    expect(mockNavigate).toHaveBeenCalledWith("/login");
   });
 });

@@ -1,21 +1,16 @@
 // src/pages/SignUpPage.js
 import React, { useState } from "react";
 import { TextField, Button, Container, Typography, Box } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const SignUpPage = ({ onSignUp }) => {
-  const [values, setValues] = useState({
-    nom: "",
-    email: "",
-    password: "",
-  });
+  const [values, setValues] = useState({ nom: "", email: "", password: "" });
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setValues({
-      ...values,
-      [name]: value,
-    });
+    setValues({ ...values, [name]: value });
   };
 
   const handleSubmit = (event) => {
@@ -25,9 +20,7 @@ const SignUpPage = ({ onSignUp }) => {
     if (!values.email) validationErrors.email = "L'email est requis";
     if (!values.password)
       validationErrors.password = "Le mot de passe est requis";
-
     setErrors(validationErrors);
-
     if (Object.keys(validationErrors).length === 0) {
       onSignUp(values);
     }
@@ -72,11 +65,17 @@ const SignUpPage = ({ onSignUp }) => {
             helperText={errors.password}
             margin="normal"
           />
-          <Box mt={2}>
-            <Button type="submit" variant="contained" color="primary">
-              S'inscrire
-            </Button>
-          </Box>
+          <Button type="submit" variant="contained" color="primary" fullWidth>
+            S'inscrire
+          </Button>
+          <Button
+            onClick={() => navigate("/login")}
+            fullWidth
+            variant="outlined"
+            sx={{ mt: 2 }}
+          >
+            Retour à la connexion
+          </Button>
         </form>
       </Box>
     </Container>
