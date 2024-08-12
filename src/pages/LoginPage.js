@@ -1,5 +1,5 @@
-// src/pages/LoginPage.js
-import React, { useState } from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Avatar,
   Button,
@@ -13,29 +13,54 @@ import {
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 
 const theme = createTheme();
 
 const LoginPage = () => {
   const { login, demoLogin } = useUser();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [error, setError] = React.useState({ email: false, password: false });
+  const [generalError, setGeneralError] = React.useState("");
+
+  useEffect(() => {
+    if (generalError) {
+      // Handle side-effects like logging errors, etc.
+    }
+  }, [generalError]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    await login(email, password);
-    navigate("/");
+  
+    const emailError = !email;
+    const passwordError = !password;
+  
+    if (emailError || passwordError) {
+      setError({ email: emailError, password: passwordError });
+      console.log("Form submission prevented due to errors.");
+      return; // Ensure form submission is halted if there are validation errors
+    }
+  
+    console.log("Submitting form with:", { email, password });
+  
+    try {
+      await login(email, password);
+      navigate("/");
+    } catch (error) {
+      setGeneralError("Login failed. Please check your credentials.");
+    }
   };
+  
 
   const handleDemoLogin = async () => {
     try {
       await demoLogin();
       navigate("/");
     } catch (error) {
-      console.error("Demo login failed: ", error);
+      setGeneralError("Demo login failed. Please try again.");
     }
   };
 
@@ -91,7 +116,12 @@ const LoginPage = () => {
                 autoComplete="email"
                 autoFocus
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setError((prevState) => ({ ...prevState, email: false }));
+                }}
+                error={error.email}
+                helperText={error.email ? "Email is required" : ""}
               />
               <TextField
                 margin="normal"
@@ -103,8 +133,18 @@ const LoginPage = () => {
                 id="password"
                 autoComplete="current-password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError((prevState) => ({ ...prevState, password: false }));
+                }}
+                error={error.password}
+                helperText={error.password ? "Password is required" : ""}
               />
+              {generalError && (
+                <Typography color="error" variant="body2">
+                  {generalError}
+                </Typography>
+              )}
               <Button
                 type="submit"
                 fullWidth
