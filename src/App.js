@@ -20,6 +20,7 @@ import { UserProvider, useUser } from "./context/UserContext";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import PageNotFound from "./pages/PageNotFound";
 
 const AppContent = () => {
   const { isAuthenticated } = useUser();
@@ -31,12 +32,11 @@ const AppContent = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route
-          path="/*"
-          element={
-            isAuthenticated ? <ProtectedRoutes /> : <Navigate to="/login" />
-          }
-        />
+        {isAuthenticated ? (
+          <Route path="*" element={<ProtectedRoutes />} />
+        ) : (
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        )}
       </Routes>
     </>
   );
@@ -49,6 +49,8 @@ const ProtectedRoutes = () => (
     <Route path="/notifications" element={<Notifications />} />
     <Route path="/config-bacs" element={<BacConfig />} />
     <Route path="/profile" element={<ProfilePage />} />
+    <Route path="*" element={<PageNotFound />} />{" "}
+    {/* Catch all unmatched routes */}
   </Routes>
 );
 

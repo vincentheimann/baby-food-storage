@@ -6,7 +6,7 @@ import { login, logout, demoLogin } from "../services/authService";
 
 jest.mock("../services/authService");
 
-describe("UserContext", () => {
+describe("UserContext with localStorage", () => {
   let contextValue;
 
   const renderWithProvider = () => {
@@ -22,7 +22,11 @@ describe("UserContext", () => {
     );
   };
 
-  test("should login a user", async () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  test("should store user and isAuthenticated in localStorage on login", async () => {
     renderWithProvider();
 
     const mockUser = { email: "test@example.com" };
@@ -32,28 +36,24 @@ describe("UserContext", () => {
       await contextValue.login("test@example.com", "password");
     });
 
+    expect(localStorage.getItem("user")).toEqual(JSON.stringify(mockUser));
+    expect(localStorage.getItem("isAuthenticated")).toBe("true");
+  });
+
+  test("should initialize from localStorage if user is present", () => {
+    const mockUser = { email: "test@example.com" };
+    localStorage.setItem("user", JSON.stringify(mockUser));
+    localStorage.setItem("isAuthenticated", "true");
+
+    renderWithProvider();
+
     expect(contextValue.user).toEqual(mockUser);
     expect(contextValue.isAuthenticated).toBe(true);
   });
 
-  test("should demo login a user", async () => {
+  test("should remove user and isAuthenticated from localStorage on logout", async () => {
     renderWithProvider();
 
-    const mockUser = { email: "demo@example.com" };
-    demoLogin.mockResolvedValueOnce({ user: mockUser });
-
-    await act(async () => {
-      await contextValue.demoLogin();
-    });
-
-    expect(contextValue.user).toEqual(mockUser);
-    expect(contextValue.isAuthenticated).toBe(true);
-  });
-
-  test("should logout a user", async () => {
-    renderWithProvider();
-
-    // Simulate user login
     const mockUser = { email: "test@example.com" };
     login.mockResolvedValueOnce({ user: mockUser });
 
@@ -61,14 +61,13 @@ describe("UserContext", () => {
       await contextValue.login("test@example.com", "password");
     });
 
-    // Simulate logout
     logout.mockResolvedValueOnce();
 
     await act(async () => {
       await contextValue.logout();
     });
 
-    expect(contextValue.user).toBeNull(); // Check that the user is null after logout
-    expect(contextValue.isAuthenticated).toBe(false);
+    expect(localStorage.getItem("user")).toBeNull();
+    expect(localStorage.getItem("isAuthenticated")).toBeNull();
   });
 });

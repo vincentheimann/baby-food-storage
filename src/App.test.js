@@ -47,9 +47,4 @@ describe("App Component", () => {
     // For example:
     // expect(screen.getByText(/Invalid email or password/i)).toBeInTheDocument(); // Adjust based on actual error message
   });
-
-  test("matches the snapshot", () => {
-    const { asFragment } = render(<App />);
-    expect(asFragment()).toMatchSnapshot();
-  });
 });

@@ -1,12 +1,28 @@
-// src/context/UserContext.js
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 import { login, logout, demoLogin } from "../services/authService";
 
 const UserContext = createContext();
 
 const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem("user");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    const savedAuth = localStorage.getItem("isAuthenticated");
+    return savedAuth === "true";
+  });
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("isAuthenticated", true);
+    } else {
+      localStorage.removeItem("user");
+      localStorage.removeItem("isAuthenticated");
+    }
+  }, [user]);
 
   const handleLogin = async (email, password) => {
     try {
