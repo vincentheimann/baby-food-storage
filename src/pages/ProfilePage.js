@@ -9,6 +9,11 @@ const ProfilePage = () => {
     email: "",
     password: "",
   });
+  const [errors, setErrors] = useState({
+    name: false,
+    email: false,
+    password: false,
+  });
 
   useEffect(() => {
     if (user) {
@@ -26,11 +31,27 @@ const ProfilePage = () => {
       ...values,
       [name]: value,
     });
+    setErrors({
+      ...errors,
+      [name]: false,
+    });
+  };
+
+  const validate = () => {
+    const newErrors = {
+      name: values.name === "",
+      email: values.email === "",
+      password: values.password === "",
+    };
+    setErrors(newErrors);
+    return !Object.values(newErrors).some((error) => error);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    updateUser(values);
+    if (validate()) {
+      updateUser(values);
+    }
   };
 
   return (
@@ -39,14 +60,15 @@ const ProfilePage = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           My Profile
         </Typography>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <TextField
             label="Name"
             name="name"
             value={values.name}
             onChange={handleChange}
+            error={errors.name}
+            helperText={errors.name ? "Name is required" : ""}
             fullWidth
-            required
             margin="normal"
           />
           <TextField
@@ -55,8 +77,9 @@ const ProfilePage = () => {
             type="email"
             value={values.email}
             onChange={handleChange}
+            error={errors.email}
+            helperText={errors.email ? "Email is required" : ""}
             fullWidth
-            required
             margin="normal"
           />
           <TextField
@@ -65,8 +88,9 @@ const ProfilePage = () => {
             type="password"
             value={values.password}
             onChange={handleChange}
+            error={errors.password}
+            helperText={errors.password ? "Password is required" : ""}
             fullWidth
-            required
             margin="normal"
           />
           <Button type="submit" variant="contained" color="primary" fullWidth>

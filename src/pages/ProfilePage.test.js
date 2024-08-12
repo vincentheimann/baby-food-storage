@@ -27,7 +27,27 @@ describe("ProfilePage", () => {
     expect(screen.getByLabelText(/Password/i).value).toBe("");
   });
 
-  test("calls updateUser on form submit", async () => {
+  test("shows validation errors when fields are empty", async () => {
+    render(<ProfilePage />);
+
+    fireEvent.change(screen.getByLabelText(/Name/i), { target: { value: "" } });
+    fireEvent.change(screen.getByLabelText(/Email/i), {
+      target: { value: "" },
+    });
+    fireEvent.change(screen.getByLabelText(/Password/i), {
+      target: { value: "" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Update/i }));
+
+    expect(screen.getByText("Name is required")).toBeInTheDocument();
+    expect(screen.getByText("Email is required")).toBeInTheDocument();
+    expect(screen.getByText("Password is required")).toBeInTheDocument();
+
+    expect(mockUpdateUser).not.toHaveBeenCalled();
+  });
+
+  test("calls updateUser on form submit when fields are valid", async () => {
     render(<ProfilePage />);
     fireEvent.change(screen.getByLabelText(/Name/i), {
       target: { value: "Jane Doe" },
