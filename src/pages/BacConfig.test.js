@@ -43,7 +43,6 @@ describe("BacConfig", () => {
       expect(screen.getByDisplayValue(bac.color)).toBeInTheDocument();
       expect(screen.getByDisplayValue(bac.type)).toBeInTheDocument();
 
-      // Updated line to handle multiple matching elements
       const capacityInputs = screen.getAllByDisplayValue(String(bac.capacity));
       expect(capacityInputs.length).toBeGreaterThan(0);
     });
@@ -57,6 +56,37 @@ describe("BacConfig", () => {
     });
     expect(mockBacContextValue.updateBac).toHaveBeenCalledWith(1, {
       color: newColor,
+    });
+  });
+
+  test("prevents setting capacity to less than 1", () => {
+    renderBacConfigWithContexts();
+    const capacityInputs = screen.getAllByDisplayValue("12");
+    fireEvent.change(capacityInputs[0], { target: { value: "-1" } });
+
+    expect(mockBacContextValue.updateBac).toHaveBeenCalledWith(1, {
+      capacity: 1,
+    });
+  });
+
+  test("does not allow adding a bac with capacity less than 1", () => {
+    renderBacConfigWithContexts();
+    fireEvent.change(screen.getAllByLabelText(/Color/i).pop(), {
+      target: { value: "yellow" },
+    });
+    fireEvent.change(screen.getAllByLabelText(/Type/i).pop(), {
+      target: { value: "Fruits" },
+    });
+    fireEvent.change(screen.getAllByLabelText(/Capacity/i).pop(), {
+      target: { value: "-5" },
+    });
+    fireEvent.click(screen.getAllByText(/Add/i).pop());
+
+    // The addBac function should still be called but with capacity adjusted to 1
+    expect(mockBacContextValue.addBac).toHaveBeenCalledWith({
+      color: "yellow",
+      type: "Fruits",
+      capacity: 1,
     });
   });
 

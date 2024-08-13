@@ -17,6 +17,9 @@ export const BacProvider = ({ children }) => {
   };
 
   const updateBac = (id, updatedBac) => {
+    if (updatedBac.capacity < 1) {
+      updatedBac.capacity = 1;
+    }
     setBacs(
       bacs.map((bac) => (bac.id === id ? { ...bac, ...updatedBac } : bac))
     );
@@ -26,6 +29,9 @@ export const BacProvider = ({ children }) => {
     if (!validateBacType(newBac.type, bacs)) {
       console.error("Bac type already exists");
       return;
+    }
+    if (newBac.capacity < 1) {
+      newBac.capacity = 1;
     }
     setBacs([...bacs, { ...newBac, id: generateNewId(bacs) }]);
   };

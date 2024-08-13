@@ -45,6 +45,29 @@ describe("BacContext", () => {
     expect(updatedBac.capacity).toBe(15);
   });
 
+  test("should not allow negative capacity when updating a bac", () => {
+    let contextValue;
+
+    render(
+      <BacProvider>
+        <BacContext.Consumer>
+          {(value) => {
+            contextValue = value;
+            return null;
+          }}
+        </BacContext.Consumer>
+      </BacProvider>
+    );
+
+    const bacId = 2;
+    act(() => {
+      contextValue.updateBac(bacId, { capacity: -5 });
+    });
+
+    const updatedBac = contextValue.bacs.find((bac) => bac.id === bacId);
+    expect(updatedBac.capacity).toBe(1);
+  });
+
   test("should add a new bac with a valid type", () => {
     let contextValue;
 
@@ -69,6 +92,28 @@ describe("BacContext", () => {
         (bac) => bac.type === "Snacks" && bac.color === "purple"
       )
     ).toBe(true);
+  });
+
+  test("should not allow negative capacity when adding a new bac", () => {
+    let contextValue;
+
+    render(
+      <BacProvider>
+        <BacContext.Consumer>
+          {(value) => {
+            contextValue = value;
+            return null;
+          }}
+        </BacContext.Consumer>
+      </BacProvider>
+    );
+
+    act(() => {
+      contextValue.addBac({ color: "purple", type: "Desserts", capacity: -10 });
+    });
+
+    const addedBac = contextValue.bacs.find((bac) => bac.type === "Desserts");
+    expect(addedBac.capacity).toBe(1);
   });
 
   test("should remove a bac by type", () => {

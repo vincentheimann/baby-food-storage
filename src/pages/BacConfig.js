@@ -23,18 +23,29 @@ const BacConfig = () => {
   const { aliments, setAliments } = useContext(AlimentContext);
 
   const [newBac, setNewBac] = useState({ color: "", type: "", capacity: 12 });
-  const [error, setError] = useState({ type: false });
+  const [error, setError] = useState({ type: false, capacity: false });
   const [openDialog, setOpenDialog] = useState(false);
   const [currentType, setCurrentType] = useState("");
   const [alimentsToReassign, setAlimentsToReassign] = useState([]);
 
   const handleUpdateBac = (id, field, value) => {
+    if (field === "capacity" && (value < 1 || isNaN(value))) {
+      setError((prev) => ({ ...prev, [id]: true }));
+      return;
+    } else {
+      setError((prev) => ({ ...prev, [id]: false }));
+    }
     updateBac(id, { [field]: value });
   };
 
   const handleAddBac = () => {
     if (!newBac.type.trim()) {
       setError({ type: true });
+      return;
+    }
+
+    if (newBac.capacity < 1) {
+      setError({ ...error, capacity: true });
       return;
     }
 
@@ -47,7 +58,7 @@ const BacConfig = () => {
       return;
     }
 
-    setError({ type: false });
+    setError({ type: false, capacity: false });
     addBac({ ...newBac, capacity: parseInt(newBac.capacity, 10) });
     setNewBac({ color: "", type: "", capacity: 12 });
   };
@@ -128,11 +139,13 @@ const BacConfig = () => {
                 label="Capacity"
                 type="number"
                 value={bac.capacity}
-                onChange={(e) =>
-                  handleUpdateBac(bac.id, "capacity", e.target.value)
-                }
+                onChange={(e) => {
+                  const value = Math.max(1, parseInt(e.target.value, 10) || 1);
+                  handleUpdateBac(bac.id, "capacity", value);
+                }}
                 fullWidth
               />
+
               <IconButton
                 aria-label="delete"
                 color="secondary"
@@ -177,7 +190,10 @@ const BacConfig = () => {
               type="number"
               value={newBac.capacity}
               onChange={(e) =>
-                setNewBac({ ...newBac, capacity: e.target.value })
+                setNewBac({
+                  ...newBac,
+                  capacity: Math.max(1, parseInt(e.target.value, 10) || 1),
+                })
               }
               fullWidth
             />
