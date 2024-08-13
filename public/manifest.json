@@ -1,5 +1,5 @@
 {
-  "short_name": "BabyFood",
+  "short_name": "Baby Food Storage",
   "name": "Baby Food Storage",
   "icons": [
     {
@@ -15,7 +15,7 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff",
-  "description": "Gérez vos aliments de bébé efficacement avec Baby Food Storage."
+  "theme_color": "#FF4081",
+  "background_color": "#fef6f8",
+  "description": "Organize with Love, Feed with Care."
 }

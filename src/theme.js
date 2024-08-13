@@ -1,4 +1,6 @@
 import { createTheme } from "@mui/material/styles";
+import "@fontsource/poppins/400.css"; // Variante Regular
+import "@fontsource/poppins/700.css"; // Variante Bold
 
 const theme = createTheme({
   palette: {
@@ -27,7 +29,7 @@ const theme = createTheme({
       contrastText: "#FFFFFF", // Texte blanc
     },
     background: {
-      default: "#F5F5F5", // Fond général légèrement gris
+      default: "#fef6f8", // Fond général légèrement gris
       paper: "#FFFFFF", // Fond des cartes et des modals
     },
     text: {
