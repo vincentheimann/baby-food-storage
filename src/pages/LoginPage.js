@@ -12,10 +12,7 @@ import {
   Link,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useUser } from "../context/UserContext";
-
-const theme = createTheme();
 
 const LoginPage = () => {
   const { login, demoLogin } = useUser();
