@@ -167,6 +167,36 @@ describe("AlimentContext", () => {
     expect(updatedAliment.name).toBe("Updated Food");
   });
 
+  test("should update multiple aliments' types", () => {
+    let contextValue;
+    render(
+      <AlimentProvider>
+        <AlimentContext.Consumer>
+          {(value) => {
+            contextValue = value;
+            return null;
+          }}
+        </AlimentContext.Consumer>
+      </AlimentProvider>
+    );
+
+    const updatedAliments = [
+      { id: 1, type: "Vegetables" },
+      { id: 2, type: "Fruits" },
+    ];
+
+    act(() => {
+      contextValue.updateMultipleAliments(updatedAliments);
+    });
+
+    updatedAliments.forEach((updatedAliment) => {
+      const aliment = contextValue.aliments.find(
+        (a) => a.id === updatedAliment.id
+      );
+      expect(aliment.type).toBe(updatedAliment.type);
+    });
+  });
+
   test("should mark a notification as read", () => {
     let contextValue;
     render(

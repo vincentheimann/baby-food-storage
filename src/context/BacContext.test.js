@@ -45,7 +45,7 @@ describe("BacContext", () => {
     expect(updatedBac.capacity).toBe(15);
   });
 
-  test("should add a new bac", () => {
+  test("should add a new bac with a valid type", () => {
     let contextValue;
 
     render(
@@ -71,7 +71,7 @@ describe("BacContext", () => {
     ).toBe(true);
   });
 
-  test("should remove a bac", () => {
+  test("should remove a bac by type", () => {
     let contextValue;
 
     render(
@@ -85,12 +85,12 @@ describe("BacContext", () => {
       </BacProvider>
     );
 
-    const bacId = 1;
+    const bacType = "Proteins";
     act(() => {
-      contextValue.removeBac(bacId);
+      contextValue.removeBac(bacType);
     });
 
     expect(contextValue.bacs.length).toBe(3);
-    expect(contextValue.bacs.some((bac) => bac.id === bacId)).toBe(false);
+    expect(contextValue.bacs.some((bac) => bac.type === bacType)).toBe(false);
   });
 });

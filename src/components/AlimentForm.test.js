@@ -2,12 +2,27 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import AlimentForm from "./AlimentForm";
+import { BacContext } from "../context/BacContext";
 
 const mockSubmit = jest.fn();
+const mockBacs = [
+  { id: 1, color: "blue", type: "Proteins", capacity: 12 },
+  { id: 2, color: "green", type: "Vegetables", capacity: 12 },
+  { id: 3, color: "red", type: "Carbs", capacity: 12 },
+  { id: 4, color: "pink", type: "Fruits", capacity: 12 },
+];
 
 describe("AlimentForm", () => {
+  const renderWithContext = (component) => {
+    return render(
+      <BacContext.Provider value={{ bacs: mockBacs }}>
+        {component}
+      </BacContext.Provider>
+    );
+  };
+
   test("renders AlimentForm component", () => {
-    render(<AlimentForm onSubmit={mockSubmit} />);
+    renderWithContext(<AlimentForm onSubmit={mockSubmit} />);
 
     expect(screen.getByLabelText(/Food name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Freezing date/i)).toBeInTheDocument();
@@ -18,7 +33,7 @@ describe("AlimentForm", () => {
   });
 
   test("shows validation errors when fields are empty", () => {
-    render(<AlimentForm onSubmit={mockSubmit} />);
+    renderWithContext(<AlimentForm onSubmit={mockSubmit} />);
 
     fireEvent.click(screen.getByText(/Add/i));
 
@@ -33,7 +48,7 @@ describe("AlimentForm", () => {
   });
 
   test("calls onSubmit with form data when form is filled correctly", () => {
-    render(<AlimentForm onSubmit={mockSubmit} />);
+    renderWithContext(<AlimentForm onSubmit={mockSubmit} />);
 
     fireEvent.change(screen.getByLabelText(/Food name/i), {
       target: { value: "Banana" },

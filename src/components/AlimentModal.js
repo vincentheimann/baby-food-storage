@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Modal,
   Box,
@@ -12,8 +12,10 @@ import {
   FormControl,
   FormHelperText,
 } from "@mui/material";
+import { BacContext } from "../context/BacContext";
 
 const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
+  const { bacs } = useContext(BacContext); // Access types from BacContext
   const [updatedAliment, setUpdatedAliment] = useState({ ...aliment });
   const [errors, setErrors] = useState({});
 
@@ -48,6 +50,8 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
       handleClose();
     }
   };
+
+  const uniqueTypes = [...new Set(bacs.map((bac) => bac.type))]; // Get unique types
 
   return (
     <Modal open={open} onClose={handleClose}>
@@ -112,10 +116,11 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
                 value={updatedAliment.type}
                 onChange={handleChange}
               >
-                <MenuItem value="Proteins">Proteins</MenuItem>
-                <MenuItem value="Vegetables">Vegetables</MenuItem>
-                <MenuItem value="Carbs">Carbs</MenuItem>
-                <MenuItem value="Fruits">Fruits</MenuItem>
+                {uniqueTypes.map((type) => (
+                  <MenuItem key={type} value={type}>
+                    {type}
+                  </MenuItem>
+                ))}
               </Select>
               <FormHelperText>{errors.type}</FormHelperText>
             </FormControl>

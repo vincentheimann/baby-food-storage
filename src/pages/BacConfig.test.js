@@ -1,13 +1,16 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, within } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import BacConfig from "./BacConfig";
 import { BacContext } from "../context/BacContext";
+import { AlimentContext } from "../context/AlimentContext";
 
 const mockBacs = [
   { id: 1, color: "blue", type: "Proteins", capacity: 12 },
   { id: 2, color: "green", type: "Vegetables", capacity: 15 },
 ];
+
+const mockAliments = [{ id: 1, name: "Chicken", type: "Proteins" }];
 
 const mockBacContextValue = {
   bacs: mockBacs,
@@ -16,17 +19,24 @@ const mockBacContextValue = {
   removeBac: jest.fn(),
 };
 
-const renderBacConfig = () => {
+const mockAlimentContextValue = {
+  aliments: mockAliments,
+  setAliments: jest.fn(),
+};
+
+const renderBacConfigWithContexts = () => {
   render(
-    <BacContext.Provider value={mockBacContextValue}>
-      <BacConfig />
-    </BacContext.Provider>
+    <AlimentContext.Provider value={mockAlimentContextValue}>
+      <BacContext.Provider value={mockBacContextValue}>
+        <BacConfig />
+      </BacContext.Provider>
+    </AlimentContext.Provider>
   );
 };
 
 describe("BacConfig", () => {
   test("renders BacConfig component", () => {
-    renderBacConfig();
+    renderBacConfigWithContexts();
     expect(screen.getByText(/Ice Tray Configuration/i)).toBeInTheDocument();
     expect(screen.getByText(/Add a New Tray/i)).toBeInTheDocument();
     mockBacs.forEach((bac) => {
@@ -46,7 +56,7 @@ describe("BacConfig", () => {
   });
 
   test("updates existing bac values", () => {
-    renderBacConfig();
+    renderBacConfigWithContexts();
     const newColor = "red";
     fireEvent.change(screen.getByDisplayValue("blue"), {
       target: { value: newColor },
@@ -57,7 +67,7 @@ describe("BacConfig", () => {
   });
 
   test("adds a new bac", () => {
-    renderBacConfig();
+    renderBacConfigWithContexts();
     const colorInput = screen.getAllByLabelText(/Color/i).pop();
     const typeInput = screen.getAllByLabelText(/Type/i).pop();
     const capacityInput = screen.getAllByLabelText(/Capacity/i).pop();
@@ -73,9 +83,59 @@ describe("BacConfig", () => {
   });
 
   test("removes an existing bac", () => {
-    renderBacConfig();
+    renderBacConfigWithContexts();
+    const deleteButtons = screen.getAllByRole("button", { name: /delete/i });
+    fireEvent.click(deleteButtons[1]); // Clicking the delete button for "Vegetables"
+    expect(mockBacContextValue.removeBac).toHaveBeenCalledWith("Vegetables");
+  });
+});
+
+describe("BacConfig Modal", () => {
+  test("opens modal when attempting to delete a bac type with food items", () => {
+    renderBacConfigWithContexts();
     const deleteButtons = screen.getAllByRole("button", { name: /delete/i });
     fireEvent.click(deleteButtons[0]);
-    expect(mockBacContextValue.removeBac).toHaveBeenCalledWith(1);
+    expect(screen.getByText(/Reassign Aliments/i)).toBeInTheDocument();
+  });
+
+  test("reassigns aliments and deletes bac type", () => {
+    renderBacConfigWithContexts();
+    const deleteButtons = screen.getAllByRole("button", { name: /delete/i });
+    fireEvent.click(deleteButtons[0]);
+
+    // Open the dropdown and select a new type
+    fireEvent.mouseDown(screen.getByLabelText("New Type"));
+    const listbox = within(screen.getByRole("listbox"));
+    fireEvent.click(listbox.getByText(/Vegetables/i));
+
+    fireEvent.click(screen.getByText(/Reassign and Delete Type/i));
+
+    // Ensure setAliments was called correctly
+    expect(mockAlimentContextValue.setAliments).toHaveBeenCalledWith(
+      expect.any(Function)
+    );
+
+    // Simulate the state update to check the final state
+    const updatedAliments =
+      mockAlimentContextValue.setAliments.mock.calls[0][0](mockAliments);
+
+    expect(updatedAliments).toEqual(
+      expect.arrayContaining([{ id: 1, name: "Chicken", type: "Vegetables" }])
+    );
+
+    expect(mockBacContextValue.removeBac).toHaveBeenCalledWith("Proteins");
+  });
+
+  test("excludes the deleted type in the modal dropdown", () => {
+    renderBacConfigWithContexts();
+    const deleteButtons = screen.getAllByRole("button", { name: /delete/i });
+    fireEvent.click(deleteButtons[0]);
+
+    // Open the dropdown
+    fireEvent.mouseDown(screen.getByLabelText("New Type"));
+    const listbox = within(screen.getByRole("listbox"));
+    const options = listbox.getAllByRole("option");
+
+    expect(options.map((o) => o.textContent)).not.toContain("Proteins");
   });
 });

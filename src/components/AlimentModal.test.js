@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import AlimentModal from "./AlimentModal";
+import { BacContext } from "../context/BacContext";
 
 const mockHandleSave = jest.fn();
 const mockHandleClose = jest.fn();
@@ -13,15 +14,24 @@ const aliment = {
   quantity: 1,
 };
 
+const bacs = [
+  { id: 1, color: "blue", type: "Proteins", capacity: 12 },
+  { id: 2, color: "green", type: "Vegetables", capacity: 12 },
+  { id: 3, color: "red", type: "Carbs", capacity: 12 },
+  { id: 4, color: "pink", type: "Fruits", capacity: 12 },
+];
+
 describe("AlimentModal", () => {
   test("renders AlimentModal component", () => {
     render(
-      <AlimentModal
-        open={true}
-        handleClose={mockHandleClose}
-        aliment={aliment}
-        handleSave={mockHandleSave}
-      />
+      <BacContext.Provider value={{ bacs }}>
+        <AlimentModal
+          open={true}
+          handleClose={mockHandleClose}
+          aliment={aliment}
+          handleSave={mockHandleSave}
+        />
+      </BacContext.Provider>
     );
 
     expect(screen.getByLabelText(/Food name/i)).toBeInTheDocument();
@@ -34,12 +44,14 @@ describe("AlimentModal", () => {
 
   test("shows validation errors when fields are empty", () => {
     render(
-      <AlimentModal
-        open={true}
-        handleClose={mockHandleClose}
-        aliment={aliment}
-        handleSave={mockHandleSave}
-      />
+      <BacContext.Provider value={{ bacs }}>
+        <AlimentModal
+          open={true}
+          handleClose={mockHandleClose}
+          aliment={aliment}
+          handleSave={mockHandleSave}
+        />
+      </BacContext.Provider>
     );
 
     fireEvent.click(screen.getByText(/Save/i));
@@ -54,12 +66,14 @@ describe("AlimentModal", () => {
 
   test("calls handleSave with form data when form is filled correctly", () => {
     render(
-      <AlimentModal
-        open={true}
-        handleClose={mockHandleClose}
-        aliment={aliment}
-        handleSave={mockHandleSave}
-      />
+      <BacContext.Provider value={{ bacs }}>
+        <AlimentModal
+          open={true}
+          handleClose={mockHandleClose}
+          aliment={aliment}
+          handleSave={mockHandleSave}
+        />
+      </BacContext.Provider>
     );
 
     fireEvent.change(screen.getByLabelText(/Food name/i), {

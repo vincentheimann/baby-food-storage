@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { TextField, Button, Grid, MenuItem } from "@mui/material";
+import { BacContext } from "../context/BacContext";
 
 const AlimentForm = ({ onSubmit }) => {
+  const { bacs } = useContext(BacContext); // Access bac types from context
   const [values, setValues] = useState({
     name: "",
     freezingDate: "",
@@ -35,6 +37,8 @@ const AlimentForm = ({ onSubmit }) => {
       onSubmit(values);
     }
   };
+
+  const uniqueTypes = [...new Set(bacs.map((bac) => bac.type))]; // Extract unique types from bacs
 
   return (
     <form onSubmit={handleSubmit}>
@@ -91,10 +95,11 @@ const AlimentForm = ({ onSubmit }) => {
             fullWidth
             helperText={errors.type}
           >
-            <MenuItem value="Proteins">Proteins</MenuItem>
-            <MenuItem value="Vegetables">Vegetables</MenuItem>
-            <MenuItem value="Carbs">Carbs</MenuItem>
-            <MenuItem value="Fruits">Fruits</MenuItem>
+            {uniqueTypes.map((type) => (
+              <MenuItem key={type} value={type}>
+                {type}
+              </MenuItem>
+            ))}
           </TextField>
         </Grid>
         <Grid item xs={12} md={3}>

@@ -1,5 +1,6 @@
-// src/context/BacContext.js
 import React, { createContext, useState } from "react";
+
+const generateNewId = (bacs) => bacs.length + 1;
 
 export const BacContext = createContext();
 
@@ -11,6 +12,10 @@ export const BacProvider = ({ children }) => {
     { id: 4, color: "pink", type: "Fruits", capacity: 12 },
   ]);
 
+  const validateBacType = (type, bacs) => {
+    return !bacs.some((bac) => bac.type.toLowerCase() === type.toLowerCase());
+  };
+
   const updateBac = (id, updatedBac) => {
     setBacs(
       bacs.map((bac) => (bac.id === id ? { ...bac, ...updatedBac } : bac))
@@ -18,11 +23,15 @@ export const BacProvider = ({ children }) => {
   };
 
   const addBac = (newBac) => {
-    setBacs([...bacs, { ...newBac, id: bacs.length + 1 }]);
+    if (!validateBacType(newBac.type, bacs)) {
+      console.error("Bac type already exists");
+      return;
+    }
+    setBacs([...bacs, { ...newBac, id: generateNewId(bacs) }]);
   };
 
-  const removeBac = (id) => {
-    setBacs(bacs.filter((bac) => bac.id !== id));
+  const removeBac = (type) => {
+    setBacs(bacs.filter((bac) => bac.type !== type));
   };
 
   return (

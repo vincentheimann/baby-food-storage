@@ -168,6 +168,16 @@ export const AlimentProvider = ({ children }) => {
     );
   };
 
+  // New function to handle bulk updates
+  const updateMultipleAliments = (updatedAliments) => {
+    setAliments(
+      aliments.map((aliment) => {
+        const updated = updatedAliments.find((item) => item.id === aliment.id);
+        return updated ? { ...aliment, type: updated.type } : aliment;
+      })
+    );
+  };
+
   const markNotificationAsRead = (id) => {
     setNotifications(
       notifications.map((notification) =>
@@ -190,10 +200,12 @@ export const AlimentProvider = ({ children }) => {
     <AlimentContext.Provider
       value={{
         aliments,
+        setAliments,
         addAliment,
         decrementAlimentQuantity,
         incrementAlimentQuantity,
         updateAliment,
+        updateMultipleAliments, // Add this to the context
         notifications,
         markNotificationAsRead,
         deleteNotification,
