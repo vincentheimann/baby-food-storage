@@ -25,10 +25,17 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUpdatedAliment((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name === "quantity" && value < 1) {
+      setUpdatedAliment((prev) => ({
+        ...prev,
+        [name]: 1, // or you could just prevent setting a negative value
+      }));
+    } else {
+      setUpdatedAliment((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSaveClick = () => {

@@ -7,29 +7,56 @@ import { differenceInDays } from "date-fns";
 
 jest.mock("./UserContext");
 
+const ErrorBoundary = ({ children }) => {
+  return (
+    <React.Suspense fallback={<div>Loading...</div>}>{children}</React.Suspense>
+  );
+};
+
 describe("AlimentContext", () => {
-  const mockUser = { email: "demo@example.com" };
-  useUser.mockReturnValue({ user: mockUser });
+  beforeEach(() => {
+    useUser.mockReturnValue({ user: { email: "demo@example.com" } });
+    jest.clearAllMocks();
+  });
 
   test("should initialize demo aliments when user is demo", () => {
     let contextValue;
     render(
-      <AlimentProvider>
-        <AlimentContext.Consumer>
-          {(value) => {
-            contextValue = value;
-            return null;
-          }}
-        </AlimentContext.Consumer>
-      </AlimentProvider>
+      <ErrorBoundary>
+        <AlimentProvider>
+          <AlimentContext.Consumer>
+            {(value) => {
+              contextValue = value;
+              return null;
+            }}
+          </AlimentContext.Consumer>
+        </AlimentProvider>
+      </ErrorBoundary>
     );
 
     expect(contextValue.aliments.length).toBeGreaterThan(0);
   });
 
-  test("should calculate notifications based on expiration dates", () => {
+  test("should initialize empty aliments when user is not demo", () => {
+    useUser.mockReturnValue({ user: { email: "notdemo@example.com" } });
+
     let contextValue;
-    const today = new Date();
+    render(
+      <AlimentProvider>
+        <AlimentContext.Consumer>
+          {(value) => {
+            contextValue = value;
+            return null;
+          }}
+        </AlimentContext.Consumer>
+      </AlimentProvider>
+    );
+
+    expect(contextValue.aliments.length).toBe(0);
+  });
+
+  test("should calculate notifications for expired aliments", () => {
+    let contextValue;
 
     render(
       <AlimentProvider>
@@ -42,17 +69,91 @@ describe("AlimentContext", () => {
       </AlimentProvider>
     );
 
-    const notification = contextValue.notifications.find(
+    const expiredNotification = contextValue.notifications.find(
       (notif) => notif.name === "Chicken"
     );
-
     const diffDays = differenceInDays(
-      new Date(notification.expirationDate),
-      today
+      new Date(expiredNotification.expirationDate),
+      new Date()
     );
-    expect(notification.message).toContain(
-      diffDays < 0 ? "Expired" : "Expires"
+
+    expect(diffDays).toBeLessThan(0);
+    expect(expiredNotification.message).toContain("Expired");
+    expect(expiredNotification.color).toBe("red");
+  });
+
+  test("should calculate notifications for aliments expiring today", () => {
+    let contextValue;
+
+    render(
+      <AlimentProvider>
+        <AlimentContext.Consumer>
+          {(value) => {
+            contextValue = value;
+            return null;
+          }}
+        </AlimentContext.Consumer>
+      </AlimentProvider>
     );
+
+    const today = new Date();
+    const expiringTodayAliment = {
+      id: 11,
+      name: "Bread",
+      freezingDate: "2024-07-30",
+      expirationDate: today.toISOString().split("T")[0],
+      type: "Carbs",
+      quantity: 4,
+    };
+
+    act(() => {
+      contextValue.setAliments([expiringTodayAliment]);
+    });
+
+    const expiringTodayNotification = contextValue.notifications.find(
+      (notif) => notif.id === expiringTodayAliment.id
+    );
+
+    expect(expiringTodayNotification.message).toContain("Expires today");
+    expect(expiringTodayNotification.color).toBe("orange");
+  });
+
+  test("should calculate notifications for aliments expiring in the next 3 days", () => {
+    let contextValue;
+
+    render(
+      <AlimentProvider>
+        <AlimentContext.Consumer>
+          {(value) => {
+            contextValue = value;
+            return null;
+          }}
+        </AlimentContext.Consumer>
+      </AlimentProvider>
+    );
+
+    const today = new Date();
+    const expiringSoonAliment = {
+      id: 12,
+      name: "Milk",
+      freezingDate: "2024-07-30",
+      expirationDate: new Date(today.setDate(today.getDate() + 3))
+        .toISOString()
+        .split("T")[0],
+      type: "Dairy",
+      quantity: 2,
+    };
+
+    act(() => {
+      contextValue.setAliments([expiringSoonAliment]);
+    });
+
+    const expiringSoonNotification = contextValue.notifications.find(
+      (notif) => notif.id === expiringSoonAliment.id
+    );
+
+    expect(expiringSoonNotification.message).toContain("Expires in");
+    expect(expiringSoonNotification.color).toBe("orange");
   });
 
   test("should add a new aliment", () => {
@@ -225,14 +326,16 @@ describe("AlimentContext", () => {
   test("should delete a notification", () => {
     let contextValue;
     render(
-      <AlimentProvider>
-        <AlimentContext.Consumer>
-          {(value) => {
-            contextValue = value;
-            return null;
-          }}
-        </AlimentContext.Consumer>
-      </AlimentProvider>
+      <ErrorBoundary>
+        <AlimentProvider>
+          <AlimentContext.Consumer>
+            {(value) => {
+              contextValue = value;
+              return null;
+            }}
+          </AlimentContext.Consumer>
+        </AlimentProvider>
+      </ErrorBoundary>
     );
 
     const notificationId = contextValue.notifications[0].id;

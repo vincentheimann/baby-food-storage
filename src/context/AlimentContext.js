@@ -17,7 +17,7 @@ export const AlimentProvider = ({ children }) => {
           id: 1,
           name: "Chicken",
           freezingDate: "2024-07-01",
-          expirationDate: "2024-08-01",
+          expirationDate: "2024-08-01", // Set to expire today
           type: "Proteins",
           quantity: 10,
         },
@@ -25,7 +25,7 @@ export const AlimentProvider = ({ children }) => {
           id: 2,
           name: "Carrots",
           freezingDate: "2024-07-05",
-          expirationDate: "2024-08-05",
+          expirationDate: "2024-08-04", // Set to expire in 3 days
           type: "Vegetables",
           quantity: 8,
         },
@@ -135,18 +135,20 @@ export const AlimentProvider = ({ children }) => {
   }, [aliments]);
 
   const addAliment = (newAliment) => {
+    if (newAliment.quantity < 0) {
+      alert("Quantity cannot be negative.");
+      return;
+    }
     setAliments([...aliments, { ...newAliment, id: aliments.length + 1 }]);
   };
 
   const decrementAlimentQuantity = (id) => {
     setAliments(
-      aliments
-        .map((aliment) =>
-          aliment.id === id
-            ? { ...aliment, quantity: aliment.quantity - 1 }
-            : aliment
-        )
-        .filter((aliment) => aliment.quantity > 0)
+      aliments.map((aliment) =>
+        aliment.id === id && aliment.quantity > 0
+          ? { ...aliment, quantity: Math.max(aliment.quantity - 1, 0) }
+          : aliment
+      )
     );
   };
 
@@ -168,7 +170,6 @@ export const AlimentProvider = ({ children }) => {
     );
   };
 
-  // New function to handle bulk updates
   const updateMultipleAliments = (updatedAliments) => {
     setAliments(
       aliments.map((aliment) => {
@@ -205,7 +206,7 @@ export const AlimentProvider = ({ children }) => {
         decrementAlimentQuantity,
         incrementAlimentQuantity,
         updateAliment,
-        updateMultipleAliments, // Add this to the context
+        updateMultipleAliments,
         notifications,
         markNotificationAsRead,
         deleteNotification,

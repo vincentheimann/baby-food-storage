@@ -103,4 +103,41 @@ describe("AlimentModal", () => {
       quantity: 10,
     });
   });
+
+  // Additional Test: Ensure Modal Closes on Cancel
+  test("calls handleClose when Cancel button is clicked", () => {
+    render(
+      <BacContext.Provider value={{ bacs }}>
+        <AlimentModal
+          open={true}
+          handleClose={mockHandleClose}
+          aliment={aliment}
+          handleSave={mockHandleSave}
+        />
+      </BacContext.Provider>
+    );
+
+    fireEvent.click(screen.getByText(/Cancel/i));
+    expect(mockHandleClose).toHaveBeenCalled();
+  });
+
+  // Additional Test: Ensure the type dropdown is populated correctly
+  test("populates the type dropdown with unique values from bacs", () => {
+    render(
+      <BacContext.Provider value={{ bacs }}>
+        <AlimentModal
+          open={true}
+          handleClose={mockHandleClose}
+          aliment={aliment}
+          handleSave={mockHandleSave}
+        />
+      </BacContext.Provider>
+    );
+
+    fireEvent.mouseDown(screen.getByLabelText(/Type/i));
+
+    bacs.forEach((bac) => {
+      expect(screen.getByText(bac.type)).toBeInTheDocument();
+    });
+  });
 });

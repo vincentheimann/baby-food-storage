@@ -15,15 +15,28 @@ const AlimentForm = ({ onSubmit }) => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setValues({
-      ...values,
-      [name]: name === "quantity" ? Number(value) : value,
-    });
+
+    if (name === "quantity") {
+      const quantityValue = Number(value);
+      if (quantityValue >= 1) {
+        setValues({
+          ...values,
+          [name]: quantityValue,
+        });
+      }
+    } else {
+      setValues({
+        ...values,
+        [name]: value,
+      });
+    }
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const validationErrors = {};
+
+    // Existing validation
     if (!values.name) validationErrors.name = "The food name is required";
     if (!values.freezingDate)
       validationErrors.freezingDate = "The freezing date is required";
@@ -104,14 +117,12 @@ const AlimentForm = ({ onSubmit }) => {
         </Grid>
         <Grid item xs={12} md={3}>
           <TextField
-            error={!!errors.quantity}
             label="Number of Ice Cubes"
             name="quantity"
             type="number"
             value={values.quantity}
             onChange={handleChange}
             fullWidth
-            helperText={errors.quantity}
           />
         </Grid>
         <Grid item xs={12} display="flex" justifyContent="flex-end">
