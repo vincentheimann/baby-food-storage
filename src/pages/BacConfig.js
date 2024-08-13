@@ -33,6 +33,11 @@ const BacConfig = () => {
   };
 
   const handleAddBac = () => {
+    if (!newBac.type.trim()) {
+      setError({ type: true });
+      return;
+    }
+
     const typeExists = bacs.some(
       (bac) => bac.type.toLowerCase() === newBac.type.toLowerCase()
     );
@@ -158,7 +163,11 @@ const BacConfig = () => {
               value={newBac.type}
               onChange={(e) => setNewBac({ ...newBac, type: e.target.value })}
               error={error.type}
-              helperText={error.type ? "This type already exists." : ""}
+              helperText={
+                error.type
+                  ? "This field is required or this type already exists."
+                  : ""
+              }
               fullWidth
             />
           </Grid>
