@@ -29,11 +29,13 @@ const Home = () => {
   };
 
   return (
-    <Container maxWidth="lg">
-      <Typography variant="h3" component="h1" gutterBottom>
-        Home
-      </Typography>
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
       <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <Typography variant="h3" component="h1" gutterBottom>
+            Home
+          </Typography>
+        </Grid>
         {bacs.map((bac) => (
           <Grid item xs={12} md={6} key={bac.id}>
             <BacCard

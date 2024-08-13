@@ -51,15 +51,18 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
                   edge="end"
                   aria-label="decrement"
                   onClick={() => onDecrement(aliment.id)}
+                  size="large"
                 >
-                  <RemoveCircleOutlineIcon />
+                  <RemoveCircleOutlineIcon sx={{fontSize:32}} />
                 </IconButton>
                 <IconButton
                   edge="end"
                   aria-label="increment"
                   onClick={() => onIncrement(aliment.id)}
+                  size="large"
+                  sx={{ ml: 2 }}
                 >
-                  <AddCircleOutlineIcon />
+                  <AddCircleOutlineIcon sx={{fontSize:32}} />
                 </IconButton>
               </ListItemSecondaryAction>
             </ListItem>

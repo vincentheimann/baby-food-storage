@@ -72,7 +72,7 @@ const Dashboard = () => {
   }));
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Typography variant="h3" component="h1" gutterBottom>

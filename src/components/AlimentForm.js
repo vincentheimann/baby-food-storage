@@ -109,8 +109,13 @@ const AlimentForm = ({ onSubmit }) => {
             helperText={errors.quantity}
           />
         </Grid>
-        <Grid item xs={12}>
-          <Button type="submit" variant="contained" color="primary">
+        <Grid item xs={12} display="flex" justifyContent="flex-end">
+          <Button
+            type="submit"
+            size="large"
+            variant="contained"
+            color="primary"
+          >
             Add
           </Button>
         </Grid>

@@ -26,8 +26,8 @@ const BacConfig = () => {
   };
 
   return (
-    <Container maxWidth="lg">
-      <Typography variant="h3" component="h1" gutterBottom>
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
+      <Typography variant="h3" component="h1" sx={{mb:4}}>
         Ice Tray Configuration
       </Typography>
       <Stack spacing={3}>
