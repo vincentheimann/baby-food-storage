@@ -34,18 +34,15 @@ const LoginPage = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+
     const emailError = !email;
     const passwordError = !password;
-  
+
     if (emailError || passwordError) {
       setError({ email: emailError, password: passwordError });
-      console.log("Form submission prevented due to errors.");
       return; // Ensure form submission is halted if there are validation errors
     }
-  
-    console.log("Submitting form with:", { email, password });
-  
+
     try {
       await login(email, password);
       navigate("/");
@@ -53,7 +50,6 @@ const LoginPage = () => {
       setGeneralError("Login failed. Please check your credentials.");
     }
   };
-  
 
   const handleDemoLogin = async () => {
     try {
