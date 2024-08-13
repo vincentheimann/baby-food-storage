@@ -90,13 +90,13 @@ describe("BacConfig", () => {
     });
   });
 
-  test("adds a new bac", () => {
+  test("adds a new bac, allowing duplicate types", () => {
     renderBacConfigWithContexts();
     fireEvent.change(screen.getAllByLabelText(/Color/i).pop(), {
       target: { value: "yellow" },
     });
     fireEvent.change(screen.getAllByLabelText(/Type/i).pop(), {
-      target: { value: "Fruits" },
+      target: { value: "Proteins" }, // Allowing a duplicate type
     });
     fireEvent.change(screen.getAllByLabelText(/Capacity/i).pop(), {
       target: { value: 20 },
@@ -104,7 +104,7 @@ describe("BacConfig", () => {
     fireEvent.click(screen.getAllByText(/Add/i).pop());
     expect(mockBacContextValue.addBac).toHaveBeenCalledWith({
       color: "yellow",
-      type: "Fruits",
+      type: "Proteins", // Duplicate type
       capacity: 20,
     });
   });

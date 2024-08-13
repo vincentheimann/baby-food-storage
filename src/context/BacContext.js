@@ -12,10 +12,6 @@ export const BacProvider = ({ children }) => {
     { id: 4, color: "pink", type: "Fruits", capacity: 12 },
   ]);
 
-  const validateBacType = (type, bacs) => {
-    return !bacs.some((bac) => bac.type.toLowerCase() === type.toLowerCase());
-  };
-
   const updateBac = (id, updatedBac) => {
     if (updatedBac.capacity < 1) {
       updatedBac.capacity = 1;
@@ -26,10 +22,6 @@ export const BacProvider = ({ children }) => {
   };
 
   const addBac = (newBac) => {
-    if (!validateBacType(newBac.type, bacs)) {
-      console.error("Bac type already exists");
-      return;
-    }
     if (newBac.capacity < 1) {
       newBac.capacity = 1;
     }

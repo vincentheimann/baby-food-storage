@@ -49,15 +49,6 @@ const BacConfig = () => {
       return;
     }
 
-    const typeExists = bacs.some(
-      (bac) => bac.type.toLowerCase() === newBac.type.toLowerCase()
-    );
-
-    if (typeExists) {
-      setError({ type: true });
-      return;
-    }
-
     setError({ type: false, capacity: false });
     addBac({ ...newBac, capacity: parseInt(newBac.capacity, 10) });
     setNewBac({ color: "", type: "", capacity: 12 });
@@ -75,7 +66,6 @@ const BacConfig = () => {
   };
 
   const handleReassign = () => {
-    // Update aliments with new types
     setAliments((prevAliments) =>
       prevAliments.map((aliment) => {
         const reassignedAliment = alimentsToReassign.find(
@@ -97,8 +87,6 @@ const BacConfig = () => {
       )
     );
   };
-
-  const uniqueTypes = [...new Set(bacs.map((bac) => bac.type))];
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
@@ -126,15 +114,8 @@ const BacConfig = () => {
                 onChange={(e) =>
                   handleUpdateBac(bac.id, "type", e.target.value)
                 }
-                select
                 fullWidth
-              >
-                {uniqueTypes.map((type) => (
-                  <MenuItem key={type} value={type}>
-                    {type}
-                  </MenuItem>
-                ))}
-              </TextField>
+              />
               <TextField
                 label="Capacity"
                 type="number"
@@ -176,11 +157,7 @@ const BacConfig = () => {
               value={newBac.type}
               onChange={(e) => setNewBac({ ...newBac, type: e.target.value })}
               error={error.type}
-              helperText={
-                error.type
-                  ? "This field is required or this type already exists."
-                  : ""
-              }
+              helperText={error.type ? "This field is required." : ""}
               fullWidth
             />
           </Grid>
@@ -222,11 +199,11 @@ const BacConfig = () => {
                 }
                 fullWidth
               >
-                {uniqueTypes
-                  .filter((type) => type !== currentType) // Exclude the type being deleted
-                  .map((type) => (
-                    <MenuItem key={type} value={type}>
-                      {type}
+                {bacs
+                  .filter((bac) => bac.type !== currentType) // Exclude the type being deleted
+                  .map((bac) => (
+                    <MenuItem key={bac.type} value={bac.type}>
+                      {bac.type}
                     </MenuItem>
                   ))}
               </TextField>

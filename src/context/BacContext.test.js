@@ -68,7 +68,7 @@ describe("BacContext", () => {
     expect(updatedBac.capacity).toBe(1);
   });
 
-  test("should add a new bac with a valid type", () => {
+  test("should add a new bac with any type, even if it duplicates an existing one", () => {
     let contextValue;
 
     render(
@@ -83,13 +83,13 @@ describe("BacContext", () => {
     );
 
     act(() => {
-      contextValue.addBac({ color: "purple", type: "Snacks", capacity: 10 });
+      contextValue.addBac({ color: "purple", type: "Proteins", capacity: 10 });
     });
 
     expect(contextValue.bacs.length).toBe(5);
     expect(
       contextValue.bacs.some(
-        (bac) => bac.type === "Snacks" && bac.color === "purple"
+        (bac) => bac.type === "Proteins" && bac.color === "purple"
       )
     ).toBe(true);
   });
