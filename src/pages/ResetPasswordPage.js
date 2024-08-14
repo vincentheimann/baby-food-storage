@@ -8,7 +8,7 @@ import {
   Box,
   Snackbar,
 } from "@mui/material";
-import { resetPassword } from "../services/authService";
+import { resetPassword } from "../services/firebaseAuthService";
 import { useNavigate } from "react-router-dom";
 
 const ResetPasswordPage = () => {

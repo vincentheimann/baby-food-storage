@@ -4,14 +4,14 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import ResetPasswordPage from "./ResetPasswordPage";
 import { useNavigate } from "react-router-dom";
-import { resetPassword } from "../services/authService";
+import { resetPassword } from "../services/firebaseAuthService";
 
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
   useNavigate: jest.fn(),
 }));
 
-jest.mock("../services/authService");
+jest.mock("../services/firebaseAuthService");
 
 describe("ResetPasswordPage", () => {
   const mockNavigate = jest.fn();

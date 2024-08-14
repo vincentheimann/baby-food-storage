@@ -1,4 +1,4 @@
-// src/services/authService.test.js
+// src/services/firebaseAuthService.test.js
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -6,7 +6,13 @@ import {
   signOut,
   sendPasswordResetEmail,
 } from "firebase/auth";
-import { signUp, login, logout, resetPassword, demoLogin } from "./authService";
+import {
+  signUp,
+  login,
+  logout,
+  resetPassword,
+  demoLogin,
+} from "./firebaseAuthService";
 
 jest.mock("firebase/auth", () => ({
   getAuth: jest.fn(() => ({ currentUser: { uid: "123" } })),
@@ -20,7 +26,7 @@ beforeEach(() => {
   jest.clearAllMocks();
 });
 
-describe("authService", () => {
+describe("firebaseAuthService", () => {
   const mockAuth = getAuth();
 
   test("signUp should create a user with email and password", async () => {

@@ -2,9 +2,9 @@ import React from "react";
 import { render, act } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import { UserProvider, UserContext } from "./UserContext";
-import { login, logout, demoLogin } from "../services/authService";
+import { login, logout, demoLogin } from "../services/firebaseAuthService";
 
-jest.mock("../services/authService");
+jest.mock("../services/firebaseAuthService");
 
 describe("UserContext with localStorage", () => {
   let contextValue;
