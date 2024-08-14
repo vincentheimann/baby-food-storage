@@ -36,12 +36,7 @@ const ProfilePage = () => {
     confirmPassword: "",
   });
 
-  const [passwordErrors, setPasswordErrors] = useState({
-    currentPassword: false,
-    newPassword: false,
-    confirmPassword: false,
-  });
-
+  const [passwordErrors, setPasswordErrors] = useState({});
   const [passwordErrorMessages, setPasswordErrorMessages] = useState({
     currentPassword: "",
     newPassword: "",
@@ -49,26 +44,26 @@ const ProfilePage = () => {
   });
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [successMessage, setSuccessMessage] = useState(""); // Add this state
+  const [successMessage, setSuccessMessage] = useState("");
   const [resetPasswordVisible, setResetPasswordVisible] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      const fetchUserData = async () => {
-        try {
-          const userDoc = await getUserProfile(user.uid);
-          if (userDoc) {
-            setValues({
-              firstName: userDoc.firstName,
-              lastName: userDoc.lastName,
-              email: userDoc.email,
-            });
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-          setError("You do not have permission to access this resource.");
+    const fetchUserData = async () => {
+      try {
+        const userDoc = await getUserProfile(user.uid);
+        if (userDoc) {
+          setValues({
+            firstName: userDoc.firstName,
+            lastName: userDoc.lastName,
+            email: userDoc.email,
+          });
         }
-      };
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        setError("You do not have permission to access this resource.");
+      }
+    };
+    if (user) {
       fetchUserData();
     }
   }, [user, setError]);
@@ -76,33 +71,32 @@ const ProfilePage = () => {
   useEffect(() => {
     if (error) {
       if (error.includes("permission")) {
-        navigate("/login"); // Redirect to login if permission error
+        navigate("/login");
       }
-      setError(null); // Clear the error after handling
+      setError(null);
     }
   }, [error, navigate, setError]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setValues({
-      ...values,
-      [name]: value,
-    });
+    setValues((prevValues) => ({ ...prevValues, [name]: value }));
   };
 
   const handlePasswordChange = (event) => {
     const { name, value } = event.target;
-    setPasswordValues({
-      ...passwordValues,
-      [name]: value,
-    });
+    setPasswordValues((prevValues) => ({ ...prevValues, [name]: value }));
   };
 
   const handleProfileSubmit = async (event) => {
     event.preventDefault();
+    if (!values.firstName || !values.lastName || !values.email) {
+      setError("All fields are required.");
+      return;
+    }
+
     try {
       await updateUserProfile(values);
-      setSuccessMessage("Profile updated successfully!"); // Set the success message
+      setSuccessMessage("Profile updated successfully!");
       setSnackbarOpen(true);
     } catch (error) {
       console.error("Profile update failed:", error);
@@ -111,93 +105,60 @@ const ProfilePage = () => {
 
   const handlePasswordSubmit = async (event) => {
     event.preventDefault();
-
-    // Clear previous errors
-    setPasswordErrors({
-      currentPassword: false,
-      newPassword: false,
-      confirmPassword: false,
-    });
-    setPasswordErrorMessages({
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    });
-
     const errors = {
-      currentPassword: passwordValues.currentPassword === "",
-      newPassword: passwordValues.newPassword === "",
+      currentPassword: !passwordValues.currentPassword,
+      newPassword: !passwordValues.newPassword,
       confirmPassword:
         passwordValues.confirmPassword !== passwordValues.newPassword,
     };
-
-    const errorMessages = {
-      currentPassword: errors.currentPassword
-        ? "Current password is required"
-        : "",
-      newPassword: errors.newPassword ? "New password is required" : "",
-      confirmPassword: errors.confirmPassword ? "Passwords do not match" : "",
-    };
-
     setPasswordErrors(errors);
-    setPasswordErrorMessages(errorMessages);
 
-    if (
-      !errors.currentPassword &&
-      !errors.newPassword &&
-      !errors.confirmPassword
+    if (Object.values(errors).some(Boolean)) {
+      return;
+    }
+
+    try {
+      await updateUserPassword(
+        passwordValues.currentPassword,
+        passwordValues.newPassword
+      );
+      setSuccessMessage("Password updated successfully!");
+      setSnackbarOpen(true);
+      setResetPasswordVisible(false);
+    } catch (error) {
+      handlePasswordError(error);
+    }
+  };
+
+  const handlePasswordError = (error) => {
+    if (error.code === "auth/weak-password") {
+      setPasswordErrors({ newPassword: true });
+      setPasswordErrorMessages({
+        newPassword: "Password should be at least 6 characters",
+      });
+    } else if (
+      error.code === "auth/wrong-password" ||
+      error.code === "auth/invalid-credential"
     ) {
-      try {
-        await updateUserPassword(
-          passwordValues.currentPassword,
-          passwordValues.newPassword
-        );
-        setSuccessMessage("Password updated successfully!"); // Set success message for password update
-        setSnackbarOpen(true);
-        setResetPasswordVisible(false); // Hide the reset password button if successful
-      } catch (error) {
-        if (error.code === "auth/weak-password") {
-          setPasswordErrors((prevErrors) => ({
-            ...prevErrors,
-            newPassword: true,
-          }));
-          setPasswordErrorMessages((prevMessages) => ({
-            ...prevMessages,
-            newPassword: "Password should be at least 6 characters",
-          }));
-        } else if (
-          error.code === "auth/wrong-password" ||
-          error.code === "auth/invalid-credential"
-        ) {
-          setPasswordErrors((prevErrors) => ({
-            ...prevErrors,
-            currentPassword: true,
-          }));
-          setPasswordErrorMessages((prevMessages) => ({
-            ...prevMessages,
-            currentPassword: "Current password is incorrect",
-          }));
-        } else if (error.code === "auth/too-many-requests") {
-          setPasswordErrors((prevErrors) => ({
-            ...prevErrors,
-            currentPassword: true,
-          }));
-          setPasswordErrorMessages((prevMessages) => ({
-            ...prevMessages,
-            currentPassword:
-              "Too many attempts. Please try again later or reset your password.",
-          }));
-          setResetPasswordVisible(true); // Show the reset password button
-        } else {
-          console.error("Unexpected error during password update:", error);
-        }
-      }
+      setPasswordErrors({ currentPassword: true });
+      setPasswordErrorMessages({
+        currentPassword: "Current password is incorrect",
+      });
+    } else if (error.code === "auth/too-many-requests") {
+      setPasswordErrors({ currentPassword: true });
+      setPasswordErrorMessages({
+        currentPassword:
+          "Too many attempts. Please try again later or reset your password.",
+      });
+      setResetPasswordVisible(true);
+    } else {
+      console.error("Unexpected error during password update:", error);
     }
   };
 
   const handleResetPassword = () => {
     resetPassword(user.email);
-    setSuccessMessage("Password reset email sent!"); // Set the success message
+    setSuccessMessage("Password reset email sent!");
     setSnackbarOpen(true);
   };
 
@@ -209,7 +170,7 @@ const ProfilePage = () => {
     <Container maxWidth="sm" sx={{ mt: 4, mb: 8 }}>
       <Box display="flex" flexDirection="column" alignItems="center">
         <Avatar sx={{ width: 80, height: 80, mb: 2 }}>
-          {user && user.firstName ? user.firstName.charAt(0) : "U"}
+          {user?.firstName?.charAt(0) || "U"}
         </Avatar>
         <Typography variant="h4" component="h1" gutterBottom>
           My Profile
@@ -222,6 +183,8 @@ const ProfilePage = () => {
             onChange={handleChange}
             fullWidth
             margin="normal"
+            error={!values.firstName}
+            helperText={!values.firstName && "First name is required"}
           />
           <TextField
             label="Last Name"
@@ -230,6 +193,8 @@ const ProfilePage = () => {
             onChange={handleChange}
             fullWidth
             margin="normal"
+            error={!values.lastName}
+            helperText={!values.lastName && "Last name is required"}
           />
           <TextField
             label="Email"
@@ -239,6 +204,8 @@ const ProfilePage = () => {
             onChange={handleChange}
             fullWidth
             margin="normal"
+            error={!values.email}
+            helperText={!values.email && "Email is required"}
           />
           <Button type="submit" variant="contained" color="primary" fullWidth>
             Update Profile
@@ -258,7 +225,10 @@ const ProfilePage = () => {
             fullWidth
             margin="normal"
             error={passwordErrors.currentPassword}
-            helperText={passwordErrorMessages.currentPassword}
+            helperText={
+              passwordErrors.currentPassword &&
+              passwordErrorMessages.currentPassword
+            }
           />
           <TextField
             label="New Password"
@@ -269,7 +239,9 @@ const ProfilePage = () => {
             fullWidth
             margin="normal"
             error={passwordErrors.newPassword}
-            helperText={passwordErrorMessages.newPassword}
+            helperText={
+              passwordErrors.newPassword && passwordErrorMessages.newPassword
+            }
           />
           <TextField
             label="Confirm New Password"
@@ -280,7 +252,10 @@ const ProfilePage = () => {
             fullWidth
             margin="normal"
             error={passwordErrors.confirmPassword}
-            helperText={passwordErrorMessages.confirmPassword}
+            helperText={
+              passwordErrors.confirmPassword &&
+              passwordErrorMessages.confirmPassword
+            }
           />
           <Button type="submit" variant="contained" color="secondary" fullWidth>
             Update Password

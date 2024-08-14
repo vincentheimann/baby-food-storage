@@ -1,72 +1,157 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
+import { BrowserRouter as Router } from "react-router-dom";
 import ProfilePage from "./ProfilePage";
 import { useUser } from "../contexts/UserContext";
+import { getUserProfile } from "../services/firebaseFirestoreDatabaseService";
 
 jest.mock("../contexts/UserContext");
+jest.mock("../services/firebaseFirestoreDatabaseService");
+
+getUserProfile.mockResolvedValue({
+  firstName: "John",
+  lastName: "Doe",
+  email: "john@example.com",
+});
 
 const mockUser = {
-  displayName: "John Doe",
+  uid: "123",
+  firstName: "John",
+  lastName: "Doe",
   email: "john@example.com",
 };
 
-const mockUpdateUser = jest.fn();
+const mockUpdateUserProfile = jest.fn();
+const mockUpdateUserPassword = jest.fn();
+const mockResetPassword = jest.fn();
+const mockSetError = jest.fn();
 
 useUser.mockReturnValue({
   user: mockUser,
-  updateUser: mockUpdateUser,
+  updateUserProfile: mockUpdateUserProfile,
+  updateUserPassword: mockUpdateUserPassword,
+  resetPassword: mockResetPassword,
+  error: null,
+  setError: mockSetError,
 });
 
 describe("ProfilePage", () => {
-  test("renders ProfilePage component with user data", () => {
-    render(<ProfilePage />);
-    expect(screen.getByText(/My Profile/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Name/i).value).toBe(mockUser.displayName);
-    expect(screen.getByLabelText(/Email/i).value).toBe(mockUser.email);
-    expect(screen.getByLabelText(/Password/i).value).toBe("");
+  const renderWithRouter = (ui) => {
+    return render(<Router>{ui}</Router>);
+  };
+
+  test("renders ProfilePage component with user data", async () => {
+    await act(async () => {
+      renderWithRouter(<ProfilePage />);
+    });
+
+    expect(await screen.findByLabelText(/First Name/i)).toHaveValue("John");
+    expect(screen.getByLabelText(/Last Name/i)).toHaveValue("Doe");
+    expect(screen.getByLabelText(/Email/i)).toHaveValue("john@example.com");
   });
 
   test("shows validation errors when fields are empty", async () => {
-    render(<ProfilePage />);
+    await act(async () => {
+      renderWithRouter(<ProfilePage />);
+    });
 
-    fireEvent.change(screen.getByLabelText(/Name/i), { target: { value: "" } });
+    fireEvent.change(screen.getByLabelText(/First Name/i), {
+      target: { value: "" },
+    });
+    fireEvent.change(screen.getByLabelText(/Last Name/i), {
+      target: { value: "" },
+    });
     fireEvent.change(screen.getByLabelText(/Email/i), {
       target: { value: "" },
     });
-    fireEvent.change(screen.getByLabelText(/Password/i), {
-      target: { value: "" },
-    });
 
-    fireEvent.click(screen.getByRole("button", { name: /Update/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Update Profile/i }));
 
-    expect(screen.getByText("Name is required")).toBeInTheDocument();
-    expect(screen.getByText("Email is required")).toBeInTheDocument();
-    expect(screen.getByText("Password is required")).toBeInTheDocument();
-
-    expect(mockUpdateUser).not.toHaveBeenCalled();
+    expect(screen.getByText(/First name is required/i)).toBeInTheDocument();
+    expect(screen.getByText(/Last name is required/i)).toBeInTheDocument();
+    expect(screen.getByText(/Email is required/i)).toBeInTheDocument();
   });
 
-  test("calls updateUser on form submit when fields are valid", async () => {
-    render(<ProfilePage />);
-    fireEvent.change(screen.getByLabelText(/Name/i), {
-      target: { value: "Jane Doe" },
+  test("calls updateUserProfile on form submit when fields are valid", async () => {
+    await act(async () => {
+      renderWithRouter(<ProfilePage />);
+    });
+
+    fireEvent.change(screen.getByLabelText(/First Name/i), {
+      target: { value: "Jane" },
+    });
+    fireEvent.change(screen.getByLabelText(/Last Name/i), {
+      target: { value: "Doe" },
     });
     fireEvent.change(screen.getByLabelText(/Email/i), {
       target: { value: "jane@example.com" },
     });
-    fireEvent.change(screen.getByLabelText(/Password/i), {
+
+    fireEvent.click(screen.getByRole("button", { name: /Update Profile/i }));
+
+    await waitFor(() => {
+      expect(mockUpdateUserProfile).toHaveBeenCalledWith({
+        firstName: "Jane",
+        lastName: "Doe",
+        email: "jane@example.com",
+      });
+    });
+  });
+
+  test("calls updateUserPassword on form submit when passwords are valid", async () => {
+    await act(async () => {
+      renderWithRouter(<ProfilePage />);
+    });
+
+    fireEvent.change(screen.getByLabelText("Current Password"), {
+      target: { value: "oldpassword" },
+    });
+    fireEvent.change(screen.getByLabelText("New Password"), {
+      target: { value: "newpassword" },
+    });
+    fireEvent.change(screen.getByLabelText("Confirm New Password"), {
       target: { value: "newpassword" },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: /Update/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Update Password/i }));
 
     await waitFor(() => {
-      expect(mockUpdateUser).toHaveBeenCalledWith({
-        name: "Jane Doe",
-        email: "jane@example.com",
-        password: "newpassword",
-      });
+      expect(mockUpdateUserPassword).toHaveBeenCalledWith(
+        "oldpassword",
+        "newpassword"
+      );
     });
+  });
+
+  test("shows error message when passwords do not match", async () => {
+    await act(async () => {
+      renderWithRouter(<ProfilePage />);
+    });
+
+    fireEvent.change(screen.getByLabelText("Current Password"), {
+      target: { value: "oldpassword" },
+    });
+    fireEvent.change(screen.getByLabelText("New Password"), {
+      target: { value: "newpassword1" },
+    });
+    fireEvent.change(screen.getByLabelText("Confirm New Password"), {
+      target: { value: "newpassword2" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Update Password/i }));
+
+    await waitFor(() => {
+      const errorMessage = screen.queryByText("Passwords do not match");
+      expect(errorMessage).toBeInTheDocument();
+    });
+
+    expect(mockUpdateUserPassword).not.toHaveBeenCalled();
   });
 });
