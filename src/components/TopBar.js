@@ -20,8 +20,8 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate } from "react-router-dom";
-import { AlimentContext } from "../context/AlimentContext";
-import { useUser } from "../context/UserContext";
+import { AlimentContext } from "../contexts/AlimentContext";
+import { useUser } from "../contexts/UserContext";
 
 const TopBar = () => {
   const [anchorEl, setAnchorEl] = useState(null);

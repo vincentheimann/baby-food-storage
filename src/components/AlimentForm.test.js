@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import AlimentForm from "./AlimentForm";
-import { BacContext } from "../context/BacContext";
+import { BacContext } from "../contexts/BacContext";
 
 const mockSubmit = jest.fn();
 const mockBacs = [

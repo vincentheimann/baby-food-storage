@@ -1,27 +1,46 @@
-// src/pages/SignUpPage.js
 import React, { useState } from "react";
 import { TextField, Button, Container, Typography, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../contexts/UserContext";
 
-const SignUpPage = ({ onSignUp }) => {
-  const [values, setValues] = useState({ name: "", email: "", password: "" });
+const SignUpPage = () => {
+  const [values, setValues] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const { signUp: handleSignUp } = useUser();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
     setValues({ ...values, [name]: value });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const validationErrors = {};
-    if (!values.name) validationErrors.name = "Name required";
+    if (!values.firstName) validationErrors.firstName = "First name required";
+    if (!values.lastName) validationErrors.lastName = "Last name required";
     if (!values.email) validationErrors.email = "Email is required";
     if (!values.password) validationErrors.password = "Password required";
     setErrors(validationErrors);
+
     if (Object.keys(validationErrors).length === 0) {
-      onSignUp(values);
+      try {
+        await handleSignUp(
+          values.email,
+          values.password,
+          values.firstName,
+          values.lastName
+        );
+        navigate("/");
+      } catch (error) {
+        console.error("Error during sign-up:", error);
+        // Handle error feedback here
+      }
     }
   };
 
@@ -33,13 +52,23 @@ const SignUpPage = ({ onSignUp }) => {
         </Typography>
         <form onSubmit={handleSubmit}>
           <TextField
-            error={!!errors.name}
-            label="Name"
-            name="name"
-            value={values.name}
+            error={!!errors.firstName}
+            label="First Name"
+            name="firstName"
+            value={values.firstName}
             onChange={handleChange}
             fullWidth
-            helperText={errors.name}
+            helperText={errors.firstName}
+            margin="normal"
+          />
+          <TextField
+            error={!!errors.lastName}
+            label="Last Name"
+            name="lastName"
+            value={values.lastName}
+            onChange={handleChange}
+            fullWidth
+            helperText={errors.lastName}
             margin="normal"
           />
           <TextField

@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import AlimentModal from "./AlimentModal";
-import { BacContext } from "../context/BacContext";
+import { BacContext } from "../contexts/BacContext";
 
 const mockHandleSave = jest.fn();
 const mockHandleClose = jest.fn();

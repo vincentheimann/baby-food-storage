@@ -2,9 +2,9 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import ProfilePage from "./ProfilePage";
-import { useUser } from "../context/UserContext";
+import { useUser } from "../contexts/UserContext";
 
-jest.mock("../context/UserContext");
+jest.mock("../contexts/UserContext");
 
 const mockUser = {
   displayName: "John Doe",

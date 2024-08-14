@@ -2,8 +2,8 @@ import React from "react";
 import { render, screen, within } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import Dashboard from "./Dashboard";
-import { BacContext } from "../context/BacContext";
-import AlimentContext from "../context/AlimentContext";
+import { BacContext } from "../contexts/BacContext";
+import AlimentContext from "../contexts/AlimentContext";
 
 // Mock data with properly formatted dates
 const mockBacs = [

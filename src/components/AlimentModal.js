@@ -12,7 +12,7 @@ import {
   FormControl,
   FormHelperText,
 } from "@mui/material";
-import { BacContext } from "../context/BacContext";
+import { BacContext } from "../contexts/BacContext";
 
 const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
   const { bacs } = useContext(BacContext); // Access types from BacContext

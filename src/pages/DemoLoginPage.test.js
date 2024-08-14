@@ -3,7 +3,7 @@ import { render, screen, fireEvent, act } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import { BrowserRouter } from "react-router-dom";
 import DemoLoginPage from "./DemoLoginPage";
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "../contexts/UserContext";
 
 const mockDemoLogin = jest.fn();
 

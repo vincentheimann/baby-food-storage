@@ -3,8 +3,8 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import { BrowserRouter } from "react-router-dom";
 import Home from "./Home";
-import { BacContext } from "../context/BacContext";
-import AlimentContext from "../context/AlimentContext";
+import { BacContext } from "../contexts/BacContext";
+import AlimentContext from "../contexts/AlimentContext";
 
 const mockBacs = [
   { id: 1, color: "blue", type: "Proteins" },

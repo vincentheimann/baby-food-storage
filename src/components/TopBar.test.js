@@ -3,8 +3,8 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import { BrowserRouter } from "react-router-dom";
 import TopBar from "./TopBar";
-import { AlimentContext } from "../context/AlimentContext";
-import { UserContext } from "../context/UserContext";
+import { AlimentContext } from "../contexts/AlimentContext";
+import { UserContext } from "../contexts/UserContext";
 
 const mockAlimentContextValue = {
   notifications: [],

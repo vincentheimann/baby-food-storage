@@ -2,8 +2,8 @@ import React from "react";
 import { render, screen, fireEvent, within } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import BacConfig from "./BacConfig";
-import { BacContext } from "../context/BacContext";
-import { AlimentContext } from "../context/AlimentContext";
+import { BacContext } from "../contexts/BacContext";
+import { AlimentContext } from "../contexts/AlimentContext";
 
 const mockBacs = [
   { id: 1, color: "blue", type: "Proteins", capacity: 12 },

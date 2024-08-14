@@ -14,9 +14,9 @@ import Notifications from "./pages/Notifications";
 import BacConfig from "./pages/BacConfig";
 import ProfilePage from "./pages/ProfilePage";
 import TopBar from "./components/TopBar";
-import { BacProvider } from "./context/BacContext";
-import { AlimentProvider } from "./context/AlimentContext";
-import { UserProvider, useUser } from "./context/UserContext";
+import { BacProvider } from "./contexts/BacContext";
+import { AlimentProvider } from "./contexts/AlimentContext";
+import { UserProvider, useUser } from "./contexts/UserContext";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
@@ -58,15 +58,15 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <UserProvider>
-        <BacProvider>
-          <AlimentProvider>
-            <Router>
+      <Router>
+        <UserProvider>
+          <BacProvider>
+            <AlimentProvider>
               <AppContent />
-            </Router>
-          </AlimentProvider>
-        </BacProvider>
-      </UserProvider>
+            </AlimentProvider>
+          </BacProvider>
+        </UserProvider>
+      </Router>
     </ThemeProvider>
   );
 };

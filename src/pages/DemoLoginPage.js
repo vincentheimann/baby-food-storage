@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Button, Container, Typography, Box } from "@mui/material";
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 
 const DemoLoginPage = () => {

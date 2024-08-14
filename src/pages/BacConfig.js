@@ -15,8 +15,8 @@ import {
   DialogTitle,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { BacContext } from "../context/BacContext";
-import { AlimentContext } from "../context/AlimentContext";
+import { BacContext } from "../contexts/BacContext";
+import { AlimentContext } from "../contexts/AlimentContext";
 
 const BacConfig = () => {
   const { bacs, updateBac, addBac, removeBac } = useContext(BacContext);

@@ -10,9 +10,11 @@ import {
   Grid,
   Typography,
   Link,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { useUser } from "../context/UserContext";
+import { useUser } from "../contexts/UserContext";
 
 const LoginPage = () => {
   const { login, demoLogin } = useUser();
@@ -22,10 +24,11 @@ const LoginPage = () => {
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState({ email: false, password: false });
   const [generalError, setGeneralError] = React.useState("");
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
 
   useEffect(() => {
     if (generalError) {
-      // Handle side-effects like logging errors, etc.
+      setSnackbarOpen(true); // Open Snackbar when there is a general error
     }
   }, [generalError]);
 
@@ -55,6 +58,11 @@ const LoginPage = () => {
     } catch (error) {
       setGeneralError("Demo login failed. Please try again.");
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+    setGeneralError(""); // Clear the general error after Snackbar is closed
   };
 
   return (
@@ -133,11 +141,6 @@ const LoginPage = () => {
                 error={error.password}
                 helperText={error.password ? "Password is required" : ""}
               />
-              {generalError && (
-                <Typography color="error" variant="body2">
-                  {generalError}
-                </Typography>
-              )}
               <Button
                 type="submit"
                 fullWidth
@@ -172,6 +175,20 @@ const LoginPage = () => {
           </Box>
         </Grid>
       </Grid>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {generalError}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

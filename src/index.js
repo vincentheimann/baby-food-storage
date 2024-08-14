@@ -3,9 +3,9 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { UserProvider } from "./context/UserContext";
-import { AlimentProvider } from "./context/AlimentContext";
-import { BacProvider } from "./context/BacContext";
+import { UserProvider } from "./contexts/UserContext";
+import { AlimentProvider } from "./contexts/AlimentContext";
+import { BacProvider } from "./contexts/BacContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
