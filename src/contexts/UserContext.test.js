@@ -2,9 +2,14 @@ import React from "react";
 import { render, act } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import { UserProvider, UserContext } from "./UserContext";
-import { login, logout, demoLogin } from "../services/firebaseAuthService";
+import { login, logout } from "../services/firebaseAuthService";
+import { createUserProfile } from "../services/firebaseFirestoreDatabaseService";
 
 jest.mock("../services/firebaseAuthService");
+jest.mock("../services/firebaseFirestoreDatabaseService", () => ({
+  createUserProfile: jest.fn(),
+  updateUserProfileInFirestore: jest.fn(),
+}));
 
 describe("UserContext with localStorage", () => {
   let contextValue;
@@ -31,6 +36,7 @@ describe("UserContext with localStorage", () => {
 
     const mockUser = { email: "test@example.com" };
     login.mockResolvedValueOnce({ user: mockUser });
+    createUserProfile.mockResolvedValueOnce(); // Mock Firestore profile creation
 
     await act(async () => {
       await contextValue.login("test@example.com", "password");
@@ -56,6 +62,7 @@ describe("UserContext with localStorage", () => {
 
     const mockUser = { email: "test@example.com" };
     login.mockResolvedValueOnce({ user: mockUser });
+    createUserProfile.mockResolvedValueOnce(); // Mock Firestore profile creation
 
     await act(async () => {
       await contextValue.login("test@example.com", "password");
