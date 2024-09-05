@@ -1,47 +1,45 @@
 import { createTheme } from "@mui/material/styles";
-import "@fontsource/poppins/400.css"; // Variante Regular
-import "@fontsource/poppins/700.css"; // Variante Bold
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#FF4081", // Rose vif
+      main: "#00B8D9", // Turquoise Vif
       contrastText: "#FFFFFF", // Texte blanc pour un bon contraste
     },
     secondary: {
-      main: "#4781ff", // Bleu vif
+      main: "#FF7043", // Orange Chaud
       contrastText: "#FFFFFF", // Texte blanc pour un bon contraste
     },
     error: {
-      main: "#F44336", // Rouge vif pour les erreurs
+      main: "#D32F2F", // Rouge Foncé pour les erreurs
       contrastText: "#FFFFFF", // Texte blanc
     },
     warning: {
-      main: "#FFEB3B", // Jaune vif pour les avertissements
-      contrastText: "#333333", // Texte noir/gris très foncé pour assurer la lisibilité
+      main: "#FFB300", // Ambre Foncé pour les avertissements
+      contrastText: "#212121", // Texte noir/gris très foncé pour assurer la lisibilité
     },
     info: {
-      main: "#2196F3", // Bleu clair vif pour les informations
+      main: "#1976D2", // Bleu Foncé pour les informations
       contrastText: "#FFFFFF", // Texte blanc
     },
     success: {
-      main: "#4CAF50", // Vert vif pour les succès
+      main: "#388E3C", // Vert Foncé pour les succès
       contrastText: "#FFFFFF", // Texte blanc
     },
     background: {
-      default: "#fef6f8", // Fond général légèrement gris
+      default: "#F5F5F5", // Fond général gris clair neutre
       paper: "#FFFFFF", // Fond des cartes et des modals
     },
     text: {
-      primary: "#212121", // Texte principal en gris très foncé
-      secondary: "#757575", // Texte secondaire en gris moyen
-      disabled: "#BDBDBD", // Texte désactivé en gris clair
+      primary: "#212121", // Texte principal en noir
+      secondary: "#37474F", // Texte secondaire en bleu gris foncé
+      disabled: "#BDBDBD", // Texte désactivé en gris moyen
     },
     action: {
-      active: "#FF4081", // Couleur pour les icônes actives
+      active: "#00B8D9", // Couleur pour les icônes actives
       disabled: "#BDBDBD", // Couleur pour les icônes désactivées
-      hover: "#ffdde9", // Hover sur les éléments interactifs
-      selected: "#FF579C", // Éléments sélectionnés
+      hover: "#E0F7FA", // Hover sur les éléments interactifs
+      selected: "#00796B", // Éléments sélectionnés
     },
   },
   typography: {
@@ -101,9 +99,9 @@ const theme = createTheme({
           padding: "8px 16px",
         },
         containedPrimary: {
-          backgroundColor: "#FF4081",
+          backgroundColor: "#00B8D9",
           "&:hover": {
-            backgroundColor: "#ffdde9",
+            backgroundColor: "#E0F7FA",
           },
           "&:disabled": {
             backgroundColor: "#BDBDBD",
@@ -111,9 +109,9 @@ const theme = createTheme({
           },
         },
         containedSecondary: {
-          backgroundColor: "#4781ff",
+          backgroundColor: "#FF7043",
           "&:hover": {
-            backgroundColor: "#5C6BC0",
+            backgroundColor: "#FF8A65",
           },
           "&:disabled": {
             backgroundColor: "#BDBDBD",
@@ -135,7 +133,7 @@ const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: "#FF4081", // Couleur de l'AppBar
+          backgroundColor: "#00B8D9", // Couleur de l'AppBar
           color: "#FFFFFF",
         },
       },
