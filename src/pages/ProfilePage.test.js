@@ -132,12 +132,13 @@ describe("ProfilePage", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /Update Password/i }));
 
-    // Use findByText to implicitly wrap in act()
-    expect(
-      await screen.findByText(/new password does not match/i)
-    ).toBeInTheDocument();
+    // Use a custom matcher function to find the error message
+    const errorMessage = await screen.findByText((content, element) =>
+      content.includes("Passwords do not match")
+    );
 
-    // Ensure updateUserPassword has not been called
+    expect(errorMessage).toBeInTheDocument();
+
     expect(mockUpdateUserPassword).not.toHaveBeenCalled();
   });
 });

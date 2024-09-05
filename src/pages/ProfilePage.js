@@ -115,9 +115,10 @@ const ProfilePage = () => {
 
     setPasswordErrors(errors);
 
-    // Ensure the state updates before proceeding
+    // Ensure state updates happen before continuing
     await new Promise((resolve) => setTimeout(resolve, 0));
 
+    // Early return if there are any errors
     if (Object.values(errors).some(Boolean)) {
       return;
     }
@@ -129,7 +130,6 @@ const ProfilePage = () => {
       );
       setSuccessMessage("Password updated successfully!");
       setSnackbarOpen(true);
-      setResetPasswordVisible(false);
     } catch (error) {
       handlePasswordError(error);
     }
