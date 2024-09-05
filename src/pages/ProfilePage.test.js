@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  act,
-} from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import { BrowserRouter as Router } from "react-router-dom";
 import ProfilePage from "./ProfilePage";
@@ -48,19 +42,16 @@ describe("ProfilePage", () => {
   };
 
   test("renders ProfilePage component with user data", async () => {
-    await act(async () => {
-      renderWithRouter(<ProfilePage />);
-    });
+    renderWithRouter(<ProfilePage />);
 
+    // Using findBy* handles asynchronous updates and resolves the act warning
     expect(await screen.findByLabelText(/First Name/i)).toHaveValue("John");
     expect(screen.getByLabelText(/Last Name/i)).toHaveValue("Doe");
     expect(screen.getByLabelText(/Email/i)).toHaveValue("john@example.com");
   });
 
   test("shows validation errors when fields are empty", async () => {
-    await act(async () => {
-      renderWithRouter(<ProfilePage />);
-    });
+    renderWithRouter(<ProfilePage />);
 
     fireEvent.change(screen.getByLabelText(/First Name/i), {
       target: { value: "" },
@@ -80,9 +71,7 @@ describe("ProfilePage", () => {
   });
 
   test("calls updateUserProfile on form submit when fields are valid", async () => {
-    await act(async () => {
-      renderWithRouter(<ProfilePage />);
-    });
+    renderWithRouter(<ProfilePage />);
 
     fireEvent.change(screen.getByLabelText(/First Name/i), {
       target: { value: "Jane" },
@@ -106,9 +95,7 @@ describe("ProfilePage", () => {
   });
 
   test("calls updateUserPassword on form submit when passwords are valid", async () => {
-    await act(async () => {
-      renderWithRouter(<ProfilePage />);
-    });
+    renderWithRouter(<ProfilePage />);
 
     fireEvent.change(screen.getByLabelText("Current Password"), {
       target: { value: "oldpassword" },
@@ -131,9 +118,7 @@ describe("ProfilePage", () => {
   });
 
   test("shows error message when passwords do not match", async () => {
-    await act(async () => {
-      renderWithRouter(<ProfilePage />);
-    });
+    renderWithRouter(<ProfilePage />);
 
     fireEvent.change(screen.getByLabelText("Current Password"), {
       target: { value: "oldpassword" },
@@ -147,11 +132,12 @@ describe("ProfilePage", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /Update Password/i }));
 
-    await waitFor(() => {
-      const errorMessage = screen.queryByText("Passwords do not match");
-      expect(errorMessage).toBeInTheDocument();
-    });
+    // Use findByText to implicitly wrap in act()
+    expect(
+      await screen.findByText(/new password does not match/i)
+    ).toBeInTheDocument();
 
+    // Ensure updateUserPassword has not been called
     expect(mockUpdateUserPassword).not.toHaveBeenCalled();
   });
 });

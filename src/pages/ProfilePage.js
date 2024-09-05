@@ -105,13 +105,18 @@ const ProfilePage = () => {
 
   const handlePasswordSubmit = async (event) => {
     event.preventDefault();
+
     const errors = {
       currentPassword: !passwordValues.currentPassword,
       newPassword: !passwordValues.newPassword,
       confirmPassword:
         passwordValues.confirmPassword !== passwordValues.newPassword,
     };
+
     setPasswordErrors(errors);
+
+    // Ensure the state updates before proceeding
+    await new Promise((resolve) => setTimeout(resolve, 0));
 
     if (Object.values(errors).some(Boolean)) {
       return;
@@ -227,7 +232,8 @@ const ProfilePage = () => {
             error={passwordErrors.currentPassword}
             helperText={
               passwordErrors.currentPassword &&
-              passwordErrorMessages.currentPassword
+              (passwordErrorMessages.currentPassword ||
+                "Current password is required")
             }
           />
           <TextField
@@ -240,7 +246,8 @@ const ProfilePage = () => {
             margin="normal"
             error={passwordErrors.newPassword}
             helperText={
-              passwordErrors.newPassword && passwordErrorMessages.newPassword
+              passwordErrors.newPassword &&
+              (passwordErrorMessages.newPassword || "New password is required")
             }
           />
           <TextField
@@ -254,7 +261,8 @@ const ProfilePage = () => {
             error={passwordErrors.confirmPassword}
             helperText={
               passwordErrors.confirmPassword &&
-              passwordErrorMessages.confirmPassword
+              (passwordErrorMessages.confirmPassword ||
+                "New password does not match")
             }
           />
           <Button type="submit" variant="contained" color="secondary" fullWidth>
