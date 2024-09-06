@@ -52,6 +52,7 @@ const LoginPage = () => {
   };
 
   const handleDemoLogin = async () => {
+    console.log("Demo login called");
     try {
       await demoLogin();
       navigate("/");
@@ -150,7 +151,7 @@ const LoginPage = () => {
               >
                 Sign In
               </Button>
-              <Button
+              {/* <Button
                 onClick={handleDemoLogin}
                 fullWidth
                 variant="outlined"
@@ -158,7 +159,7 @@ const LoginPage = () => {
                 data-testid="demo-login-button"
               >
                 Demo account login
-              </Button>
+              </Button> */}
               <Grid container>
                 <Grid item xs>
                   <Link href="/reset-password" variant="body2">
