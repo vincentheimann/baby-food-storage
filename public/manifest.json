@@ -15,7 +15,7 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#FF4081",
-  "background_color": "#fef6f8",
+  "theme_color": "#00B8D9",
+  "background_color": "#F5F5F5",
   "description": "Organize with Love, Feed with Care."
 }
