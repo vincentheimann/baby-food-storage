@@ -13,9 +13,11 @@ import {
   FormHelperText,
 } from "@mui/material";
 import { BacContext } from "../contexts/BacContext";
+import { AlimentContext } from "../contexts/AlimentContext";
 
 const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
   const { bacs } = useContext(BacContext); // Access types from BacContext
+  const { updateAliment } = useContext(AlimentContext); // Firestore update
   const [updatedAliment, setUpdatedAliment] = useState({ ...aliment });
   const [errors, setErrors] = useState({});
 
@@ -28,7 +30,7 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
     if (name === "quantity" && value < 1) {
       setUpdatedAliment((prev) => ({
         ...prev,
-        [name]: 1, // or you could just prevent setting a negative value
+        [name]: 1,
       }));
     } else {
       setUpdatedAliment((prev) => ({
@@ -50,10 +52,7 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      handleSave({
-        ...updatedAliment,
-        quantity: Number(updatedAliment.quantity),
-      });
+      updateAliment(updatedAliment); // Update aliment in Firestore
       handleClose();
     }
   };

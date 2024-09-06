@@ -1,12 +1,19 @@
-import React from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { List, ListItem, ListItemText, Typography, Box } from "@mui/material";
 import { formatDate } from "../utils/dateUtils";
+import { AlimentContext } from "../contexts/AlimentContext";
 
-const AlimentPriorityList = ({ aliments }) => {
-  // Sort foods by Expiration date
-  const sortedAliments = aliments.sort(
-    (a, b) => new Date(a.expirationDate) - new Date(b.expirationDate)
-  );
+const AlimentPriorityList = () => {
+  const { aliments } = useContext(AlimentContext);
+  const [sortedAliments, setSortedAliments] = useState([]);
+
+  useEffect(() => {
+    // Sort aliments by expiration date
+    const sorted = aliments.sort(
+      (a, b) => new Date(a.expirationDate) - new Date(b.expirationDate)
+    );
+    setSortedAliments(sorted);
+  }, [aliments]);
 
   return (
     <>
@@ -22,11 +29,9 @@ const AlimentPriorityList = ({ aliments }) => {
             <ListItem key={aliment.id}>
               <ListItemText
                 primary={`${aliment.name} (${aliment.type})`}
-                secondary={`Frozen on: ${formatDate(
-                  aliment.freezingDate
-                )} | Expiration: ${formatDate(
-                  aliment.expirationDate
-                )} | Quantity: ${aliment.quantity} cubes`}
+                secondary={`Frozen on: ${formatDate(aliment.freezingDate)} | 
+                Expiration: ${formatDate(aliment.expirationDate)} | 
+                Quantity: ${aliment.quantity} cubes`}
               />
             </ListItem>
           ))}

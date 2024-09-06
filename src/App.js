@@ -23,35 +23,40 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import PageNotFound from "./pages/PageNotFound";
 
 const AppContent = () => {
-  const { isAuthenticated, user } = useUser(); // Get userId from user context
+  const { isAuthenticated, user } = useUser();
 
-  return (
-    <>
-      {isAuthenticated && <TopBar />}
+  if (!isAuthenticated) {
+    return (
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
-        {isAuthenticated ? (
-          <Route path="*" element={<ProtectedRoutes userId={user?.uid} />} />
-        ) : (
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        )}
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
+    );
+  }
+
+  return (
+    <>
+      <TopBar />
+      <BacProvider userId={user.uid}>
+        <AlimentProvider userId={user.uid}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route
+              path="/config-bacs"
+              element={<BacConfig userId={user.uid} />}
+            />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="*" element={<PageNotFound />} />
+          </Routes>
+        </AlimentProvider>
+      </BacProvider>
     </>
   );
 };
-
-const ProtectedRoutes = ({ userId }) => (
-  <Routes>
-    <Route path="/" element={<Home />} />
-    <Route path="/dashboard" element={<Dashboard />} />
-    <Route path="/notifications" element={<Notifications />} />
-    <Route path="/config-bacs" element={<BacConfig userId={userId} />} />
-    <Route path="/profile" element={<ProfilePage />} />
-    <Route path="*" element={<PageNotFound />} />
-  </Routes>
-);
 
 const App = () => {
   return (
@@ -59,11 +64,7 @@ const App = () => {
       <CssBaseline />
       <Router>
         <UserProvider>
-          <BacProvider userId={useUser()?.user?.uid}>
-            <AlimentProvider userId={useUser()?.user?.uid}>
-              <AppContent />
-            </AlimentProvider>
-          </BacProvider>
+          <AppContent />
         </UserProvider>
       </Router>
     </ThemeProvider>

@@ -1,14 +1,32 @@
 import React, { createContext, useState, useEffect } from "react";
 import { differenceInDays } from "date-fns";
 import { useUser } from "./UserContext";
+import {
+  addAlimentToFirestore,
+  updateAlimentInFirestore,
+  deleteAlimentFromFirestore,
+  getAlimentsFromFirestore,
+} from "../services/firebaseFirestoreDatabaseService";
 
 export const AlimentContext = createContext();
 
 export const AlimentProvider = ({ children, userId }) => {
   const [aliments, setAliments] = useState([]);
   const { user } = useUser();
-
   const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    const fetchAliments = async () => {
+      if (!userId) return; // Ensure userId is available before fetching
+      try {
+        const fetchedAliments = await getAlimentsFromFirestore(userId);
+        setAliments(fetchedAliments);
+      } catch (error) {
+        console.error("Error fetching aliments: ", error);
+      }
+    };
+    fetchAliments();
+  }, [user, userId]);
 
   useEffect(() => {
     const today = new Date();
@@ -44,49 +62,64 @@ export const AlimentProvider = ({ children, userId }) => {
     setNotifications(updatedNotifications);
   }, [aliments]);
 
-  const addAliment = (newAliment) => {
-    if (newAliment.quantity < 0) {
-      alert("Quantity cannot be negative.");
-      return;
+  const addAliment = async (newAliment) => {
+    try {
+      await addAlimentToFirestore(userId, newAliment);
+      const updatedAliments = await getAlimentsFromFirestore(userId);
+      setAliments(updatedAliments);
+    } catch (error) {
+      console.error("Error adding aliment:", error);
     }
-    setAliments([...aliments, { ...newAliment, id: aliments.length + 1 }]);
   };
 
-  const decrementAlimentQuantity = (id) => {
-    setAliments(
-      aliments.map((aliment) =>
-        aliment.id === id && aliment.quantity > 0
-          ? { ...aliment, quantity: Math.max(aliment.quantity - 1, 0) }
-          : aliment
-      )
-    );
+  const updateAliment = async (updatedAliment) => {
+    try {
+      await updateAlimentInFirestore(userId, updatedAliment.id, updatedAliment);
+      const updatedAliments = await getAlimentsFromFirestore(userId);
+      setAliments(updatedAliments);
+    } catch (error) {
+      console.error("Error updating aliment:", error);
+    }
   };
 
-  const incrementAlimentQuantity = (id) => {
-    setAliments(
-      aliments.map((aliment) =>
-        aliment.id === id
-          ? { ...aliment, quantity: aliment.quantity + 1 }
-          : aliment
-      )
-    );
+  const deleteAliment = async (id) => {
+    try {
+      await deleteAlimentFromFirestore(userId, id);
+      const updatedAliments = await getAlimentsFromFirestore(userId);
+      setAliments(updatedAliments);
+    } catch (error) {
+      console.error("Error deleting aliment:", error);
+    }
   };
 
-  const updateAliment = (updatedAliment) => {
-    setAliments(
-      aliments.map((aliment) =>
-        aliment.id === updatedAliment.id ? updatedAliment : aliment
-      )
-    );
+  const decrementAlimentQuantity = async (id) => {
+    const aliment = aliments.find((aliment) => aliment.id === id);
+    if (aliment && aliment.quantity > 0) {
+      const updatedAliment = {
+        ...aliment,
+        quantity: Math.max(aliment.quantity - 1, 0),
+      };
+      await updateAliment(updatedAliment);
+    }
   };
 
-  const updateMultipleAliments = (updatedAliments) => {
-    setAliments(
-      aliments.map((aliment) => {
-        const updated = updatedAliments.find((item) => item.id === aliment.id);
-        return updated ? { ...aliment, type: updated.type } : aliment;
-      })
-    );
+  const incrementAlimentQuantity = async (id) => {
+    const aliment = aliments.find((aliment) => aliment.id === id);
+    if (aliment) {
+      const updatedAliment = {
+        ...aliment,
+        quantity: aliment.quantity + 1,
+      };
+      await updateAliment(updatedAliment);
+    }
+  };
+
+  const updateMultipleAliments = async (updatedAliments) => {
+    const updated = aliments.map((aliment) => {
+      const match = updatedAliments.find((item) => item.id === aliment.id);
+      return match ? { ...aliment, type: match.type } : aliment;
+    });
+    setAliments(updated);
   };
 
   const markNotificationAsRead = (id) => {
@@ -117,6 +150,7 @@ export const AlimentProvider = ({ children, userId }) => {
         incrementAlimentQuantity,
         updateAliment,
         updateMultipleAliments,
+        deleteAliment,
         notifications,
         markNotificationAsRead,
         deleteNotification,
@@ -127,5 +161,3 @@ export const AlimentProvider = ({ children, userId }) => {
     </AlimentContext.Provider>
   );
 };
-
-export default AlimentContext;

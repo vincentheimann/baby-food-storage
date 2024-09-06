@@ -1,9 +1,12 @@
 import React, { useState, useContext } from "react";
 import { TextField, Button, Grid, MenuItem } from "@mui/material";
 import { BacContext } from "../contexts/BacContext";
+import { AlimentContext } from "../contexts/AlimentContext"; // Import AlimentContext
 
 const AlimentForm = ({ onSubmit }) => {
   const { bacs } = useContext(BacContext); // Access bac types from context
+  const { addAliment } = useContext(AlimentContext); // Access addAliment function from AlimentContext
+
   const [values, setValues] = useState({
     name: "",
     freezingDate: "",
@@ -11,6 +14,7 @@ const AlimentForm = ({ onSubmit }) => {
     type: "",
     quantity: 1,
   });
+
   const [errors, setErrors] = useState({});
 
   const handleChange = (event) => {
@@ -36,7 +40,7 @@ const AlimentForm = ({ onSubmit }) => {
     event.preventDefault();
     const validationErrors = {};
 
-    // Existing validation
+    // Validate inputs
     if (!values.name) validationErrors.name = "The food name is required";
     if (!values.freezingDate)
       validationErrors.freezingDate = "The freezing date is required";
@@ -47,7 +51,14 @@ const AlimentForm = ({ onSubmit }) => {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      onSubmit(values);
+      addAliment(values); // Call addAliment to save the aliment in Firestore
+      setValues({
+        name: "",
+        freezingDate: "",
+        expirationDate: "",
+        type: "",
+        quantity: 1,
+      });
     }
   };
 

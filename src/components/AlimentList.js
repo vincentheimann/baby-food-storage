@@ -53,7 +53,7 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
                   onClick={() => onDecrement(aliment.id)}
                   size="large"
                 >
-                  <RemoveCircleOutlineIcon sx={{fontSize:32}} />
+                  <RemoveCircleOutlineIcon sx={{ fontSize: 32 }} />
                 </IconButton>
                 <IconButton
                   edge="end"
@@ -62,7 +62,7 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
                   size="large"
                   sx={{ ml: 2 }}
                 >
-                  <AddCircleOutlineIcon sx={{fontSize:32}} />
+                  <AddCircleOutlineIcon sx={{ fontSize: 32 }} />
                 </IconButton>
               </ListItemSecondaryAction>
             </ListItem>

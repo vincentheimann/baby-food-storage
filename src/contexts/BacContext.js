@@ -13,6 +13,7 @@ export const BacProvider = ({ children, userId }) => {
 
   useEffect(() => {
     const fetchBacs = async () => {
+      if (!userId) return; // Ensure userId is available before fetching
       try {
         const fetchedBacs = await getBacsFromFirestore(userId);
         setBacs(fetchedBacs);

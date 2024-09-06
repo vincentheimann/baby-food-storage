@@ -86,22 +86,26 @@ export const getBacsFromFirestore = async (userId) => {
   return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 };
 
-export const addAliment = async (userId, aliment) => {
+export const addAlimentToFirestore = async (userId, aliment) => {
   const alimentsRef = collection(db, "users", userId, "aliments");
   await addDoc(alimentsRef, aliment);
 };
 
-export const updateAliment = async (userId, alimentId, updatedAliment) => {
+export const updateAlimentInFirestore = async (
+  userId,
+  alimentId,
+  updatedAliment
+) => {
   const alimentDocRef = doc(db, "users", userId, "aliments", alimentId);
   await updateDoc(alimentDocRef, updatedAliment);
 };
 
-export const deleteAliment = async (userId, alimentId) => {
+export const deleteAlimentFromFirestore = async (userId, alimentId) => {
   const alimentDocRef = doc(db, "users", userId, "aliments", alimentId);
   await deleteDoc(alimentDocRef);
 };
 
-export const getAliments = async (userId) => {
+export const getAlimentsFromFirestore = async (userId) => {
   const alimentsRef = collection(db, "users", userId, "aliments");
   const querySnapshot = await getDocs(alimentsRef);
   return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
