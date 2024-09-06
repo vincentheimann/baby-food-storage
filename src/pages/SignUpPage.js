@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { TextField, Button, Container, Typography, Box } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Container,
+  Typography,
+  Box,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
 
@@ -11,6 +19,7 @@ const SignUpPage = () => {
     password: "",
   });
   const [errors, setErrors] = useState({});
+  const [openSnackbar, setOpenSnackbar] = useState(false);
   const navigate = useNavigate();
   const { signUp: handleSignUp } = useUser();
 
@@ -22,10 +31,16 @@ const SignUpPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const validationErrors = {};
+
     if (!values.firstName) validationErrors.firstName = "First name required";
     if (!values.lastName) validationErrors.lastName = "Last name required";
     if (!values.email) validationErrors.email = "Email is required";
-    if (!values.password) validationErrors.password = "Password required";
+    if (!values.password) {
+      validationErrors.password = "Password required";
+    } else if (values.password.length < 6) {
+      validationErrors.password = "Password must be at least 6 characters long";
+    }
+
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
@@ -36,12 +51,22 @@ const SignUpPage = () => {
           values.firstName,
           values.lastName
         );
-        navigate("/");
+        setOpenSnackbar(true); // Show the success Snackbar
+
+        navigate("/"); // Redirect after success
       } catch (error) {
-        console.error("Error during sign-up:", error);
-        // Handle error feedback here
+        if (error.message.includes("email-already-in-use")) {
+          setErrors({ email: "This email is already in use." });
+        } else {
+          console.error("Error during sign-up:", error);
+        }
+        setOpenSnackbar(false); // Hide Snackbar for errors
       }
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
   };
 
   return (
@@ -106,6 +131,21 @@ const SignUpPage = () => {
           </Button>
         </form>
       </Box>
+
+      {/* Success Snackbar */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          Account created! Please check your email to verify your account.
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

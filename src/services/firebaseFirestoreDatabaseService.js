@@ -26,6 +26,7 @@ export const createUserProfile = async (user) => {
         email,
         firstName,
         lastName,
+        emailVerified: user.emailVerified || false, // Default to false if undefined
         createdAt: new Date(),
       });
     } catch (error) {

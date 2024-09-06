@@ -5,6 +5,7 @@ import {
   signUp,
   updatePassword,
   resetPassword,
+  sendVerificationEmail,
 } from "../services/firebaseAuthService";
 import {
   createUserProfile,
@@ -61,6 +62,9 @@ const UserProvider = ({ children }) => {
         firstName,
         lastName,
       });
+
+      // Send email verification
+      await sendVerificationEmail(user);
 
       setUser(user);
       setIsAuthenticated(true);
