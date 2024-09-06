@@ -18,8 +18,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { BacContext } from "../contexts/BacContext";
 import { AlimentContext } from "../contexts/AlimentContext";
 
-const BacConfig = () => {
-  const { bacs, updateBac, addBac, removeBac } = useContext(BacContext);
+const BacConfig = ({ userId }) => {
+  const { bacs, addBac, updateBac, removeBac } = useContext(BacContext);
   const { aliments, setAliments } = useContext(AlimentContext);
 
   const [newBac, setNewBac] = useState({ color: "", type: "", capacity: 12 });
@@ -28,17 +28,22 @@ const BacConfig = () => {
   const [currentType, setCurrentType] = useState("");
   const [alimentsToReassign, setAlimentsToReassign] = useState([]);
 
-  const handleUpdateBac = (id, field, value) => {
+  const handleUpdateBac = async (id, field, value) => {
     if (field === "capacity" && (value < 1 || isNaN(value))) {
       setError((prev) => ({ ...prev, [id]: true }));
       return;
     } else {
       setError((prev) => ({ ...prev, [id]: false }));
     }
-    updateBac(id, { [field]: value });
+
+    try {
+      await updateBac(id, { [field]: value }); // Update Firestore and state
+    } catch (error) {
+      console.error("Error updating bac:", error);
+    }
   };
 
-  const handleAddBac = () => {
+  const handleAddBac = async () => {
     if (!newBac.type.trim()) {
       setError({ type: true });
       return;
@@ -50,18 +55,26 @@ const BacConfig = () => {
     }
 
     setError({ type: false, capacity: false });
-    addBac({ ...newBac, capacity: parseInt(newBac.capacity, 10) });
-    setNewBac({ color: "", type: "", capacity: 12 });
+    try {
+      await addBac(newBac); // Add to Firestore and update local state
+      setNewBac({ color: "", type: "", capacity: 12 });
+    } catch (error) {
+      console.error("Error adding bac:", error);
+    }
   };
 
-  const handleDeleteBac = (type) => {
+  const handleDeleteBac = async (type) => {
     const alimentsOfType = aliments.filter((aliment) => aliment.type === type);
     if (alimentsOfType.length > 0) {
       setAlimentsToReassign(alimentsOfType);
       setCurrentType(type);
       setOpenDialog(true);
     } else {
-      removeBac(type);
+      try {
+        await removeBac(type); // Remove from Firestore and local state
+      } catch (error) {
+        console.error("Error deleting bac:", error);
+      }
     }
   };
 
@@ -126,7 +139,6 @@ const BacConfig = () => {
                 }}
                 fullWidth
               />
-
               <IconButton
                 aria-label="delete"
                 color="secondary"

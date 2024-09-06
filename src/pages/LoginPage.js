@@ -17,7 +17,8 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useUser } from "../contexts/UserContext";
 
 const LoginPage = () => {
-  const { login, demoLogin } = useUser();
+  // const { login, demoLogin } = useUser();
+  const { login } = useUser();
   const navigate = useNavigate();
 
   const [email, setEmail] = React.useState("");
@@ -51,15 +52,15 @@ const LoginPage = () => {
     }
   };
 
-  const handleDemoLogin = async () => {
-    console.log("Demo login called");
-    try {
-      await demoLogin();
-      navigate("/");
-    } catch (error) {
-      setGeneralError("Demo login failed. Please try again.");
-    }
-  };
+  // const handleDemoLogin = async () => {
+  //   console.log("Demo login called");
+  //   try {
+  //     await demoLogin();
+  //     navigate("/");
+  //   } catch (error) {
+  //     setGeneralError("Demo login failed. Please try again.");
+  //   }
+  // };
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);

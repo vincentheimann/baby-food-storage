@@ -4,7 +4,7 @@ import { useUser } from "./UserContext";
 
 export const AlimentContext = createContext();
 
-export const AlimentProvider = ({ children }) => {
+export const AlimentProvider = ({ children, userId }) => {
   const [aliments, setAliments] = useState([]);
   const { user } = useUser();
 

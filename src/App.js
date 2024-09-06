@@ -23,7 +23,7 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import PageNotFound from "./pages/PageNotFound";
 
 const AppContent = () => {
-  const { isAuthenticated } = useUser();
+  const { isAuthenticated, user } = useUser(); // Get userId from user context
 
   return (
     <>
@@ -33,7 +33,7 @@ const AppContent = () => {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         {isAuthenticated ? (
-          <Route path="*" element={<ProtectedRoutes />} />
+          <Route path="*" element={<ProtectedRoutes userId={user?.uid} />} />
         ) : (
           <Route path="*" element={<Navigate to="/login" replace />} />
         )}
@@ -42,15 +42,14 @@ const AppContent = () => {
   );
 };
 
-const ProtectedRoutes = () => (
+const ProtectedRoutes = ({ userId }) => (
   <Routes>
     <Route path="/" element={<Home />} />
     <Route path="/dashboard" element={<Dashboard />} />
     <Route path="/notifications" element={<Notifications />} />
-    <Route path="/config-bacs" element={<BacConfig />} />
+    <Route path="/config-bacs" element={<BacConfig userId={userId} />} />
     <Route path="/profile" element={<ProfilePage />} />
-    <Route path="*" element={<PageNotFound />} />{" "}
-    {/* Catch all unmatched routes */}
+    <Route path="*" element={<PageNotFound />} />
   </Routes>
 );
 
@@ -60,8 +59,8 @@ const App = () => {
       <CssBaseline />
       <Router>
         <UserProvider>
-          <BacProvider>
-            <AlimentProvider>
+          <BacProvider userId={useUser()?.user?.uid}>
+            <AlimentProvider userId={useUser()?.user?.uid}>
               <AppContent />
             </AlimentProvider>
           </BacProvider>

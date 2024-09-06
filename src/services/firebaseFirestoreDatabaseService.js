@@ -65,7 +65,27 @@ export const updateUserProfileInFirestore = async (uid, updatedProfile) => {
   }
 };
 
-// Other functions remain unchanged...
+export const addBacToFirestore = async (userId, bac) => {
+  const bacsRef = collection(db, "users", userId, "bacs");
+  await addDoc(bacsRef, bac);
+};
+
+export const updateBacInFirestore = async (userId, bacId, updatedBac) => {
+  const bacDocRef = doc(db, "users", userId, "bacs", bacId);
+  await updateDoc(bacDocRef, updatedBac);
+};
+
+export const deleteBacFromFirestore = async (userId, bacId) => {
+  const bacDocRef = doc(db, "users", userId, "bacs", bacId);
+  await deleteDoc(bacDocRef);
+};
+
+export const getBacsFromFirestore = async (userId) => {
+  const bacsRef = collection(db, "users", userId, "bacs");
+  const querySnapshot = await getDocs(bacsRef);
+  return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+};
+
 export const addAliment = async (userId, aliment) => {
   const alimentsRef = collection(db, "users", userId, "aliments");
   await addDoc(alimentsRef, aliment);
