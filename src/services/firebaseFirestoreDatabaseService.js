@@ -20,12 +20,11 @@ export const createUserProfile = async (user) => {
   const userSnapshot = await getDoc(userDocRef);
 
   if (!userSnapshot.exists()) {
-    const { email, firstName, lastName } = user;
+    const { email, displayName } = user;
     try {
       await setDoc(userDocRef, {
         email,
-        firstName,
-        lastName,
+        displayName: displayName || "", // Google users might not have firstName, lastName
         emailVerified: user.emailVerified || false, // Default to false if undefined
         createdAt: new Date(),
       });
@@ -45,17 +44,11 @@ export const getUserProfile = async (uid) => {
       throw new Error("Document not found");
     }
   } catch (error) {
-    if (error.code === "permission-denied") {
-      console.error("Permission denied");
-      throw new Error("You do not have permission to access this resource.");
-    } else {
-      console.error("Unexpected error:", error);
-      throw new Error("An unexpected error occurred.");
-    }
+    console.error("Unexpected error:", error);
+    throw new Error("An unexpected error occurred.");
   }
 };
 
-// Correctly define and export updateUserProfileInFirestore
 export const updateUserProfileInFirestore = async (uid, updatedProfile) => {
   const userDocRef = doc(db, "users", uid);
 
@@ -66,6 +59,7 @@ export const updateUserProfileInFirestore = async (uid, updatedProfile) => {
   }
 };
 
+// Functions for managing "bacs"
 export const addBacToFirestore = async (userId, bac) => {
   const bacsRef = collection(db, "users", userId, "bacs");
   await addDoc(bacsRef, bac);
@@ -87,6 +81,7 @@ export const getBacsFromFirestore = async (userId) => {
   return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 };
 
+// Functions for managing "aliments"
 export const addAlimentToFirestore = async (userId, aliment) => {
   const alimentsRef = collection(db, "users", userId, "aliments");
   await addDoc(alimentsRef, aliment);

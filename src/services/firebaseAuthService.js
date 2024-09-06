@@ -1,60 +1,30 @@
 import {
   getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
   signOut,
-  sendPasswordResetEmail,
-  updatePassword as firebaseUpdatePassword,
-  reauthenticateWithCredential,
-  EmailAuthProvider,
-  sendEmailVerification,
+  GoogleAuthProvider,
+  signInWithPopup,
+  deleteUser,
 } from "firebase/auth";
 import app from "./firebaseApp";
 
 export const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-export const signUp = async (email, password) => {
+export const googleLogin = async () => {
   try {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    const user = userCredential.user;
-
-    // Automatically send email verification after sign-up
-    await sendEmailVerification(user);
-
-    return userCredential;
+    const result = await signInWithPopup(auth, provider);
+    return result.user; // The signed-in user info
   } catch (error) {
-    if (error.code === "auth/email-already-in-use") {
-      throw new Error("This email is already in use.");
-    }
-    throw error; // Re-throw other errors
+    throw error; // Handle errors as needed
   }
 };
 
-export const sendVerificationEmail = (user) => sendEmailVerification(user);
-
-export const login = (email, password) =>
-  signInWithEmailAndPassword(auth, email, password);
+export const deleteAccount = async () => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  if (user) {
+    await deleteUser(user);
+  }
+};
 
 export const logout = () => signOut(auth);
-
-export const resetPassword = (email) => sendPasswordResetEmail(auth, email);
-
-export const demoLogin = () =>
-  signInWithEmailAndPassword(auth, "demo@example.com", "demopassword");
-
-export const updatePassword = async (currentPassword, newPassword) => {
-  const user = auth.currentUser;
-  const credential = EmailAuthProvider.credential(user.email, currentPassword);
-
-  try {
-    await reauthenticateWithCredential(user, credential);
-    await firebaseUpdatePassword(user, newPassword);
-  } catch (error) {
-    console.error("Password update failed: ", error);
-    throw error; // Rethrow the error to be caught by the caller
-  }
-};

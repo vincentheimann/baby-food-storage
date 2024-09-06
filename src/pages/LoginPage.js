@@ -4,12 +4,10 @@ import {
   Avatar,
   Button,
   CssBaseline,
-  TextField,
   Paper,
   Box,
   Grid,
   Typography,
-  Link,
   Snackbar,
   Alert,
 } from "@mui/material";
@@ -17,13 +15,8 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useUser } from "../contexts/UserContext";
 
 const LoginPage = () => {
-  // const { login, demoLogin } = useUser();
-  const { login } = useUser();
+  const { googleLogin } = useUser();
   const navigate = useNavigate();
-
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [error, setError] = React.useState({ email: false, password: false });
   const [generalError, setGeneralError] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
 
@@ -33,34 +26,14 @@ const LoginPage = () => {
     }
   }, [generalError]);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    const emailError = !email;
-    const passwordError = !password;
-
-    if (emailError || passwordError) {
-      setError({ email: emailError, password: passwordError });
-      return; // Ensure form submission is halted if there are validation errors
-    }
-
+  const handleGoogleLogin = async () => {
     try {
-      await login(email, password);
-      navigate("/");
+      await googleLogin(); // Calls your googleLogin method in firebaseAuthService.js
+      navigate("/"); // Navigate to home page after login
     } catch (error) {
-      setGeneralError("Login failed. Please check your credentials.");
+      setGeneralError("Google login failed.");
     }
   };
-
-  // const handleDemoLogin = async () => {
-  //   console.log("Demo login called");
-  //   try {
-  //     await demoLogin();
-  //     navigate("/");
-  //   } catch (error) {
-  //     setGeneralError("Demo login failed. Please try again.");
-  //   }
-  // };
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -101,79 +74,16 @@ const LoginPage = () => {
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              Sign in
+              Sign in with Google
             </Typography>
-            <Box
-              component="form"
-              noValidate
-              onSubmit={handleSubmit}
-              sx={{ mt: 1 }}
+            <Button
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              onClick={handleGoogleLogin}
             >
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setError((prevState) => ({ ...prevState, email: false }));
-                }}
-                error={error.email}
-                helperText={error.email ? "Email is required" : ""}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setError((prevState) => ({ ...prevState, password: false }));
-                }}
-                error={error.password}
-                helperText={error.password ? "Password is required" : ""}
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-                data-testid="login-button"
-              >
-                Sign In
-              </Button>
-              {/* <Button
-                onClick={handleDemoLogin}
-                fullWidth
-                variant="outlined"
-                sx={{ mt: 1, mb: 2 }}
-                data-testid="demo-login-button"
-              >
-                Demo account login
-              </Button> */}
-              <Grid container>
-                <Grid item xs>
-                  <Link href="/reset-password" variant="body2">
-                    Forgot password?
-                  </Link>
-                </Grid>
-                <Grid item>
-                  <Link href="/signup" variant="body2">
-                    {"Don't have an account? Sign Up"}
-                  </Link>
-                </Grid>
-              </Grid>
-            </Box>
+              Sign in with Google
+            </Button>
           </Box>
         </Grid>
       </Grid>

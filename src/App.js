@@ -18,9 +18,6 @@ import { BacProvider } from "./contexts/BacContext";
 import { AlimentProvider } from "./contexts/AlimentContext";
 import { UserProvider, useUser } from "./contexts/UserContext";
 import LoginPage from "./pages/LoginPage";
-import SignUpPage from "./pages/SignUpPage";
-import VerifyEmailPage from './pages/VerifyEmailPage';
-import ResetPasswordPage from "./pages/ResetPasswordPage";
 import PageNotFound from "./pages/PageNotFound";
 
 const AppContent = () => {
@@ -30,15 +27,9 @@ const AppContent = () => {
     return (
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     );
-  }
-
-  if (!user.emailVerified) {
-    return <VerifyEmailPage />;
   }
 
   return (
