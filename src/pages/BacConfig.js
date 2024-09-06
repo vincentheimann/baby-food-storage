@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useMemo } from "react";
 import {
   Container,
   Typography,
@@ -14,33 +14,50 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
+import { CirclePicker } from "react-color";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { BacContext } from "../contexts/BacContext";
 import { AlimentContext } from "../contexts/AlimentContext";
+import { debounce } from "lodash";
 
 const BacConfig = ({ userId }) => {
   const { bacs, addBac, updateBac, removeBac } = useContext(BacContext);
   const { aliments, setAliments } = useContext(AlimentContext);
 
-  const [newBac, setNewBac] = useState({ color: "", type: "", capacity: 12 });
+  const [newBac, setNewBac] = useState({
+    name: "",
+    color: "",
+    type: "",
+    capacity: 12,
+  });
+  const [localBacState, setLocalBacState] = useState({}); // Store local changes for immediate feedback
   const [error, setError] = useState({ type: false, capacity: false });
   const [openDialog, setOpenDialog] = useState(false);
   const [currentType, setCurrentType] = useState("");
   const [alimentsToReassign, setAlimentsToReassign] = useState([]);
 
-  const handleUpdateBac = async (id, field, value) => {
-    if (field === "capacity" && (value < 1 || isNaN(value))) {
-      setError((prev) => ({ ...prev, [id]: true }));
-      return;
-    } else {
-      setError((prev) => ({ ...prev, [id]: false }));
-    }
+  // Debounced function for saving to the database
+  const debouncedSave = useMemo(
+    () =>
+      debounce((id, field, value) => {
+        updateBac(id, { [field]: value }).catch((error) =>
+          console.error("Error updating bac:", error)
+        );
+      }, 300),
+    [updateBac]
+  );
 
-    try {
-      await updateBac(id, { [field]: value }); // Update Firestore and state
-    } catch (error) {
-      console.error("Error updating bac:", error);
-    }
+  // Handle input changes immediately for user feedback
+  const handleInputChange = (id, field, value) => {
+    setLocalBacState((prev) => ({
+      ...prev,
+      [id]: { ...prev[id], [field]: value },
+    }));
+  };
+
+  // Save to database when user stops typing (onBlur)
+  const handleBlur = (id, field, value) => {
+    debouncedSave(id, field, value);
   };
 
   const handleAddBac = async () => {
@@ -56,7 +73,7 @@ const BacConfig = ({ userId }) => {
 
     setError({ type: false, capacity: false });
     try {
-      await addBac(newBac); // Add to Firestore and update local state
+      await addBac(newBac);
       setNewBac({ color: "", type: "", capacity: 12 });
     } catch (error) {
       console.error("Error adding bac:", error);
@@ -71,7 +88,7 @@ const BacConfig = ({ userId }) => {
       setOpenDialog(true);
     } else {
       try {
-        await removeBac(type); // Remove from Firestore and local state
+        await removeBac(type);
       } catch (error) {
         console.error("Error deleting bac:", error);
       }
@@ -114,29 +131,56 @@ const BacConfig = ({ userId }) => {
           >
             <Stack direction="row" spacing={2} alignItems="center">
               <TextField
-                label="Color"
-                value={bac.color}
+                label="Name"
+                value={localBacState[bac.id]?.name || bac.name}
                 onChange={(e) =>
-                  handleUpdateBac(bac.id, "color", e.target.value)
-                }
+                  handleInputChange(bac.id, "name", e.target.value)
+                } // Immediate feedback
+                onBlur={(e) => handleBlur(bac.id, "name", e.target.value)} // Debounced save on blur
                 fullWidth
               />
+              <Box
+                sx={{
+                  backgroundColor: "white",
+                  border: "1px solid #ccc",
+                  borderRadius: 1,
+                  padding: 1.6,
+                }}
+              >
+                <CirclePicker
+                  color={bac.color}
+                  onChangeComplete={(color) =>
+                    handleBlur(bac.id, "color", color.hex)
+                  }
+                  colors={[
+                    "#F44336",
+                    "#F78DA7",
+                    "#4CAF50",
+                    "#03A9F4",
+                    "#607D8B",
+                  ]}
+                />
+              </Box>
               <TextField
                 label="Type"
-                value={bac.type}
+                value={localBacState[bac.id]?.type || bac.type}
                 onChange={(e) =>
-                  handleUpdateBac(bac.id, "type", e.target.value)
-                }
+                  handleInputChange(bac.id, "type", e.target.value)
+                } // Immediate feedback
+                onBlur={(e) => handleBlur(bac.id, "type", e.target.value)} // Debounced save on blur
                 fullWidth
               />
               <TextField
                 label="Capacity"
                 type="number"
-                value={bac.capacity}
+                value={localBacState[bac.id]?.capacity || bac.capacity}
                 onChange={(e) => {
                   const value = Math.max(1, parseInt(e.target.value, 10) || 1);
-                  handleUpdateBac(bac.id, "capacity", value);
-                }}
+                  handleInputChange(bac.id, "capacity", value);
+                }} // Immediate feedback
+                onBlur={(e) =>
+                  handleBlur(bac.id, "capacity", parseInt(e.target.value, 10))
+                } // Debounced save on blur
                 fullWidth
               />
               <IconButton
@@ -150,20 +194,39 @@ const BacConfig = ({ userId }) => {
           </Box>
         ))}
       </Stack>
+
       <Box mt={5}>
         <Typography variant="h4" component="h2" gutterBottom>
           Add a New Tray
         </Typography>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={3}>
             <TextField
-              label="Color"
-              value={newBac.color}
-              onChange={(e) => setNewBac({ ...newBac, color: e.target.value })}
+              label="Name"
+              value={newBac.name}
+              onChange={(e) => setNewBac({ ...newBac, name: e.target.value })}
               fullWidth
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={3}>
+            <Box
+              sx={{
+                backgroundColor: "white",
+                border: "1px solid #ccc",
+                borderRadius: 1,
+                padding: 1.6,
+              }}
+            >
+              <CirclePicker
+                color={newBac.color}
+                onChangeComplete={(color) =>
+                  setNewBac({ ...newBac, color: color.hex })
+                }
+                colors={["#F44336", "#F78DA7", "#4CAF50", "#03A9F4", "#607D8B"]}
+              />
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={3}>
             <TextField
               label="Type"
               value={newBac.type}
@@ -173,7 +236,7 @@ const BacConfig = ({ userId }) => {
               fullWidth
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={3}>
             <TextField
               label="Capacity"
               type="number"
@@ -195,7 +258,6 @@ const BacConfig = ({ userId }) => {
         </Grid>
       </Box>
 
-      {/* Dialog for reassigning aliments */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>Reassign Aliments</DialogTitle>
         <DialogContent>
