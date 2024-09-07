@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import {
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
   IconButton,
   Typography,
   Box,
+  Card,
+  CardContent,
+  Grid,
 } from "@mui/material";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -28,46 +27,97 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
     <>
       {aliments.length === 0 ? (
         <Box textAlign="center" mt={2}>
-          <Typography variant="h6">Oops, there's nothing to eat!</Typography>
+          <Typography
+            variant="h6"
+            sx={{ fontSize: { xs: "1.2rem", md: "1.5rem" } }}
+          >
+            Oops, there's nothing to eat!
+          </Typography>
         </Box>
       ) : (
-        <List>
+        <Grid container spacing={2}>
           {aliments.map((aliment) => (
-            <ListItem
-              button
-              key={aliment.id}
-              onClick={() => handleItemClick(aliment)}
-            >
-              <ListItemText
-                primary={`${aliment.name} (${aliment.type})`}
-                secondary={`Frozen on: ${formatDate(
-                  aliment.freezingDate
-                )} | Expiration: ${formatDate(
-                  aliment.expirationDate
-                )} | Quantity: ${aliment.quantity} ice cubes`}
-              />
-              <ListItemSecondaryAction>
-                <IconButton
-                  edge="end"
-                  aria-label="decrement"
-                  onClick={() => onDecrement(aliment.id)}
-                  size="large"
+            <Grid item xs={12} key={aliment.id}>
+              <Card sx={{ display: "flex", width: "100%", mb: 2 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
                 >
-                  <RemoveCircleOutlineIcon sx={{ fontSize: 32 }} />
-                </IconButton>
-                <IconButton
-                  edge="end"
-                  aria-label="increment"
-                  onClick={() => onIncrement(aliment.id)}
-                  size="large"
-                  sx={{ ml: 2 }}
-                >
-                  <AddCircleOutlineIcon sx={{ fontSize: 32 }} />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
+                  <CardContent
+                    sx={{ flex: "1 0 auto" }}
+                    onClick={() => handleItemClick(aliment)}
+                  >
+                    <Typography
+                      component="div"
+                      variant="h4"
+                      sx={{ fontSize: { xs: "1.2rem", md: "2rem" } }}
+                    >
+                      {`${aliment.name}`}
+                    </Typography>
+                    <Typography
+                      variant="subtitle1"
+                      component="div"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {aliment.type}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      component="div"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {`Frozen on: ${formatDate(aliment.freezingDate)}`}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      component="div"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {`Expiration: ${formatDate(aliment.expirationDate)}`}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      component="div"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {`Quantity: ${aliment.quantity} ice cubes`}
+                    </Typography>
+                  </CardContent>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      pl: 1,
+                      pb: 1,
+                    }}
+                  >
+                    <IconButton
+                      edge="end"
+                      aria-label="decrement"
+                      onClick={() => onDecrement(aliment.id)}
+                      size="large"
+                      sx={{ padding: "12px" }}
+                    >
+                      <RemoveCircleOutlineIcon sx={{ fontSize: 32 }} />
+                    </IconButton>
+                    <IconButton
+                      edge="end"
+                      aria-label="increment"
+                      onClick={() => onIncrement(aliment.id)}
+                      size="large"
+                      sx={{ ml: 2, padding: "12px" }}
+                    >
+                      <AddCircleOutlineIcon sx={{ fontSize: 32 }} />
+                    </IconButton>
+                  </Box>
+                </Box>
+              </Card>
+            </Grid>
           ))}
-        </List>
+        </Grid>
       )}
       {selectedAliment && (
         <AlimentModal

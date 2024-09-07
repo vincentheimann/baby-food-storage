@@ -1,4 +1,3 @@
-// src/pages/Home.js
 import React, { useContext } from "react";
 import {
   Grid,
@@ -29,15 +28,15 @@ const Home = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
-      <Grid container spacing={3}>
+    <Container maxWidth="sm" sx={{ mt: 4, mb: 8 }}>
+      <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Typography variant="h3" component="h1" gutterBottom>
+          <Typography variant="h4" component="h1" gutterBottom>
             Home
           </Typography>
         </Grid>
         {bacs.map((bac) => (
-          <Grid item xs={12} md={6} key={bac.id}>
+          <Grid item xs={12} sm={6} key={bac.id}>
             <BacCard
               color={bac.color}
               type={bac.type}
@@ -49,7 +48,7 @@ const Home = () => {
       <Box mt={5}>
         <Card>
           <CardContent>
-            <Typography variant="h4" component="h2" gutterBottom>
+            <Typography variant="h5" component="h2" gutterBottom>
               Add a food item
             </Typography>
             <AlimentForm onSubmit={addAliment} />
@@ -59,7 +58,7 @@ const Home = () => {
       <Box mt={5}>
         <Card>
           <CardContent>
-            <Typography variant="h4" component="h2" gutterBottom>
+            <Typography variant="h5" component="h2" gutterBottom>
               Food list
             </Typography>
             <AlimentList
