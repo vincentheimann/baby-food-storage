@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Avatar,
@@ -10,6 +10,7 @@ import {
   Typography,
   Snackbar,
   Alert,
+  CircularProgress,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useUser } from "../contexts/UserContext";
@@ -17,8 +18,9 @@ import { useUser } from "../contexts/UserContext";
 const LoginPage = () => {
   const { googleLogin } = useUser();
   const navigate = useNavigate();
-  const [generalError, setGeneralError] = React.useState("");
-  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+  const [generalError, setGeneralError] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (generalError) {
@@ -27,11 +29,14 @@ const LoginPage = () => {
   }, [generalError]);
 
   const handleGoogleLogin = async () => {
+    setLoading(true);
     try {
       await googleLogin(); // Calls your googleLogin method in firebaseAuthService.js
       navigate("/"); // Navigate to home page after login
     } catch (error) {
-      setGeneralError("Google login failed.");
+      setGeneralError("Google login failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -76,14 +81,22 @@ const LoginPage = () => {
             <Typography component="h1" variant="h5">
               Sign in with Google
             </Typography>
-            <Button
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              onClick={handleGoogleLogin}
-            >
-              Sign in with Google
-            </Button>
+            <Box sx={{ position: "relative", width: "100%" }}>
+              <Button
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                onClick={handleGoogleLogin}
+                disabled={loading}
+                aria-label="Sign in with Google"
+              >
+                {loading ? (
+                  <CircularProgress size={24} sx={{ color: "white" }} />
+                ) : (
+                  "Sign in with Google"
+                )}
+              </Button>
+            </Box>
           </Box>
         </Grid>
       </Grid>
