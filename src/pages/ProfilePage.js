@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import {
-  TextField,
-  Button,
   Container,
   Typography,
   Box,
   Avatar,
+  Button,
   Snackbar,
   Alert,
   Dialog,
@@ -18,44 +17,16 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
-import { getUserProfile } from "../services/firebaseFirestoreDatabaseService";
 import { deleteAccount } from "../services/firebaseAuthService";
 
 const ProfilePage = () => {
-  const { user, updateUserProfile, logout, error, setError } = useUser();
+  const { user, logout, error, setError } = useUser();
   const navigate = useNavigate();
-
-  const [values, setValues] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-  });
 
   const [notificationPref, setNotificationPref] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const userDoc = await getUserProfile(user.uid);
-        if (userDoc) {
-          setValues({
-            firstName: userDoc.firstName,
-            lastName: userDoc.lastName,
-            email: userDoc.email,
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        setError("You do not have permission to access this resource.");
-      }
-    };
-    if (user) {
-      fetchUserData();
-    }
-  }, [user, setError]);
 
   useEffect(() => {
     if (error) {
@@ -65,27 +36,6 @@ const ProfilePage = () => {
       setError(null);
     }
   }, [error, navigate, setError]);
-
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setValues((prevValues) => ({ ...prevValues, [name]: value }));
-  };
-
-  const handleProfileSubmit = async (event) => {
-    event.preventDefault();
-    if (!values.firstName || !values.lastName || !values.email) {
-      setError("All fields are required.");
-      return;
-    }
-
-    try {
-      await updateUserProfile(values);
-      setSuccessMessage("Profile updated successfully!");
-      setSnackbarOpen(true);
-    } catch (error) {
-      console.error("Profile update failed:", error);
-    }
-  };
 
   const handleLogout = async () => {
     try {
@@ -119,51 +69,23 @@ const ProfilePage = () => {
   return (
     <Container maxWidth="sm" sx={{ mt: 4, mb: 8 }}>
       <Box display="flex" flexDirection="column" alignItems="center">
+        {/* Display Google Profile Picture */}
         <Avatar
           sx={{ width: 80, height: 80, mb: 2 }}
-          src={user?.photoURL} // Google profile picture
+          src={user?.photoURL || ""}
           alt={user?.displayName || "User Avatar"}
-        />
+          referrerPolicy="no-referrer"
+        >
+          {!user?.photoURL && user?.displayName?.charAt(0)}
+        </Avatar>
+
+        {/* Display Name and Email from Google Account */}
         <Typography variant="h4" component="h1" gutterBottom>
-          My Profile
+          {user?.displayName || "User Name"}
         </Typography>
-        <form onSubmit={handleProfileSubmit} noValidate>
-          <TextField
-            label="First Name"
-            name="firstName"
-            value={values.firstName}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            error={!values.firstName}
-            helperText={!values.firstName && "First name is required"}
-          />
-          <TextField
-            label="Last Name"
-            name="lastName"
-            value={values.lastName}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            error={!values.lastName}
-            helperText={!values.lastName && "Last name is required"}
-          />
-          <TextField
-            label="Email"
-            name="email"
-            type="email"
-            value={values.email}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            error={!values.email}
-            helperText={!values.email && "Email is required"}
-            disabled
-          />
-          <Button type="submit" variant="contained" color="primary" fullWidth>
-            Update Profile
-          </Button>
-        </form>
+        <Typography variant="body1" gutterBottom>
+          {user?.email}
+        </Typography>
 
         <Typography variant="h5" component="h2" gutterBottom sx={{ mt: 4 }}>
           Account Settings
