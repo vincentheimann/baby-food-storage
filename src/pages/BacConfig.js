@@ -30,13 +30,12 @@ const BacConfig = ({ userId }) => {
     type: "",
     capacity: 12,
   });
-  const [localBacState, setLocalBacState] = useState({}); // Store local changes for immediate feedback
+  const [localBacState, setLocalBacState] = useState({});
   const [error, setError] = useState({ type: false, capacity: false });
   const [openDialog, setOpenDialog] = useState(false);
   const [currentType, setCurrentType] = useState("");
   const [alimentsToReassign, setAlimentsToReassign] = useState([]);
 
-  // Debounced function for saving to the database
   const debouncedSave = useMemo(
     () =>
       debounce((id, field, value) => {
@@ -47,7 +46,6 @@ const BacConfig = ({ userId }) => {
     [updateBac]
   );
 
-  // Handle input changes immediately for user feedback
   const handleInputChange = (id, field, value) => {
     setLocalBacState((prev) => ({
       ...prev,
@@ -55,7 +53,6 @@ const BacConfig = ({ userId }) => {
     }));
   };
 
-  // Save to database when user stops typing (onBlur)
   const handleBlur = (id, field, value) => {
     debouncedSave(id, field, value);
   };
@@ -119,24 +116,35 @@ const BacConfig = ({ userId }) => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
-      <Typography variant="h3" component="h1" sx={{ mb: 4 }}>
+    <Container
+      maxWidth="lg"
+      sx={{ mt: { xs: 2, md: 4 }, mb: { xs: 4, md: 8 } }}
+    >
+      <Typography variant="h4" component="h1" sx={{ mb: { xs: 2, md: 4 } }}>
         Ice Tray Configuration
       </Typography>
-      <Stack spacing={3}>
+      <Stack spacing={2}>
         {bacs.map((bac) => (
           <Box
             key={bac.id}
-            sx={{ padding: 2, border: "1px solid #ccc", borderRadius: 2 }}
+            sx={{
+              padding: { xs: 1, md: 2 },
+              border: "1px solid #ccc",
+              borderRadius: 2,
+            }}
           >
-            <Stack direction="row" spacing={2} alignItems="center">
+            <Stack
+              direction={{ xs: "column", md: "row" }}
+              spacing={2}
+              alignItems="center"
+            >
               <TextField
                 label="Name"
                 value={localBacState[bac.id]?.name || bac.name}
                 onChange={(e) =>
                   handleInputChange(bac.id, "name", e.target.value)
-                } // Immediate feedback
-                onBlur={(e) => handleBlur(bac.id, "name", e.target.value)} // Debounced save on blur
+                }
+                onBlur={(e) => handleBlur(bac.id, "name", e.target.value)}
                 fullWidth
               />
               <Box
@@ -145,6 +153,7 @@ const BacConfig = ({ userId }) => {
                   border: "1px solid #ccc",
                   borderRadius: 1,
                   padding: 1.6,
+                  width: "100%", // Make it full-width for mobile
                 }}
               >
                 <CirclePicker
@@ -166,8 +175,8 @@ const BacConfig = ({ userId }) => {
                 value={localBacState[bac.id]?.type || bac.type}
                 onChange={(e) =>
                   handleInputChange(bac.id, "type", e.target.value)
-                } // Immediate feedback
-                onBlur={(e) => handleBlur(bac.id, "type", e.target.value)} // Debounced save on blur
+                }
+                onBlur={(e) => handleBlur(bac.id, "type", e.target.value)}
                 fullWidth
               />
               <TextField
@@ -177,10 +186,10 @@ const BacConfig = ({ userId }) => {
                 onChange={(e) => {
                   const value = Math.max(1, parseInt(e.target.value, 10) || 1);
                   handleInputChange(bac.id, "capacity", value);
-                }} // Immediate feedback
+                }}
                 onBlur={(e) =>
                   handleBlur(bac.id, "capacity", parseInt(e.target.value, 10))
-                } // Debounced save on blur
+                }
                 fullWidth
               />
               <IconButton
@@ -196,7 +205,7 @@ const BacConfig = ({ userId }) => {
       </Stack>
 
       <Box mt={5}>
-        <Typography variant="h4" component="h2" gutterBottom>
+        <Typography variant="h5" component="h2" gutterBottom>
           Add a New Tray
         </Typography>
         <Grid container spacing={2}>
