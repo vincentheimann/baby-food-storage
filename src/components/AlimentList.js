@@ -37,82 +37,92 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
       ) : (
         <Grid container spacing={2}>
           {aliments.map((aliment) => (
-            <Grid item xs={12} key={aliment.id}>
-              <Card sx={{ display: "flex", width: "100%", mb: 2 }}>
+            <Grid item xs={12} sm={6} md={4} lg={3} key={aliment.id}>
+              <Card
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  height: "100%",
+                  border: "1px solid #e0e0e0",
+                  borderRadius: 2,
+                }}
+              >
+                <CardContent
+                  sx={{ flex: "1 0 auto", cursor: "pointer" }}
+                  onClick={() => handleItemClick(aliment)}
+                >
+                  <Typography
+                    component="div"
+                    variant="h4"
+                    sx={{
+                      fontSize: { xs: "1.2rem", md: "1.6rem" },
+                      fontWeight: 600,
+                    }}
+                  >
+                    {`${aliment.name}`}
+                  </Typography>
+                  <Typography
+                    variant="subtitle1"
+                    component="div"
+                    sx={{ color: "text.secondary", mb: 1 }}
+                  >
+                    {aliment.type}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    component="div"
+                    sx={{ color: "text.secondary", mb: 0.5 }}
+                  >
+                    {`Frozen on: ${formatDate(aliment.freezingDate)}`}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    component="div"
+                    sx={{
+                      color:
+                        new Date(aliment.expirationDate) < new Date()
+                          ? "red"
+                          : "text.secondary",
+                      fontWeight: 500,
+                    }}
+                  >
+                    {`Expiration: ${formatDate(aliment.expirationDate)}`}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    component="div"
+                    sx={{ color: "text.secondary", mt: 1 }}
+                  >
+                    {`Quantity: ${aliment.quantity} ice cubes`}
+                  </Typography>
+                </CardContent>
                 <Box
                   sx={{
                     display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    pb: 2,
                   }}
                 >
-                  <CardContent
-                    sx={{ flex: "1 0 auto" }}
-                    onClick={() => handleItemClick(aliment)}
+                  <IconButton
+                    edge="end"
+                    aria-label="decrement"
+                    onClick={() => onDecrement(aliment.id)}
+                    size="large"
+                    sx={{ padding: "12px" }}
                   >
-                    <Typography
-                      component="div"
-                      variant="h4"
-                      sx={{ fontSize: { xs: "1.2rem", md: "2rem" } }}
-                    >
-                      {`${aliment.name}`}
-                    </Typography>
-                    <Typography
-                      variant="subtitle1"
-                      component="div"
-                      sx={{ color: "text.secondary" }}
-                    >
-                      {aliment.type}
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      component="div"
-                      sx={{ color: "text.secondary" }}
-                    >
-                      {`Frozen on: ${formatDate(aliment.freezingDate)}`}
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      component="div"
-                      sx={{ color: "text.secondary" }}
-                    >
-                      {`Expiration: ${formatDate(aliment.expirationDate)}`}
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      component="div"
-                      sx={{ color: "text.secondary" }}
-                    >
-                      {`Quantity: ${aliment.quantity} ice cubes`}
-                    </Typography>
-                  </CardContent>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      pl: 1,
-                      pb: 1,
-                    }}
+                    <RemoveCircleOutlineIcon sx={{ fontSize: 32 }} />
+                  </IconButton>
+                  <IconButton
+                    edge="end"
+                    aria-label="increment"
+                    onClick={() => onIncrement(aliment.id)}
+                    size="large"
+                    sx={{ ml: 2, padding: "12px" }}
                   >
-                    <IconButton
-                      edge="end"
-                      aria-label="decrement"
-                      onClick={() => onDecrement(aliment.id)}
-                      size="large"
-                      sx={{ padding: "12px" }}
-                    >
-                      <RemoveCircleOutlineIcon sx={{ fontSize: 32 }} />
-                    </IconButton>
-                    <IconButton
-                      edge="end"
-                      aria-label="increment"
-                      onClick={() => onIncrement(aliment.id)}
-                      size="large"
-                      sx={{ ml: 2, padding: "12px" }}
-                    >
-                      <AddCircleOutlineIcon sx={{ fontSize: 32 }} />
-                    </IconButton>
-                  </Box>
+                    <AddCircleOutlineIcon sx={{ fontSize: 32 }} />
+                  </IconButton>
                 </Box>
               </Card>
             </Grid>

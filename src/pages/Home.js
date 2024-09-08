@@ -28,15 +28,20 @@ const Home = () => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4, mb: 8 }}>
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 8, padding: { xs: 2, sm: 4 } }}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Typography variant="h4" component="h1" gutterBottom>
+          <Typography
+            variant="h4"
+            component="h1"
+            gutterBottom
+            sx={{ fontSize: { xs: "1.5rem", sm: "2rem" } }}
+          >
             Home
           </Typography>
         </Grid>
         {bacs.map((bac) => (
-          <Grid item xs={12} sm={6} key={bac.id}>
+          <Grid item xs={12} sm={6} key={bac.id} sx={{ padding: { xs: 1, sm: 2 } }}>
             <BacCard
               color={bac.color}
               type={bac.type}

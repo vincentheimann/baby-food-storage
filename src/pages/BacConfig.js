@@ -153,7 +153,7 @@ const BacConfig = ({ userId }) => {
                   border: "1px solid #ccc",
                   borderRadius: 1,
                   padding: 1.6,
-                  width: "100%", // Make it full-width for mobile
+                  width: "100%", // Full-width for mobile
                 }}
               >
                 <CirclePicker

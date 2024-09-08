@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   Container,
   Typography,
-  Box,
   Avatar,
   Button,
   Snackbar,
@@ -12,8 +11,10 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Switch,
-  FormControlLabel,
+  Card,
+  CardContent,
+  CardActions,
+  Box,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
@@ -23,7 +24,6 @@ const ProfilePage = () => {
   const { user, logout, error, setError } = useUser();
   const navigate = useNavigate();
 
-  const [notificationPref, setNotificationPref] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -67,60 +67,50 @@ const ProfilePage = () => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4, mb: 8 }}>
-      <Box display="flex" flexDirection="column" alignItems="center">
-        {/* Display Google Profile Picture */}
-        <Avatar
-          sx={{ width: 80, height: 80, mb: 2 }}
-          src={user?.photoURL || ""}
-          alt={user?.displayName || "User Avatar"}
-          referrerPolicy="no-referrer"
-        >
-          {!user?.photoURL && user?.displayName?.charAt(0)}
-        </Avatar>
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
+      <Card sx={{ maxWidth: "sm", mx: "auto", p: 2 }}>
+        <CardContent sx={{ textAlign: "center" }}>
+          {/* Centering Avatar */}
+          <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+            <Avatar
+              sx={{ width: 80, height: 80 }}
+              src={user?.photoURL || ""}
+              alt={user?.displayName || "User Avatar"}
+              referrerPolicy="no-referrer"
+            >
+              {!user?.photoURL && user?.displayName?.charAt(0)}
+            </Avatar>
+          </Box>
 
-        {/* Display Name and Email from Google Account */}
-        <Typography variant="h4" component="h1" gutterBottom>
-          {user?.displayName || "User Name"}
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          {user?.email}
-        </Typography>
+          {/* Display Name and Email from Google Account */}
+          <Typography variant="h4" component="h1" gutterBottom>
+            {user?.displayName || "User Name"}
+          </Typography>
+          <Typography variant="body1" gutterBottom>
+            {user?.email}
+          </Typography>
+        </CardContent>
 
-        <Typography variant="h5" component="h2" gutterBottom sx={{ mt: 4 }}>
-          Account Settings
-        </Typography>
+        <CardActions sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <Button
+            variant="contained"
+            color="secondary"
+            fullWidth
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
 
-        <FormControlLabel
-          control={
-            <Switch
-              checked={notificationPref}
-              onChange={() => setNotificationPref(!notificationPref)}
-            />
-          }
-          label="Enable Expiration Notifications"
-        />
-
-        <Button
-          variant="contained"
-          color="secondary"
-          fullWidth
-          sx={{ mt: 2 }}
-          onClick={handleLogout}
-        >
-          Logout
-        </Button>
-
-        <Button
-          variant="outlined"
-          color="error"
-          fullWidth
-          sx={{ mt: 2 }}
-          onClick={() => setDeleteDialogOpen(true)}
-        >
-          Delete Account
-        </Button>
-      </Box>
+          <Button
+            variant="outlined"
+            color="error"
+            fullWidth
+            onClick={() => setDeleteDialogOpen(true)}
+          >
+            Delete Account
+          </Button>
+        </CardActions>
+      </Card>
 
       {/* Snackbar for success messages */}
       <Snackbar
