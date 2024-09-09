@@ -1,11 +1,11 @@
 import React, { useState, useContext } from "react";
-import { TextField, Button, Grid, MenuItem } from "@mui/material";
+import { TextField, Button, Grid, MenuItem, Typography } from "@mui/material";
 import { BacContext } from "../contexts/BacContext";
-import { AlimentContext } from "../contexts/AlimentContext"; // Import AlimentContext
+import { AlimentContext } from "../contexts/AlimentContext";
 
-const AlimentForm = ({ onSubmit }) => {
-  const { bacs } = useContext(BacContext); // Access bac types from context
-  const { addAliment } = useContext(AlimentContext); // Access addAliment function from AlimentContext
+const AlimentForm = () => {
+  const { bacs } = useContext(BacContext);
+  const { addAliment, error } = useContext(AlimentContext); // Add error handling
 
   const [values, setValues] = useState({
     name: "",
@@ -51,7 +51,7 @@ const AlimentForm = ({ onSubmit }) => {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      addAliment(values); // Call addAliment to save the aliment in Firestore
+      addAliment(values); // Save aliment in Firestore
       setValues({
         name: "",
         freezingDate: "",
@@ -62,10 +62,15 @@ const AlimentForm = ({ onSubmit }) => {
     }
   };
 
-  const uniqueTypes = [...new Set(bacs.map((bac) => bac.type))]; // Extract unique types from bacs
+  const uniqueTypes = [...new Set(bacs.map((bac) => bac.type))];
 
   return (
     <form onSubmit={handleSubmit}>
+      {error && (
+        <Typography color="error" align="center">
+          {error}
+        </Typography>
+      )}
       <Grid container spacing={2}>
         <Grid item xs={12} md={3}>
           <TextField

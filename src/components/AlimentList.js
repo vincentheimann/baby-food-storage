@@ -14,6 +14,7 @@ import { formatDate } from "../utils/dateUtils";
 
 const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
   const [selectedAliment, setSelectedAliment] = useState(null);
+  const [error, setError] = useState(null); // New error state
 
   const handleItemClick = (aliment) => {
     setSelectedAliment(aliment);
@@ -23,8 +24,29 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
     setSelectedAliment(null);
   };
 
+  const handleDecrement = async (id) => {
+    try {
+      await onDecrement(id);
+    } catch (err) {
+      setError("Failed to decrement quantity.");
+    }
+  };
+
+  const handleIncrement = async (id) => {
+    try {
+      await onIncrement(id);
+    } catch (err) {
+      setError("Failed to increment quantity.");
+    }
+  };
+
   return (
     <>
+      {error && (
+        <Typography color="error" align="center">
+          {error}
+        </Typography>
+      )}
       {aliments.length === 0 ? (
         <Box textAlign="center" mt={2}>
           <Typography
@@ -108,7 +130,7 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
                   <IconButton
                     edge="end"
                     aria-label="decrement"
-                    onClick={() => onDecrement(aliment.id)}
+                    onClick={() => handleDecrement(aliment.id)}
                     size="large"
                     sx={{ padding: "12px" }}
                   >
@@ -117,7 +139,7 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
                   <IconButton
                     edge="end"
                     aria-label="increment"
-                    onClick={() => onIncrement(aliment.id)}
+                    onClick={() => handleIncrement(aliment.id)}
                     size="large"
                     sx={{ ml: 2, padding: "12px" }}
                   >
