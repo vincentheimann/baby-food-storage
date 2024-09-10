@@ -6,7 +6,7 @@ import {
   Typography,
   Menu,
   MenuItem,
-  Badge,
+  // Badge,
   Drawer,
   List,
   ListItem,
@@ -15,7 +15,7 @@ import {
   Box,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import NotificationsIcon from "@mui/icons-material/Notifications";
+// import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import CloseIcon from "@mui/icons-material/Close";
@@ -31,7 +31,7 @@ const TopBar = () => {
     notifications,
     markNotificationAsRead,
     deleteNotification,
-    unreadNotificationsCount,
+    // unreadNotificationsCount,
   } = useContext(AlimentContext);
   const { logout } = useUser();
   const navigate = useNavigate();
@@ -100,7 +100,7 @@ const TopBar = () => {
           >
             <SettingsIcon />
           </IconButton>
-          <IconButton
+          {/* <IconButton
             color="inherit"
             onClick={toggleDrawer(true)}
             data-testid="notifications-button"
@@ -108,7 +108,7 @@ const TopBar = () => {
             <Badge badgeContent={unreadNotificationsCount} color="secondary">
               <NotificationsIcon />
             </Badge>
-          </IconButton>
+          </IconButton> */}
           <Box
             onMouseEnter={handleProfileMenuOpen}
             onMouseLeave={handleProfileMenuClose}
@@ -135,9 +135,9 @@ const TopBar = () => {
           onClose={handleMenuClose}
         >
           <MenuItem onClick={() => handleNavigation("/")}>Home</MenuItem>
-          <MenuItem onClick={() => handleNavigation("/dashboard")}>
+          {/* <MenuItem onClick={() => handleNavigation("/dashboard")}>
             Dashboard
-          </MenuItem>
+          </MenuItem> */}
         </Menu>
         <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
           <List>

@@ -1,30 +1,32 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth"; // Import Firebase Auth
 import { googleLogin, logout } from "../services/firebaseAuthService";
 
 const UserContext = createContext();
 
 const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem("user");
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
-
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    const savedAuth = localStorage.getItem("isAuthenticated");
-    return savedAuth === "true";
-  });
-
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true); // Add loading state
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("isAuthenticated", true);
-    } else {
-      localStorage.removeItem("user");
-      localStorage.removeItem("isAuthenticated");
-    }
-  }, [user]);
+    const auth = getAuth();
+
+    // Use onAuthStateChanged to monitor sign-in state
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setUser(firebaseUser);
+        setIsAuthenticated(true);
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
+      }
+      setLoading(false); // Set loading to false once auth state is determined
+    });
+
+    return () => unsubscribe(); // Clean up the listener
+  }, []);
 
   const handleGoogleLogin = async () => {
     try {
@@ -53,6 +55,7 @@ const UserProvider = ({ children }) => {
         isAuthenticated,
         googleLogin: handleGoogleLogin,
         logout: handleLogout,
+        loading, // Provide loading state
         error,
         setError,
       }}
