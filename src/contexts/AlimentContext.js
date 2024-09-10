@@ -18,7 +18,7 @@ export const AlimentContext = createContext();
 export const AlimentProvider = ({ children, userId }) => {
   const [aliments, setAliments] = useState([]);
   const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Track loading state
   const [error, setError] = useState(null);
 
   // Fetch aliments when userId changes
@@ -30,11 +30,12 @@ export const AlimentProvider = ({ children, userId }) => {
       try {
         const fetchedAliments = await getAlimentsFromFirestore(userId);
         setAliments(fetchedAliments);
+        setError(null); // Clear error on success
       } catch (error) {
         console.error("Error fetching aliments: ", error);
         setError("Error fetching aliments");
       } finally {
-        setLoading(false);
+        setLoading(false); // Stop loading after data is fetched
       }
     };
 
@@ -84,6 +85,7 @@ export const AlimentProvider = ({ children, userId }) => {
         await addAlimentToFirestore(userId, newAliment);
         const updatedAliments = await getAlimentsFromFirestore(userId);
         setAliments(updatedAliments);
+        setError(null); // Clear error on success
       } catch (error) {
         console.error("Error adding aliment:", error);
         setError("Error adding aliment");
@@ -103,6 +105,7 @@ export const AlimentProvider = ({ children, userId }) => {
         );
         const updatedAliments = await getAlimentsFromFirestore(userId);
         setAliments(updatedAliments);
+        setError(null); // Clear error on success
       } catch (error) {
         console.error("Error updating aliment:", error);
         setError("Error updating aliment");
@@ -118,6 +121,7 @@ export const AlimentProvider = ({ children, userId }) => {
         await deleteAlimentFromFirestore(userId, id);
         const updatedAliments = await getAlimentsFromFirestore(userId);
         setAliments(updatedAliments);
+        setError(null); // Clear error on success
       } catch (error) {
         console.error("Error deleting aliment:", error);
         setError("Error deleting aliment");
@@ -199,13 +203,12 @@ export const AlimentProvider = ({ children, userId }) => {
   const value = useMemo(
     () => ({
       aliments,
-      setAliments,
       addAliment,
       decrementAlimentQuantity,
       incrementAlimentQuantity,
       updateAliment,
-      updateMultipleAliments,
       deleteAliment,
+      updateMultipleAliments,
       notifications,
       markNotificationAsRead,
       deleteNotification,
@@ -219,8 +222,8 @@ export const AlimentProvider = ({ children, userId }) => {
       decrementAlimentQuantity,
       incrementAlimentQuantity,
       updateAliment,
-      updateMultipleAliments,
       deleteAliment,
+      updateMultipleAliments,
       notifications,
       markNotificationAsRead,
       deleteNotification,

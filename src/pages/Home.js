@@ -6,6 +6,7 @@ import {
   Card,
   CardContent,
   Container,
+  CircularProgress,
 } from "@mui/material";
 import BacCard from "../components/BacCard";
 import AlimentList from "../components/AlimentList";
@@ -14,18 +15,34 @@ import { BacContext } from "../contexts/BacContext";
 import { AlimentContext } from "../contexts/AlimentContext";
 
 const Home = () => {
-  const { bacs } = useContext(BacContext);
+  const { bacs, loading: loadingBacs } = useContext(BacContext);
   const {
     aliments,
     addAliment,
     decrementAlimentQuantity,
     incrementAlimentQuantity,
     updateAliment,
+    loading: loadingAliments,
   } = useContext(AlimentContext);
 
   const filterAlimentsByType = (type) => {
     return aliments.filter((aliment) => aliment.type === type);
   };
+
+  if (loadingBacs || loadingAliments) {
+    // Show a loading spinner while bacs or aliments are being fetched
+    return (
+      <Container
+        maxWidth="lg"
+        sx={{ mt: 4, mb: 8, padding: { xs: 2, sm: 4 }, textAlign: "center" }}
+      >
+        <CircularProgress />
+        <Typography variant="h6" sx={{ mt: 2 }}>
+          Loading your data...
+        </Typography>
+      </Container>
+    );
+  }
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 8, padding: { xs: 2, sm: 4 } }}>
