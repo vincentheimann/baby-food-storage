@@ -1,21 +1,39 @@
-import React, { useState, useContext } from "react";
-import { TextField, Button, Grid, MenuItem, Typography } from "@mui/material";
+import React, { useState, useContext, useEffect } from "react";
+import {
+  TextField,
+  Button,
+  Grid,
+  MenuItem,
+  Typography,
+  InputAdornment,
+  CircularProgress,
+} from "@mui/material";
+import LabelIcon from "@mui/icons-material/Label";
+import EventIcon from "@mui/icons-material/Event";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import IcecreamIcon from "@mui/icons-material/Icecream";
 import { BacContext } from "../contexts/BacContext";
 import { AlimentContext } from "../contexts/AlimentContext";
+import { addDays, format } from "date-fns";
 
 const AlimentForm = () => {
   const { bacs } = useContext(BacContext);
-  const { addAliment, error } = useContext(AlimentContext); // Add error handling
+  const { addAliment, error, loading } = useContext(AlimentContext);
+
+  const getCurrentDate = () => format(new Date(), "yyyy-MM-dd");
+  const getDefaultExpirationDate = () =>
+    format(addDays(new Date(), 30), "yyyy-MM-dd");
 
   const [values, setValues] = useState({
     name: "",
-    freezingDate: "",
-    expirationDate: "",
+    freezingDate: getCurrentDate(), // Default to current date
+    expirationDate: getDefaultExpirationDate(), // Default to current date + 30 days
     type: "",
     quantity: 1,
   });
 
   const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -36,7 +54,7 @@ const AlimentForm = () => {
     }
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const validationErrors = {};
 
@@ -51,14 +69,19 @@ const AlimentForm = () => {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      addAliment(values); // Save aliment in Firestore
-      setValues({
-        name: "",
-        freezingDate: "",
-        expirationDate: "",
-        type: "",
-        quantity: 1,
-      });
+      try {
+        await addAliment(values); // Save aliment in Firestore
+        setSuccessMessage("Aliment added successfully!");
+        setValues({
+          name: "",
+          freezingDate: getCurrentDate(), // Reset to current date
+          expirationDate: getDefaultExpirationDate(), // Reset to current date + 30 days
+          type: "",
+          quantity: 1,
+        });
+      } catch (err) {
+        setErrors({ form: "Failed to add aliment. Please try again." });
+      }
     }
   };
 
@@ -71,6 +94,12 @@ const AlimentForm = () => {
           {error}
         </Typography>
       )}
+      {successMessage && (
+        <Typography color="primary" align="center" gutterBottom>
+          {successMessage}
+        </Typography>
+      )}
+
       <Grid container spacing={2}>
         <Grid item xs={12} md={3}>
           <TextField
@@ -81,6 +110,13 @@ const AlimentForm = () => {
             onChange={handleChange}
             fullWidth
             helperText={errors.name}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LabelIcon />
+                </InputAdornment>
+              ),
+            }}
           />
         </Grid>
         <Grid item xs={12} md={3}>
@@ -94,6 +130,13 @@ const AlimentForm = () => {
             fullWidth
             InputLabelProps={{
               shrink: true,
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <EventIcon />
+                </InputAdornment>
+              ),
             }}
             helperText={errors.freezingDate}
           />
@@ -109,6 +152,13 @@ const AlimentForm = () => {
             fullWidth
             InputLabelProps={{
               shrink: true,
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <EventAvailableIcon />
+                </InputAdornment>
+              ),
             }}
             helperText={errors.expirationDate}
           />
@@ -139,6 +189,14 @@ const AlimentForm = () => {
             value={values.quantity}
             onChange={handleChange}
             fullWidth
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <IcecreamIcon />
+                </InputAdornment>
+              ),
+              inputProps: { min: 1 },
+            }}
           />
         </Grid>
         <Grid item xs={12} display="flex" justifyContent="flex-end">
@@ -147,11 +205,17 @@ const AlimentForm = () => {
             size="large"
             variant="contained"
             color="primary"
+            disabled={loading}
           >
-            Add
+            {loading ? <CircularProgress size={24} /> : "Add"}
           </Button>
         </Grid>
       </Grid>
+      {errors.form && (
+        <Typography color="error" align="center" sx={{ mt: 2 }}>
+          {errors.form}
+        </Typography>
+      )}
     </form>
   );
 };
