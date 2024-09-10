@@ -21,7 +21,8 @@ import { AlimentContext } from "../contexts/AlimentContext";
 import { debounce } from "lodash";
 
 const BacConfig = ({ userId }) => {
-  const { bacs, addBac, updateBac, removeBac } = useContext(BacContext);
+  const { bacs, addBac, updateBac, removeBac, loading, error } =
+    useContext(BacContext);
   const { aliments, setAliments } = useContext(AlimentContext);
 
   const [newBac, setNewBac] = useState({
@@ -31,7 +32,7 @@ const BacConfig = ({ userId }) => {
     capacity: 12,
   });
   const [localBacState, setLocalBacState] = useState({});
-  const [error, setError] = useState({ type: false, capacity: false });
+  const [formError, setFormError] = useState({ type: false, capacity: false });
   const [openDialog, setOpenDialog] = useState(false);
   const [currentType, setCurrentType] = useState("");
   const [alimentsToReassign, setAlimentsToReassign] = useState([]);
@@ -59,22 +60,18 @@ const BacConfig = ({ userId }) => {
 
   const handleAddBac = async () => {
     if (!newBac.type.trim()) {
-      setError({ type: true });
+      setFormError({ type: true });
       return;
     }
 
     if (newBac.capacity < 1) {
-      setError({ ...error, capacity: true });
+      setFormError({ ...formError, capacity: true });
       return;
     }
 
-    setError({ type: false, capacity: false });
-    try {
-      await addBac(newBac);
-      setNewBac({ color: "", type: "", capacity: 12 });
-    } catch (error) {
-      console.error("Error adding bac:", error);
-    }
+    setFormError({ type: false, capacity: false });
+    addBac(newBac); // No need to refetch bacs due to optimistic UI updates
+    setNewBac({ color: "", type: "", capacity: 12 });
   };
 
   const handleDeleteBac = async (type) => {
@@ -84,11 +81,7 @@ const BacConfig = ({ userId }) => {
       setCurrentType(type);
       setOpenDialog(true);
     } else {
-      try {
-        await removeBac(type);
-      } catch (error) {
-        console.error("Error deleting bac:", error);
-      }
+      removeBac(type); // Optimistic update, no need to re-fetch
     }
   };
 
@@ -123,6 +116,10 @@ const BacConfig = ({ userId }) => {
       <Typography variant="h4" component="h1" sx={{ mb: { xs: 2, md: 4 } }}>
         Ice Tray Configuration
       </Typography>
+
+      {/* Show any global error from the context */}
+      {error && <Typography color="error">{error}</Typography>}
+
       <Stack spacing={2}>
         {bacs.map((bac) => (
           <Box
@@ -153,7 +150,7 @@ const BacConfig = ({ userId }) => {
                   border: "1px solid #ccc",
                   borderRadius: 1,
                   padding: 1.6,
-                  width: "100%", // Make it full-width for mobile
+                  width: "100%",
                 }}
               >
                 <CirclePicker
@@ -240,8 +237,8 @@ const BacConfig = ({ userId }) => {
               label="Type"
               value={newBac.type}
               onChange={(e) => setNewBac({ ...newBac, type: e.target.value })}
-              error={error.type}
-              helperText={error.type ? "This field is required." : ""}
+              error={formError.type}
+              helperText={formError.type ? "This field is required." : ""}
               fullWidth
             />
           </Grid>
@@ -260,8 +257,13 @@ const BacConfig = ({ userId }) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <Button variant="contained" color="primary" onClick={handleAddBac}>
-              Add
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAddBac}
+              disabled={loading} // Disable button while loading
+            >
+              {loading ? "Adding..." : "Add"}
             </Button>
           </Grid>
         </Grid>
@@ -295,8 +297,13 @@ const BacConfig = ({ userId }) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
-          <Button onClick={handleReassign} variant="contained" color="primary">
-            Reassign and Delete Type
+          <Button
+            onClick={handleReassign}
+            variant="contained"
+            color="primary"
+            disabled={loading} // Disable button while loading
+          >
+            {loading ? "Reassigning..." : "Reassign and Delete Type"}
           </Button>
         </DialogActions>
       </Dialog>

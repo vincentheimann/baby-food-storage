@@ -1,4 +1,3 @@
-// src/pages/Dashboard.js
 import React, { useContext } from "react";
 import {
   Grid,
@@ -72,10 +71,15 @@ const Dashboard = () => {
   }));
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 8, padding: { xs: 2, sm: 4 } }}>
       <Grid container spacing={3}>
         <Grid item xs={12}>
-          <Typography variant="h3" component="h1" gutterBottom>
+          <Typography
+            variant="h3"
+            component="h1"
+            gutterBottom
+            sx={{ fontSize: { xs: "2rem", sm: "2.5rem" } }}
+          >
             Dashboard
           </Typography>
           <Box mt={5}>
@@ -90,17 +94,21 @@ const Dashboard = () => {
                   height={200}
                   colors={pieChartData.map((data) => data.color)}
                 />
-                <ul aria-label="Pie chart legend">
-                  {pieChartData.map((data) => (
-                    <li key={data.id}>{data.label}</li>
-                  ))}
-                </ul>
+                <Box sx={{ mt: 2 }}>
+                  <ul aria-label="Pie chart legend" style={{ paddingLeft: 16 }}>
+                    {pieChartData.map((data) => (
+                      <li key={data.id} style={{ color: data.color }}>
+                        {data.label}
+                      </li>
+                    ))}
+                  </ul>
+                </Box>
               </CardContent>
             </Card>
           </Box>
         </Grid>
         {bacs.map((bac) => (
-          <Grid item xs={12} key={bac.id}>
+          <Grid item xs={12} sm={6} md={4} key={bac.id}>
             <BacCard
               color={bac.color}
               type={bac.type}

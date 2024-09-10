@@ -16,27 +16,28 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useUser } from "../contexts/UserContext";
 
 const LoginPage = () => {
-  const { googleLogin } = useUser();
+  const { googleLogin, isAuthenticated, loading } = useUser(); // Add loading and isAuthenticated
   const navigate = useNavigate();
   const [generalError, setGeneralError] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loginLoading, setLoginLoading] = useState(false);
 
+  // Automatically redirect to home if the user is already authenticated
   useEffect(() => {
-    if (generalError) {
-      setSnackbarOpen(true); // Open Snackbar when there is a general error
+    if (isAuthenticated && !loading) {
+      navigate("/"); // Redirect to home if authenticated
     }
-  }, [generalError]);
+  }, [isAuthenticated, loading, navigate]);
 
   const handleGoogleLogin = async () => {
-    setLoading(true);
+    setLoginLoading(true);
     try {
       await googleLogin(); // Calls your googleLogin method in firebaseAuthService.js
       navigate("/"); // Navigate to home page after login
     } catch (error) {
       setGeneralError("Google login failed. Please try again.");
     } finally {
-      setLoading(false);
+      setLoginLoading(false);
     }
   };
 
@@ -44,6 +45,11 @@ const LoginPage = () => {
     setSnackbarOpen(false);
     setGeneralError(""); // Clear the general error after Snackbar is closed
   };
+
+  // Render loading if the user is authenticated
+  if (isAuthenticated && !loading) {
+    return <div>Redirecting...</div>;
+  }
 
   return (
     <>
@@ -87,10 +93,10 @@ const LoginPage = () => {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
                 onClick={handleGoogleLogin}
-                disabled={loading}
+                disabled={loginLoading}
                 aria-label="Sign in with Google"
               >
-                {loading ? (
+                {loginLoading ? (
                   <CircularProgress size={24} sx={{ color: "white" }} />
                 ) : (
                   "Sign in with Google"
