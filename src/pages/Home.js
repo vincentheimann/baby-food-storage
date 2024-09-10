@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import {
   Grid,
   Typography,
@@ -11,6 +11,7 @@ import {
 import BacCard from "../components/BacCard";
 import AlimentList from "../components/AlimentList";
 import AlimentForm from "../components/AlimentForm";
+import AlimentModal from "../components/AlimentModal"; // Import AlimentModal
 import { BacContext } from "../contexts/BacContext";
 import { AlimentContext } from "../contexts/AlimentContext";
 
@@ -25,8 +26,18 @@ const Home = () => {
     loading: loadingAliments,
   } = useContext(AlimentContext);
 
+  const [selectedAliment, setSelectedAliment] = useState(null); // Manage selected aliment for modal
+
   const filterAlimentsByType = (type) => {
     return aliments.filter((aliment) => aliment.type === type);
+  };
+
+  const handleItemClick = (aliment) => {
+    setSelectedAliment(aliment); // Set aliment when clicked
+  };
+
+  const handleCloseModal = () => {
+    setSelectedAliment(null); // Close modal
   };
 
   if (loadingBacs || loadingAliments) {
@@ -68,6 +79,7 @@ const Home = () => {
             <BacCard
               bac={bac} // Pass entire bac object to BacCard
               aliments={filterAlimentsByType(bac.type)} // Filter aliments by bac type
+              onItemClick={handleItemClick} // Pass click handler
             />
           </Grid>
         ))}
@@ -93,10 +105,21 @@ const Home = () => {
               onDecrement={decrementAlimentQuantity}
               onIncrement={incrementAlimentQuantity}
               onUpdate={updateAliment}
+              onItemClick={handleItemClick} // Pass click handler for AlimentList too
             />
           </CardContent>
         </Card>
       </Box>
+
+      {/* Aliment Modal */}
+      {selectedAliment && (
+        <AlimentModal
+          open={Boolean(selectedAliment)}
+          handleClose={handleCloseModal}
+          aliment={selectedAliment} // Pass selected aliment to AlimentModal
+          handleSave={updateAliment} // Use the update function to save changes
+        />
+      )}
     </Container>
   );
 };
