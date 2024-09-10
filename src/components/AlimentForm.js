@@ -7,6 +7,8 @@ import {
   Typography,
   InputAdornment,
   CircularProgress,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import LabelIcon from "@mui/icons-material/Label";
 import EventIcon from "@mui/icons-material/Event";
@@ -33,7 +35,7 @@ const AlimentForm = () => {
   });
 
   const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState(false); // Changed to boolean for Snackbar control
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -71,7 +73,7 @@ const AlimentForm = () => {
     if (Object.keys(validationErrors).length === 0) {
       try {
         await addAliment(values); // Save aliment in Firestore
-        setSuccessMessage("Aliment added successfully!");
+        setSuccessMessage(true); // Trigger Snackbar
         setValues({
           name: "",
           freezingDate: getCurrentDate(), // Reset to current date
@@ -85,6 +87,10 @@ const AlimentForm = () => {
     }
   };
 
+  const handleCloseSnackbar = () => {
+    setSuccessMessage(false);
+  };
+
   const uniqueTypes = [...new Set(bacs.map((bac) => bac.type))];
 
   return (
@@ -94,11 +100,16 @@ const AlimentForm = () => {
           {error}
         </Typography>
       )}
-      {successMessage && (
-        <Typography color="primary" align="center" gutterBottom>
-          {successMessage}
-        </Typography>
-      )}
+
+      <Snackbar
+        open={successMessage}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success">
+          Aliment added successfully!
+        </Alert>
+      </Snackbar>
 
       <Grid container spacing={2}>
         <Grid item xs={12} md={3}>
