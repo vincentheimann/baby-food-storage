@@ -70,19 +70,22 @@ const ProfilePage = () => {
     <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
       <Card sx={{ maxWidth: "sm", mx: "auto", p: 2 }}>
         <CardContent sx={{ textAlign: "center" }}>
-          {/* Centering Avatar */}
+          {/* Avatar Section */}
           <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
             <Avatar
               sx={{ width: 80, height: 80 }}
               src={user?.photoURL || ""}
               alt={user?.displayName || "User Avatar"}
               referrerPolicy="no-referrer"
+              onError={(e) => {
+                e.target.src = ""; // Fallback to initial letter if image fails to load
+              }}
             >
               {!user?.photoURL && user?.displayName?.charAt(0)}
             </Avatar>
           </Box>
 
-          {/* Display Name and Email from Google Account */}
+          {/* Display Name and Email */}
           <Typography variant="h4" component="h1" gutterBottom>
             {user?.displayName || "User Name"}
           </Typography>
@@ -91,6 +94,7 @@ const ProfilePage = () => {
           </Typography>
         </CardContent>
 
+        {/* Actions: Logout and Delete Account */}
         <CardActions sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <Button
             variant="contained"
@@ -112,7 +116,7 @@ const ProfilePage = () => {
         </CardActions>
       </Card>
 
-      {/* Snackbar for success messages */}
+      {/* Success Snackbar */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
