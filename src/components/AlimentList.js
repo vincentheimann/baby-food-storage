@@ -14,7 +14,59 @@ import { formatDate } from "../utils/dateUtils";
 
 const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
   const [selectedAliment, setSelectedAliment] = useState(null);
-  const [error, setError] = useState(null); // New error state
+  const [error, setError] = useState(null); // Error state
+  const [localAliments, setLocalAliments] = useState(aliments); // Local state for optimistic updates
+  const [loadingAlimentId, setLoadingAlimentId] = useState(null); // Track which aliment is being updated
+
+  // Optimistically update quantity and call the increment function in the background
+  const handleIncrement = async (id) => {
+    const aliment = localAliments.find((aliment) => aliment.id === id);
+    if (!aliment) return;
+
+    const updatedAliments = localAliments.map((aliment) =>
+      aliment.id === id
+        ? { ...aliment, quantity: aliment.quantity + 1 }
+        : aliment
+    );
+
+    setLocalAliments(updatedAliments); // Optimistic update
+    setLoadingAlimentId(id); // Set loading state for this aliment
+
+    try {
+      await onIncrement(id);
+      setError(null); // Clear error on success
+    } catch (err) {
+      setError("Failed to increment quantity.");
+      setLocalAliments(aliments); // Revert back to original state on error
+    } finally {
+      setLoadingAlimentId(null); // Clear loading state
+    }
+  };
+
+  // Optimistically update quantity and call the decrement function in the background
+  const handleDecrement = async (id) => {
+    const aliment = localAliments.find((aliment) => aliment.id === id);
+    if (aliment.quantity === 0) return; // Prevent decrementing below 0
+
+    const updatedAliments = localAliments.map((aliment) =>
+      aliment.id === id
+        ? { ...aliment, quantity: Math.max(aliment.quantity - 1, 0) }
+        : aliment
+    );
+
+    setLocalAliments(updatedAliments); // Optimistic update
+    setLoadingAlimentId(id); // Set loading state for this aliment
+
+    try {
+      await onDecrement(id);
+      setError(null); // Clear error on success
+    } catch (err) {
+      setError("Failed to decrement quantity.");
+      setLocalAliments(aliments); // Revert back to original state on error
+    } finally {
+      setLoadingAlimentId(null); // Clear loading state
+    }
+  };
 
   const handleItemClick = (aliment) => {
     setSelectedAliment(aliment);
@@ -24,22 +76,6 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
     setSelectedAliment(null);
   };
 
-  const handleDecrement = async (id) => {
-    try {
-      await onDecrement(id);
-    } catch (err) {
-      setError("Failed to decrement quantity.");
-    }
-  };
-
-  const handleIncrement = async (id) => {
-    try {
-      await onIncrement(id);
-    } catch (err) {
-      setError("Failed to increment quantity.");
-    }
-  };
-
   return (
     <>
       {error && (
@@ -47,7 +83,7 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
           {error}
         </Typography>
       )}
-      {aliments.length === 0 ? (
+      {localAliments.length === 0 ? (
         <Box textAlign="center" mt={2}>
           <Typography
             variant="h6"
@@ -58,7 +94,7 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
         </Box>
       ) : (
         <Grid container spacing={2}>
-          {aliments.map((aliment) => (
+          {localAliments.map((aliment) => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={aliment.id}>
               <Card
                 sx={{
@@ -133,6 +169,7 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
                     onClick={() => handleDecrement(aliment.id)}
                     size="large"
                     sx={{ padding: "12px" }}
+                    disabled={loadingAlimentId === aliment.id}
                   >
                     <RemoveCircleOutlineIcon sx={{ fontSize: 32 }} />
                   </IconButton>
@@ -142,6 +179,7 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
                     onClick={() => handleIncrement(aliment.id)}
                     size="large"
                     sx={{ ml: 2, padding: "12px" }}
+                    disabled={loadingAlimentId === aliment.id}
                   >
                     <AddCircleOutlineIcon sx={{ fontSize: 32 }} />
                   </IconButton>
