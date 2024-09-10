@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   IconButton,
   Typography,
@@ -18,6 +18,10 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
   const [localAliments, setLocalAliments] = useState(aliments); // Local state for optimistic updates
   const [loadingAlimentId, setLoadingAlimentId] = useState(null); // Track which aliment is being updated
 
+  useEffect(() => {
+    setLocalAliments(aliments); // Ensure local state is in sync with props
+  }, [aliments]);
+
   // Optimistically update quantity and call the increment function in the background
   const handleIncrement = async (id) => {
     const aliment = localAliments.find((aliment) => aliment.id === id);
@@ -33,7 +37,7 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
     setLoadingAlimentId(id); // Set loading state for this aliment
 
     try {
-      await onIncrement(id);
+      await onIncrement(id); // Perform the increment operation
       setError(null); // Clear error on success
     } catch (err) {
       setError("Failed to increment quantity.");
@@ -58,7 +62,7 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
     setLoadingAlimentId(id); // Set loading state for this aliment
 
     try {
-      await onDecrement(id);
+      await onDecrement(id); // Perform the decrement operation
       setError(null); // Clear error on success
     } catch (err) {
       setError("Failed to decrement quantity.");
@@ -169,7 +173,7 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
                     onClick={() => handleDecrement(aliment.id)}
                     size="large"
                     sx={{ padding: "12px" }}
-                    disabled={loadingAlimentId === aliment.id}
+                    disabled={loadingAlimentId === aliment.id} // Disable button during loading
                   >
                     <RemoveCircleOutlineIcon sx={{ fontSize: 32 }} />
                   </IconButton>
@@ -179,7 +183,7 @@ const AlimentList = ({ aliments, onDecrement, onIncrement, onUpdate }) => {
                     onClick={() => handleIncrement(aliment.id)}
                     size="large"
                     sx={{ ml: 2, padding: "12px" }}
-                    disabled={loadingAlimentId === aliment.id}
+                    disabled={loadingAlimentId === aliment.id} // Disable button during loading
                   >
                     <AddCircleOutlineIcon sx={{ fontSize: 32 }} />
                   </IconButton>
