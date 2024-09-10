@@ -19,6 +19,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
 import { deleteAccount } from "../services/firebaseAuthService";
+import { deleteUserDataFromFirestore } from "../services/firebaseFirestoreDatabaseService"; // Import function to delete user data
 
 const ProfilePage = () => {
   const { user, logout, error, setError } = useUser();
@@ -48,12 +49,17 @@ const ProfilePage = () => {
 
   const handleDeleteAccount = async () => {
     try {
+      // First, delete all related data from Firestore
+      await deleteUserDataFromFirestore(user.uid);
+
+      // Then, delete the account
       await deleteAccount();
+
       setSuccessMessage("Account deleted successfully.");
       setSnackbarOpen(true);
       navigate("/login");
     } catch (error) {
-      console.error("Failed to delete account:", error);
+      console.error("Failed to delete account and data:", error);
       setError("Failed to delete account. Try again later.");
     }
   };
@@ -155,7 +161,7 @@ const ProfilePage = () => {
         <DialogContent>
           <DialogContentText id="delete-dialog-description">
             Are you sure you want to delete your account? This action cannot be
-            undone.
+            undone, and all your data will be permanently deleted.
           </DialogContentText>
         </DialogContent>
         <DialogActions>

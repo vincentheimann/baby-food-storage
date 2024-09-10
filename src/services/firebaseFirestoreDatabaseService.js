@@ -64,6 +64,33 @@ export const updateUserProfileInFirestore = async (uid, updatedProfile) => {
   }
 };
 
+// Function to delete all bacs and aliments related to the user
+export const deleteUserDataFromFirestore = async (userId) => {
+  try {
+    // Delete all bacs
+    const bacsRef = collection(db, "users", userId, "bacs");
+    const bacsSnapshot = await getDocs(bacsRef);
+    const batch = writeBatch(db);
+
+    bacsSnapshot.forEach((bacDoc) => {
+      batch.delete(bacDoc.ref);
+    });
+
+    // Delete all aliments
+    const alimentsRef = collection(db, "users", userId, "aliments");
+    const alimentsSnapshot = await getDocs(alimentsRef);
+
+    alimentsSnapshot.forEach((alimentDoc) => {
+      batch.delete(alimentDoc.ref);
+    });
+
+    await batch.commit();
+  } catch (error) {
+    console.error("Error deleting user data:", error);
+    throw error;
+  }
+};
+
 // Functions for managing "bacs"
 
 // Add a new bac
