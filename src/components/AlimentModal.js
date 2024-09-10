@@ -16,32 +16,53 @@ import { BacContext } from "../contexts/BacContext";
 import { AlimentContext } from "../contexts/AlimentContext";
 
 const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
-  const { bacs } = useContext(BacContext); // Access types from BacContext
+  const { bacs } = useContext(BacContext); // Access bac types from BacContext
   const { updateAliment } = useContext(AlimentContext); // Firestore update
+
   const [updatedAliment, setUpdatedAliment] = useState({ ...aliment });
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    setUpdatedAliment({ ...aliment });
+    if (aliment) {
+      setUpdatedAliment({ ...aliment });
+    }
   }, [aliment]);
+
+  // Real-time validation for each input field
+  const validate = (field, value) => {
+    let validationErrors = {};
+
+    if (field === "name" && !value) {
+      validationErrors.name = "Food name is required";
+    }
+    if (field === "freezingDate" && !value) {
+      validationErrors.freezingDate = "Freezing date is required";
+    }
+    if (field === "expirationDate" && !value) {
+      validationErrors.expirationDate = "Expiration date is required";
+    }
+    if (field === "type" && !value) {
+      validationErrors.type = "Type is required";
+    }
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      ...validationErrors,
+    }));
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === "quantity" && value < 1) {
-      setUpdatedAliment((prev) => ({
-        ...prev,
-        [name]: 1,
-      }));
-    } else {
-      setUpdatedAliment((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
+    setUpdatedAliment((prev) => ({ ...prev, [name]: value }));
+
+    // Trigger real-time validation
+    validate(name, value);
   };
 
   const handleSaveClick = () => {
     const validationErrors = {};
+
+    // Run validation on all fields before saving
     if (!updatedAliment.name) validationErrors.name = "Food name is required";
     if (!updatedAliment.freezingDate)
       validationErrors.freezingDate = "Freezing date is required";
@@ -53,7 +74,7 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
 
     if (Object.keys(validationErrors).length === 0) {
       updateAliment(updatedAliment); // Update aliment in Firestore
-      handleClose();
+      handleClose(); // Close the modal
     }
   };
 
@@ -63,12 +84,12 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
     <Modal open={open} onClose={handleClose}>
       <Box
         sx={{
-          p: 4,
+          p: { xs: 3, sm: 4 },
           bgcolor: "background.paper",
           borderRadius: 1,
           maxWidth: 500,
           mx: "auto",
-          mt: 10,
+          mt: { xs: 8, sm: 10 },
         }}
       >
         <Typography variant="h6" component="h2">
@@ -84,6 +105,7 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
               onChange={handleChange}
               fullWidth
               helperText={errors.name}
+              autoFocus // Automatically focus on the food name input
             />
           </Grid>
           <Grid item xs={12}>
@@ -92,7 +114,7 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
               label="Freezing date"
               type="date"
               name="freezingDate"
-              value={updatedAliment.freezingDate}
+              value={updatedAliment.freezingDate || ""}
               onChange={handleChange}
               InputLabelProps={{ shrink: true }}
               fullWidth
@@ -105,7 +127,7 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
               label="Expiration date"
               type="date"
               name="expirationDate"
-              value={updatedAliment.expirationDate}
+              value={updatedAliment.expirationDate || ""}
               onChange={handleChange}
               InputLabelProps={{ shrink: true }}
               fullWidth
@@ -119,7 +141,7 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
                 labelId="type-label"
                 id="type-select"
                 name="type"
-                value={updatedAliment.type}
+                value={updatedAliment.type || ""}
                 onChange={handleChange}
               >
                 {uniqueTypes.map((type) => (
@@ -139,6 +161,7 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
               value={updatedAliment.quantity}
               onChange={handleChange}
               fullWidth
+              inputProps={{ min: 1 }}
             />
           </Grid>
         </Grid>
@@ -147,7 +170,7 @@ const AlimentModal = ({ open, handleClose, aliment, handleSave }) => {
             Cancel
           </Button>
           <Button onClick={handleSaveClick} variant="contained" color="primary">
-            Save
+            Save Changes
           </Button>
         </Box>
       </Box>
