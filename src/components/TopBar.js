@@ -6,18 +6,18 @@ import {
   Typography,
   Menu,
   MenuItem,
-  // Badge,
   Drawer,
   List,
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
   Box,
+  // Badge,
+  Avatar,
+  Tooltip,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-// import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
-import AccountCircle from "@mui/icons-material/AccountCircle";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate } from "react-router-dom";
 import { AlimentContext } from "../contexts/AlimentContext";
@@ -27,15 +27,12 @@ const TopBar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const {
-    notifications,
-    markNotificationAsRead,
-    deleteNotification,
-    // unreadNotificationsCount,
-  } = useContext(AlimentContext);
-  const { logout } = useUser();
+  const { notifications, markNotificationAsRead, deleteNotification } =
+    useContext(AlimentContext);
+  const { user, logout } = useUser();
   const navigate = useNavigate();
 
+  // Open/Close main navigation menu
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -44,6 +41,7 @@ const TopBar = () => {
     setAnchorEl(null);
   };
 
+  // Open/Close profile menu
   const handleProfileMenuOpen = (event) => {
     setProfileMenuAnchorEl(event.currentTarget);
   };
@@ -52,12 +50,14 @@ const TopBar = () => {
     setProfileMenuAnchorEl(null);
   };
 
+  // Navigation handler
   const handleNavigation = (path) => {
     navigate(path);
     handleMenuClose();
     handleProfileMenuClose();
   };
 
+  // Handle logout
   const handleLogout = async () => {
     try {
       await logout();
@@ -67,6 +67,7 @@ const TopBar = () => {
     }
   };
 
+  // Drawer toggle
   const toggleDrawer = (open) => (event) => {
     if (
       event.type === "keydown" &&
@@ -80,6 +81,7 @@ const TopBar = () => {
   return (
     <AppBar position="static">
       <Toolbar>
+        {/* Left-side Menu Icon */}
         <IconButton
           edge="start"
           color="inherit"
@@ -89,92 +91,115 @@ const TopBar = () => {
         >
           <MenuIcon />
         </IconButton>
-        <Typography variant="h6" style={{ flexGrow: 1 }}>
+
+        {/* App Title */}
+        <Typography variant="h6" sx={{ flexGrow: 1 }}>
           Baby Food Storage
         </Typography>
+
+        {/* Settings and Profile Actions */}
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <IconButton
-            color="inherit"
-            onClick={() => handleNavigation("/config-bacs")}
-            data-testid="settings-button"
-          >
-            <SettingsIcon />
-          </IconButton>
-          {/* <IconButton
-            color="inherit"
-            onClick={toggleDrawer(true)}
-            data-testid="notifications-button"
-          >
-            <Badge badgeContent={unreadNotificationsCount} color="secondary">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton> */}
-          <Box
-            onMouseEnter={handleProfileMenuOpen}
-            onMouseLeave={handleProfileMenuClose}
-          >
-            <IconButton edge="end" color="inherit" data-testid="profile-button">
-              <AccountCircle />
-            </IconButton>
-            <Menu
-              anchorEl={profileMenuAnchorEl}
-              open={Boolean(profileMenuAnchorEl)}
-              onClose={handleProfileMenuClose}
-              MenuListProps={{ onMouseLeave: handleProfileMenuClose }}
+          {/* Settings Button */}
+          <Tooltip title="Configure Bacs">
+            <IconButton
+              color="inherit"
+              onClick={() => handleNavigation("/config-bacs")}
+              data-testid="settings-button"
             >
-              <MenuItem onClick={() => handleNavigation("/profile")}>
-                Profile
-              </MenuItem>
-              <MenuItem onClick={handleLogout}>Logout</MenuItem>
-            </Menu>
-          </Box>
+              <SettingsIcon />
+            </IconButton>
+          </Tooltip>
+
+          {/* Notifications (Optional) */}
+          {/* {notifications.length > 0 && (
+            <IconButton
+              color="inherit"
+              onClick={toggleDrawer(true)}
+              data-testid="notifications-button"
+            >
+              <Badge badgeContent={notifications.length} color="secondary">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+          )} */}
+
+          {/* Profile Menu with Avatar */}
+          <Tooltip title="Account settings">
+            <IconButton
+              onClick={handleProfileMenuOpen}
+              color="inherit"
+              data-testid="profile-button"
+              size="large"
+            >
+              <Avatar alt={user.displayName} src={user.photoURL} />
+            </IconButton>
+          </Tooltip>
         </Box>
+
+        {/* Navigation Menu */}
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}
         >
           <MenuItem onClick={() => handleNavigation("/")}>Home</MenuItem>
-          {/* <MenuItem onClick={() => handleNavigation("/dashboard")}>
-            Dashboard
-          </MenuItem> */}
         </Menu>
+
+        {/* Profile Menu */}
+        <Menu
+          anchorEl={profileMenuAnchorEl}
+          open={Boolean(profileMenuAnchorEl)}
+          onClose={handleProfileMenuClose}
+        >
+          <MenuItem onClick={() => handleNavigation("/profile")}>
+            Profile
+          </MenuItem>
+          <MenuItem onClick={handleLogout}>Logout</MenuItem>
+        </Menu>
+
+        {/* Notification Drawer */}
         <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
-          <List>
-            {notifications.length > 0 ? (
-              notifications.map((notification) => (
-                <ListItem
-                  button
-                  key={notification.id}
-                  onClick={() => markNotificationAsRead(notification.id)}
-                  style={{ backgroundColor: notification.color }}
-                >
-                  <ListItemText
-                    primary={notification.name}
-                    secondary={notification.message}
-                    style={{
-                      textDecoration: notification.read
-                        ? "line-through"
-                        : "none",
-                    }}
-                  />
-                  <ListItemSecondaryAction>
-                    <IconButton
-                      edge="end"
-                      aria-label="delete"
-                      onClick={() => deleteNotification(notification.id)}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
+          <Box
+            sx={{ width: 300 }}
+            role="presentation"
+            onKeyDown={toggleDrawer(false)}
+          >
+            <List>
+              {notifications.length > 0 ? (
+                notifications.map((notification) => (
+                  <ListItem
+                    button
+                    key={notification.id}
+                    onClick={() => markNotificationAsRead(notification.id)}
+                    sx={{ backgroundColor: notification.color }}
+                  >
+                    <ListItemText
+                      primary={notification.name}
+                      secondary={notification.message}
+                      sx={{
+                        textDecoration: notification.read
+                          ? "line-through"
+                          : "none",
+                      }}
+                    />
+                    <ListItemSecondaryAction>
+                      <IconButton
+                        edge="end"
+                        aria-label="delete"
+                        onClick={() => deleteNotification(notification.id)}
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))
+              ) : (
+                <ListItem>
+                  <ListItemText primary="No notifications" />
                 </ListItem>
-              ))
-            ) : (
-              <ListItem>
-                <ListItemText primary="No notifications" />
-              </ListItem>
-            )}
-          </List>
+              )}
+            </List>
+          </Box>
         </Drawer>
       </Toolbar>
     </AppBar>
