@@ -41,11 +41,16 @@ const Home = () => {
           </Typography>
         </Grid>
         {bacs.map((bac) => (
-          <Grid item xs={12} sm={6} key={bac.id} sx={{ padding: { xs: 1, sm: 2 } }}>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            key={bac.id}
+            sx={{ padding: { xs: 1, sm: 2 } }}
+          >
             <BacCard
-              color={bac.color}
-              type={bac.type}
-              aliments={filterAlimentsByType(bac.type)}
+              bac={bac} // Pass entire bac object to BacCard
+              aliments={filterAlimentsByType(bac.type)} // Filter aliments by bac type
             />
           </Grid>
         ))}
