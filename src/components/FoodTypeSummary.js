@@ -6,6 +6,15 @@ import { db } from "../services/firebase";
 import AddAlimentModal from "./AddAlimentModal";
 import { differenceInDays, format } from "date-fns"; // A library to easily manipulate dates
 import SnackBarAlert from "./SnackBar";
+import {
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  Chip,
+  LinearProgress,
+  Button,
+} from "@mui/material";
 
 const FoodTypeSummary = () => {
   const { currentUser } = useAuth();
@@ -55,40 +64,95 @@ const FoodTypeSummary = () => {
 
   return (
     <div>
-      <h2>Food Type Summary</h2>
+      <Typography variant="h4" gutterBottom>
+        Food Type Summary
+      </Typography>
 
       {/* Expiration Alerts */}
       {expiringSoon.length > 0 && (
         <div>
-          <h3>Expiring Soon</h3>
+          <Typography variant="h6" gutterBottom>
+            Expiring Soon
+          </Typography>
           <ul>
             {expiringSoon.map((aliment) => (
-              <li key={aliment.id} style={{ color: "red" }}>
-                {aliment.name} expires on{" "}
-                {format(new Date(aliment.expirationDate), "yyyy-MM-dd")}
+              <li key={aliment.id}>
+                <Chip
+                  label={`${aliment.name} expires on ${format(
+                    new Date(aliment.expirationDate),
+                    "yyyy-MM-dd"
+                  )}`}
+                  color="warning"
+                />
               </li>
             ))}
           </ul>
         </div>
       )}
 
-      <ul>
-        {aliments.map((aliment) => (
-          <li key={aliment.id}>
-            {aliment.name}: {aliment.quantity} cubes
-          </li>
-        ))}
-      </ul>
-      <button onClick={() => setIsModalOpen(true)}>Add New Aliment</button>
+      <Grid container spacing={3}>
+        {aliments.map((aliment) => {
+          const totalQuantity = aliment.totalQuantity || 0;
+          const remainingQuantity = aliment.trays
+            ? aliment.trays.reduce((sum, tray) => sum + tray.quantity, 0)
+            : 0;
+          const progressPercentage =
+            (remainingQuantity / totalQuantity) * 100 || 0;
+
+          return (
+            <Grid item xs={12} sm={6} md={4} key={aliment.id}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6">{aliment.name}</Typography>
+                  <Typography variant="body2">
+                    Total: {remainingQuantity}/{totalQuantity} cubes
+                  </Typography>
+                  <LinearProgress
+                    variant="determinate"
+                    value={progressPercentage}
+                    sx={{ mt: 1, mb: 1 }}
+                  />
+                  <Chip
+                    label={
+                      progressPercentage < 20
+                        ? "Low Stock"
+                        : progressPercentage > 80
+                        ? "Well-Stocked"
+                        : "Moderate"
+                    }
+                    color={
+                      progressPercentage < 20
+                        ? "error"
+                        : progressPercentage > 80
+                        ? "success"
+                        : "warning"
+                    }
+                  />
+                </CardContent>
+              </Card>
+            </Grid>
+          );
+        })}
+      </Grid>
+
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => setIsModalOpen(true)}
+        sx={{ mt: 3 }}
+      >
+        Add New Aliment
+      </Button>
+
       {isModalOpen && <AddAlimentModal onClose={() => setIsModalOpen(false)} />}
-      <div>
-        <SnackBarAlert
-          open={snackBarOpen}
-          onClose={handleCloseSnackBar}
-          message="Some aliments are expiring soon!"
-          severity="warning"
-        />
-      </div>
+
+      {/* SnackBar Alert */}
+      <SnackBarAlert
+        open={snackBarOpen}
+        onClose={handleCloseSnackBar}
+        message="Some aliments are expiring soon!"
+        severity="warning"
+      />
     </div>
   );
 };

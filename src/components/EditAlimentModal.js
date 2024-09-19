@@ -1,8 +1,8 @@
-// /src/components/AddAlimentModal.js
+// /src/components/EditAlimentModal.js
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import { addAliment } from "../services/alimentService";
-import { fetchTrays } from "../services/trayService";
+import { fetchTrays } from "../services/trayService"; // To fetch available trays
+import { updateAliment } from "../services/alimentService"; // Update the aliment service
 import {
   Dialog,
   DialogTitle,
@@ -15,25 +15,37 @@ import {
   Grid,
 } from "@mui/material";
 
-const AddAlimentModal = ({ onClose }) => {
+const EditAlimentModal = ({ aliment, onClose }) => {
   const { currentUser } = useAuth();
-  const [alimentName, setAlimentName] = useState("");
-  const [alimentType, setAlimentType] = useState("Protein");
-  const [trays, setTrays] = useState([]);
+  const [alimentName, setAlimentName] = useState(aliment.name || "");
+  const [alimentType, setAlimentType] = useState(aliment.type || "Protein");
   const [trayQuantities, setTrayQuantities] = useState({});
+  const [trays, setTrays] = useState([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const loadTrays = async () => {
       const trayData = await fetchTrays(currentUser.uid);
       setTrays(trayData);
-    };
-    loadTrays();
-  }, [currentUser]);
 
-  const handleAddAliment = async () => {
+      // Initialize the tray quantities based on the aliment's existing data
+      const trayQuantitiesInitial = (aliment.trays || []).reduce(
+        (acc, tray) => {
+          acc[tray.trayId] = tray.quantity;
+          return acc;
+        },
+        {}
+      );
+
+      setTrayQuantities(trayQuantitiesInitial);
+    };
+
+    loadTrays();
+  }, [aliment, currentUser]);
+
+  const handleUpdateAliment = async () => {
     if (!alimentName) {
-      setError("Aliment name is required");
+      setError("Aliment name is required.");
       return;
     }
 
@@ -47,7 +59,7 @@ const AddAlimentModal = ({ onClose }) => {
       return;
     }
 
-    const alimentData = {
+    const updatedAlimentData = {
       name: alimentName,
       type: alimentType,
       totalQuantity,
@@ -57,8 +69,13 @@ const AddAlimentModal = ({ onClose }) => {
       })),
     };
 
-    await addAliment(currentUser.uid, alimentData);
-    onClose();
+    try {
+      await updateAliment(currentUser.uid, aliment.id, updatedAlimentData);
+      onClose(); // Close the modal after successful update
+    } catch (error) {
+      console.error("Error updating aliment:", error);
+      setError("Error updating aliment. Please try again.");
+    }
   };
 
   const handleTrayQuantityChange = (trayId, quantity) => {
@@ -67,7 +84,7 @@ const AddAlimentModal = ({ onClose }) => {
 
   return (
     <Dialog open onClose={onClose}>
-      <DialogTitle>Add New Aliment</DialogTitle>
+      <DialogTitle>Edit Aliment</DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -126,12 +143,16 @@ const AddAlimentModal = ({ onClose }) => {
 
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleAddAliment} variant="contained" color="primary">
-          Add Aliment
+        <Button
+          onClick={handleUpdateAliment}
+          variant="contained"
+          color="primary"
+        >
+          Update Aliment
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default AddAlimentModal;
+export default EditAlimentModal;

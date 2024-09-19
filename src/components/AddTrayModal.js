@@ -9,28 +9,39 @@ import {
   DialogActions,
   TextField,
   Button,
+  Typography,
+  Grid,
 } from "@mui/material";
-import Grid from "@mui/material/Grid2";
 
 const AddTrayModal = ({ onClose }) => {
   const { currentUser } = useAuth();
   const [trayName, setTrayName] = useState("");
   const [trayCapacity, setTrayCapacity] = useState(12);
   const [trayColor, setTrayColor] = useState("#ffffff");
+  const [error, setError] = useState("");
 
   const handleAddTray = async () => {
-    if (trayName.trim()) {
-      try {
-        await addTray(currentUser.uid, {
-          name: trayName,
-          capacity: trayCapacity,
-          color: trayColor,
-          used: 0,
-        });
-        onClose(); // Close the modal after successful add
-      } catch (error) {
-        console.error("Error adding tray:", error);
-      }
+    if (!trayName.trim()) {
+      setError("Tray name is required");
+      return;
+    }
+
+    if (trayCapacity <= 0) {
+      setError("Tray capacity must be greater than 0");
+      return;
+    }
+
+    try {
+      await addTray(currentUser.uid, {
+        name: trayName,
+        capacity: trayCapacity,
+        color: trayColor,
+        used: 0,
+      });
+      onClose(); // Close the modal after successful add
+    } catch (error) {
+      console.error("Error adding tray:", error);
+      setError("There was an error adding the tray. Please try again.");
     }
   };
 
@@ -46,6 +57,8 @@ const AddTrayModal = ({ onClose }) => {
               value={trayName}
               onChange={(e) => setTrayName(e.target.value)}
               required
+              error={!!error && !trayName.trim()}
+              helperText={!trayName.trim() && error}
             />
           </Grid>
 
@@ -57,18 +70,28 @@ const AddTrayModal = ({ onClose }) => {
               value={trayCapacity}
               onChange={(e) => setTrayCapacity(e.target.value)}
               required
+              error={!!error && trayCapacity <= 0}
+              helperText={trayCapacity <= 0 && error}
             />
           </Grid>
 
           <Grid item xs={12}>
+            <Typography variant="subtitle1">Select Tray Color</Typography>
             <TextField
               fullWidth
               type="color"
-              label="Tray Color"
               value={trayColor}
               onChange={(e) => setTrayColor(e.target.value)}
             />
           </Grid>
+
+          {error && (
+            <Grid item xs={12}>
+              <Typography color="error" variant="body2">
+                {error}
+              </Typography>
+            </Grid>
+          )}
         </Grid>
       </DialogContent>
 

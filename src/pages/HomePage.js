@@ -1,53 +1,44 @@
 // /src/pages/HomePage.js
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import TrayOverview from "../components/TrayOverview"; // Shows tray usage
 import AddAlimentModal from "../components/AddAlimentModal"; // Modal for adding aliment
+import EditAlimentModal from "../components/EditAlimentModal"; // Modal for editing aliment
 import { useNavigate } from "react-router-dom";
-import { fetchAliments } from "../services/alimentService"; // Fetch aliments service
-import { fetchTrays } from "../services/trayService"; // Fetch trays service
+import { useFetchAlimentsAndTrays } from "../hooks/useFetchAlimentsAndTrays"; // Custom hook for fetching aliments and trays
 import {
   Typography,
   Button,
   CircularProgress,
   Card,
   CardContent,
-  List,
-  ListItem,
-  ListItemText,
+  LinearProgress,
+  Chip,
+  Grid,
 } from "@mui/material";
-import Grid from "@mui/material/Grid2";
 
 const HomePage = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
-  const [isAlimentModalOpen, setIsAlimentModalOpen] = useState(false);
-  const [aliments, setAliments] = useState([]);
-  const [trayMap, setTrayMap] = useState({});
-  const [loading, setLoading] = useState(true);
+  const { aliments, trayMap, loading } = useFetchAlimentsAndTrays(
+    currentUser?.uid
+  );
 
-  useEffect(() => {
-    const loadData = async () => {
-      if (currentUser) {
-        const alimentData = await fetchAliments(currentUser.uid);
-        const trayData = await fetchTrays(currentUser.uid);
+  // Modal state management
+  const [modalState, setModalState] = useState({
+    open: false,
+    type: null,
+    aliment: null,
+  });
 
-        const trayMapData = trayData.reduce((map, tray) => {
-          map[tray.id] = tray.name;
-          return map;
-        }, {});
+  const goToTrayManagement = () => navigate("/trays");
 
-        setAliments(alimentData);
-        setTrayMap(trayMapData);
-        setLoading(false);
-      }
-    };
+  const openModal = (type, aliment = null) => {
+    setModalState({ open: true, type, aliment });
+  };
 
-    loadData();
-  }, [currentUser]);
-
-  const goToTrayManagement = () => {
-    navigate("/trays");
+  const closeModal = () => {
+    setModalState({ open: false, type: null, aliment: null });
   };
 
   if (loading) {
@@ -85,39 +76,66 @@ const HomePage = () => {
         <Typography variant="h5" component="h3">
           Your Aliments
         </Typography>
-        <Grid container spacing={2}>
-          {aliments.map((aliment) => (
-            <Grid item key={aliment.id} xs={12} sm={6} md={4}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" component="div">
-                    {aliment.name} ({aliment.type})
-                  </Typography>
-                  <Typography variant="body2">
-                    Total: {aliment.totalQuantity} cubes
-                  </Typography>
-                  <List>
-                    {aliment.trays && aliment.trays.length > 0 ? (
-                      aliment.trays.map((tray) => (
-                        <ListItem key={tray.trayId}>
-                          <ListItemText
-                            primary={`Stored in ${trayMap[tray.trayId]}: ${
-                              tray.quantity
-                            } cubes`}
-                          />
-                        </ListItem>
-                      ))
-                    ) : (
-                      <ListItem>
-                        <ListItemText primary="No trays assigned" />
-                      </ListItem>
-                    )}
-                  </List>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+
+        {/* Handle empty state */}
+        {aliments.length === 0 ? (
+          <Typography>No food items added yet.</Typography>
+        ) : (
+          <Grid container spacing={2}>
+            {aliments.map((aliment) => {
+              const totalQuantity = aliment.totalQuantity || 0;
+              const remainingQuantity = (aliment.trays || []).reduce(
+                (sum, tray) => sum + tray.quantity,
+                0
+              );
+              const progressPercentage =
+                (remainingQuantity / totalQuantity) * 100 || 0;
+
+              return (
+                <Grid item key={aliment.id} xs={12} sm={6} md={4}>
+                  <Card>
+                    <CardContent>
+                      <Typography
+                        variant="h6"
+                        component="div"
+                        onClick={() => openModal("edit", aliment)}
+                        sx={{ cursor: "pointer", color: "primary.main" }}
+                        aria-label={`Edit ${aliment.name}`} // Accessibility label
+                        role="button" // Role as button
+                      >
+                        {aliment.name} ({aliment.type})
+                      </Typography>
+                      <Typography variant="body2">
+                        Total: {remainingQuantity}/{totalQuantity} cubes
+                      </Typography>
+                      <LinearProgress
+                        variant="determinate"
+                        value={progressPercentage}
+                        sx={{ mt: 1, mb: 1 }}
+                      />
+                      <Chip
+                        label={
+                          progressPercentage < 20
+                            ? "Low Stock"
+                            : progressPercentage > 80
+                            ? "Well-Stocked"
+                            : "Moderate"
+                        }
+                        color={
+                          progressPercentage < 20
+                            ? "error"
+                            : progressPercentage > 80
+                            ? "success"
+                            : "warning"
+                        }
+                      />
+                    </CardContent>
+                  </Card>
+                </Grid>
+              );
+            })}
+          </Grid>
+        )}
       </Grid>
 
       {/* Manage Trays Button */}
@@ -131,20 +149,25 @@ const HomePage = () => {
         </Button>
       </Grid>
 
-      {/* Add Aliment Button */}
+      {/* Add New Aliment Button */}
       <Grid item xs={12}>
         <Button
           variant="contained"
           color="secondary"
-          onClick={() => setIsAlimentModalOpen(true)}
+          onClick={() => openModal("add")}
         >
-          Add Aliment
+          Add A New Food Item
         </Button>
       </Grid>
 
       {/* Add Aliment Modal */}
-      {isAlimentModalOpen && (
-        <AddAlimentModal onClose={() => setIsAlimentModalOpen(false)} />
+      {modalState.open && modalState.type === "add" && (
+        <AddAlimentModal onClose={closeModal} />
+      )}
+
+      {/* Edit Aliment Modal */}
+      {modalState.open && modalState.type === "edit" && modalState.aliment && (
+        <EditAlimentModal aliment={modalState.aliment} onClose={closeModal} />
       )}
     </Grid>
   );

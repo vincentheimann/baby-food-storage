@@ -1,55 +1,102 @@
 // /src/components/EditTrayModal.js
 import React, { useState } from "react";
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from "../services/firebase";
-import { useAuth } from "../context/AuthContext";
+import { updateTray } from "../services/trayService"; // A function to update the tray in Firestore
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Typography,
+  Button,
+  Grid,
+} from "@mui/material";
 
 const EditTrayModal = ({ tray, onClose }) => {
-  const { currentUser } = useAuth();
-  const [trayName, setTrayName] = useState(tray.name);
-  const [trayCapacity, setTrayCapacity] = useState(tray.capacity);
-  const [trayColor, setTrayColor] = useState(tray.color || "#ffffff"); // Default to white if no color is set
+  const [trayName, setTrayName] = useState(tray.name || "");
+  const [trayCapacity, setTrayCapacity] = useState(tray.capacity || 0);
+  const [trayColor, setTrayColor] = useState(tray.color || "#ffffff");
+  const [error, setError] = useState("");
 
   const handleUpdateTray = async () => {
+    if (!trayName || trayCapacity <= 0) {
+      setError("Please provide valid tray name and capacity.");
+      return;
+    }
+
+    const updatedTrayData = {
+      name: trayName,
+      capacity: trayCapacity,
+      color: trayColor,
+      used: tray.used, // Keep the current used capacity
+    };
+
     try {
-      const trayDocRef = doc(db, `users/${currentUser.uid}/trays`, tray.id);
-      await updateDoc(trayDocRef, {
-        name: trayName,
-        capacity: trayCapacity,
-        color: trayColor,
-      });
-      onClose(); // Close the modal after successful update
+      await updateTray(tray.id, updatedTrayData); // Update the tray in Firestore
+      onClose(); // Close the modal after update
     } catch (error) {
       console.error("Error updating tray:", error);
+      setError("Error updating tray. Please try again.");
     }
   };
 
   return (
-    <div className="modal">
-      <h2>Edit Tray</h2>
-      <input
-        type="text"
-        placeholder="Tray Name"
-        value={trayName}
-        onChange={(e) => setTrayName(e.target.value)}
-      />
-      <input
-        type="number"
-        placeholder="Capacity"
-        value={trayCapacity}
-        onChange={(e) => setTrayCapacity(e.target.value)}
-      />
+    <Dialog open onClose={onClose}>
+      <DialogTitle>Edit Tray</DialogTitle>
+      <DialogContent>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Tray Name"
+              value={trayName}
+              onChange={(e) => setTrayName(e.target.value)}
+              required
+              error={!!error && !trayName}
+              helperText={!trayName && error}
+            />
+          </Grid>
 
-      {/* Color Picker */}
-      <input
-        type="color"
-        value={trayColor}
-        onChange={(e) => setTrayColor(e.target.value)}
-      />
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              type="number"
+              label="Tray Capacity"
+              value={trayCapacity}
+              onChange={(e) => setTrayCapacity(Number(e.target.value))}
+              required
+              error={!!error && trayCapacity <= 0}
+              helperText={trayCapacity <= 0 && error}
+            />
+          </Grid>
 
-      <button onClick={handleUpdateTray}>Save Changes</button>
-      <button onClick={onClose}>Cancel</button>
-    </div>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              type="color"
+              label="Tray Color"
+              value={trayColor}
+              onChange={(e) => setTrayColor(e.target.value)}
+            />
+          </Grid>
+
+          {error && (
+            <Grid item xs={12}>
+              <Typography color="error" variant="body2">
+                {error}
+              </Typography>
+            </Grid>
+          )}
+        </Grid>
+      </DialogContent>
+
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleUpdateTray} variant="contained" color="primary">
+          Update Tray
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
