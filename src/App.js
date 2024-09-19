@@ -1,5 +1,7 @@
 // /src/App.js
 import React from "react";
+import { ThemeProvider, CssBaseline } from "@mui/material";
+import theme from "./theme";
 import { AuthProvider } from "./context/AuthContext";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
@@ -13,38 +15,41 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 const App = () => {
   return (
     <AuthProvider>
-      <Router>
-        <TopBar />
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <HomePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/trays"
-            element={
-              <ProtectedRoute>
-                <TrayManagementPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <ProfilePage />
-              </ProtectedRoute>
-            }
-          />
-          {/* Catch-all route for 404 */}
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </Router>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          <TopBar />
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <HomePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/trays"
+              element={
+                <ProtectedRoute>
+                  <TrayManagementPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            {/* Catch-all route for 404 */}
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Router>
+      </ThemeProvider>
     </AuthProvider>
   );
 };
