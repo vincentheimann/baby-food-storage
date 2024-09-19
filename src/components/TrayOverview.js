@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { onSnapshot, collection } from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
 import { db } from "../services/firebase";
+import { CircularProgress, Card, CardContent, Typography } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 
 const TrayOverview = () => {
   const { currentUser } = useAuth();
@@ -26,20 +28,34 @@ const TrayOverview = () => {
   }, [currentUser]);
 
   if (loading) {
-    return <div>Loading trays...</div>;
+    return (
+      <Grid container justifyContent="center" alignItems="center">
+        <CircularProgress />
+        <Typography variant="body1" sx={{ mt: 2 }}>
+          Loading trays...
+        </Typography>
+      </Grid>
+    );
   }
 
   return (
-    <div>
-      <h2>Your Trays</h2>
-      <ul>
-        {trays.map((tray) => (
-          <li key={tray.id}>
-            {tray.name}: {tray.used}/{tray.capacity} cubes used
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <Typography variant="h5">Your Trays</Typography>
+      </Grid>
+      {trays.map((tray) => (
+        <Grid item key={tray.id} xs={12} sm={6} md={4}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6">{tray.name}</Typography>
+              <Typography variant="body2">
+                {tray.used}/{tray.capacity} cubes used
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      ))}
+    </Grid>
   );
 };
 

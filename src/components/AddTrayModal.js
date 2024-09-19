@@ -2,12 +2,21 @@
 import React, { useState } from "react";
 import { addTray } from "../services/trayService";
 import { useAuth } from "../context/AuthContext";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button,
+} from "@mui/material";
+import Grid from "@mui/material/Grid2";
 
 const AddTrayModal = ({ onClose }) => {
   const { currentUser } = useAuth();
   const [trayName, setTrayName] = useState("");
-  const [trayCapacity, setTrayCapacity] = useState(12); // Default capacity
-  const [trayColor, setTrayColor] = useState("#ffffff"); // Default color
+  const [trayCapacity, setTrayCapacity] = useState(12);
+  const [trayColor, setTrayColor] = useState("#ffffff");
 
   const handleAddTray = async () => {
     if (trayName.trim()) {
@@ -26,28 +35,50 @@ const AddTrayModal = ({ onClose }) => {
   };
 
   return (
-    <div>
-      <h2>Add New Tray</h2>
-      <input
-        type="text"
-        placeholder="Tray Name"
-        value={trayName}
-        onChange={(e) => setTrayName(e.target.value)}
-      />
-      <input
-        type="number"
-        placeholder="Capacity"
-        value={trayCapacity}
-        onChange={(e) => setTrayCapacity(e.target.value)}
-      />
-      <input
-        type="color"
-        value={trayColor}
-        onChange={(e) => setTrayColor(e.target.value)}
-      />
-      <button onClick={handleAddTray}>Add Tray</button>
-      <button onClick={onClose}>Cancel</button>
-    </div>
+    <Dialog open onClose={onClose}>
+      <DialogTitle>Add New Tray</DialogTitle>
+      <DialogContent>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Tray Name"
+              value={trayName}
+              onChange={(e) => setTrayName(e.target.value)}
+              required
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              type="number"
+              label="Capacity"
+              value={trayCapacity}
+              onChange={(e) => setTrayCapacity(e.target.value)}
+              required
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              type="color"
+              label="Tray Color"
+              value={trayColor}
+              onChange={(e) => setTrayColor(e.target.value)}
+            />
+          </Grid>
+        </Grid>
+      </DialogContent>
+
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleAddTray} variant="contained" color="primary">
+          Add Tray
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

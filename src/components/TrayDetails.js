@@ -3,6 +3,15 @@ import React, { useState, useEffect } from "react";
 import { onSnapshot, collection } from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
 import { db } from "../services/firebase";
+import {
+  Card,
+  CardContent,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
+import Grid from "@mui/material/Grid2";
 
 const TrayDetails = () => {
   const { currentUser } = useAuth();
@@ -15,7 +24,7 @@ const TrayDetails = () => {
         const trayData = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-          aliments: doc.data().aliments || [], // Ensure aliments is at least an empty array
+          aliments: doc.data().aliments || [],
         }));
         setTrays(trayData);
       });
@@ -24,26 +33,33 @@ const TrayDetails = () => {
   }, [currentUser]);
 
   return (
-    <div>
-      <h3>Tray Details</h3>
-      <ul>
-        {trays.map((tray) => (
-          <li key={tray.id}>
-            <span>
-              {tray.name} - {tray.used}/{tray.capacity} cubes
-            </span>
-            {/* Safely map over aliments, which should now always be an array */}
-            <ul>
-              {tray.aliments.map((aliment) => (
-                <li key={aliment.alimentId}>
-                  {aliment.name}: {aliment.quantity} cubes
-                </li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <Typography variant="h5">Tray Details</Typography>
+      </Grid>
+      {trays.map((tray) => (
+        <Grid item key={tray.id} xs={12} sm={6} md={4}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6">{tray.name}</Typography>
+              <Typography variant="body2">
+                {tray.used}/{tray.capacity} cubes
+              </Typography>
+
+              <List>
+                {tray.aliments.map((aliment) => (
+                  <ListItem key={aliment.alimentId}>
+                    <ListItemText
+                      primary={`${aliment.name}: ${aliment.quantity} cubes`}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            </CardContent>
+          </Card>
+        </Grid>
+      ))}
+    </Grid>
   );
 };
 

@@ -3,17 +3,29 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { addAliment } from "../services/alimentService";
 import { fetchTrays } from "../services/trayService";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button,
+  MenuItem,
+  Typography,
+} from "@mui/material";
+import Grid from "@mui/material/Grid2";
+
 
 const AddAlimentModal = ({ onClose }) => {
   const { currentUser } = useAuth();
   const [alimentName, setAlimentName] = useState("");
   const [alimentType, setAlimentType] = useState("Protein");
   const [trays, setTrays] = useState([]);
-  const [trayQuantities, setTrayQuantities] = useState({}); // Store quantity per tray
+  const [trayQuantities, setTrayQuantities] = useState({});
 
   useEffect(() => {
     const loadTrays = async () => {
-      const trayData = await fetchTrays(currentUser.uid); // Fetch available trays
+      const trayData = await fetchTrays(currentUser.uid);
       setTrays(trayData);
     };
     loadTrays();
@@ -23,7 +35,7 @@ const AddAlimentModal = ({ onClose }) => {
     const totalQuantity = Object.values(trayQuantities).reduce(
       (acc, qty) => acc + qty,
       0
-    ); // Total quantity across trays
+    );
 
     const alimentData = {
       name: alimentName,
@@ -35,50 +47,69 @@ const AddAlimentModal = ({ onClose }) => {
       })),
     };
 
-    await addAliment(currentUser.uid, alimentData); // Add aliment to Firestore
+    await addAliment(currentUser.uid, alimentData);
     onClose();
   };
 
   const handleTrayQuantityChange = (trayId, quantity) => {
-    setTrayQuantities((prev) => ({ ...prev, [trayId]: Number(quantity) })); // Update quantity for each tray
+    setTrayQuantities((prev) => ({ ...prev, [trayId]: Number(quantity) }));
   };
 
   return (
-    <div className="modal">
-      <h2>Add New Aliment</h2>
-      <input
-        type="text"
-        placeholder="Aliment Name"
-        value={alimentName}
-        onChange={(e) => setAlimentName(e.target.value)}
-      />
-      <select
-        value={alimentType}
-        onChange={(e) => setAlimentType(e.target.value)}
-      >
-        <option value="Protein">Protein</option>
-        <option value="Carb">Carb</option>
-        <option value="Vegetable">Vegetable</option>
-      </select>
+    <Dialog open onClose={onClose}>
+      <DialogTitle>Add New Aliment</DialogTitle>
+      <DialogContent>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Aliment Name"
+              value={alimentName}
+              onChange={(e) => setAlimentName(e.target.value)}
+              required
+            />
+          </Grid>
 
-      {/* Display trays and allow user to specify quantity per tray */}
-      {trays.map((tray) => (
-        <div key={tray.id}>
-          <span>
-            {tray.name} (Available capacity: {tray.capacity - tray.used})
-          </span>
-          <input
-            type="number"
-            placeholder="Quantity"
-            value={trayQuantities[tray.id] || 0}
-            onChange={(e) => handleTrayQuantityChange(tray.id, e.target.value)}
-          />
-        </div>
-      ))}
+          <Grid item xs={12}>
+            <TextField
+              select
+              fullWidth
+              label="Aliment Type"
+              value={alimentType}
+              onChange={(e) => setAlimentType(e.target.value)}
+            >
+              <MenuItem value="Protein">Protein</MenuItem>
+              <MenuItem value="Carb">Carb</MenuItem>
+              <MenuItem value="Vegetable">Vegetable</MenuItem>
+            </TextField>
+          </Grid>
 
-      <button onClick={handleAddAliment}>Add Aliment</button>
-      <button onClick={onClose}>Cancel</button>
-    </div>
+          {trays.map((tray) => (
+            <Grid item xs={12} key={tray.id}>
+              <Typography variant="subtitle1">
+                {tray.name} (Available capacity: {tray.capacity - tray.used})
+              </Typography>
+              <TextField
+                type="number"
+                fullWidth
+                label="Quantity"
+                value={trayQuantities[tray.id] || 0}
+                onChange={(e) =>
+                  handleTrayQuantityChange(tray.id, e.target.value)
+                }
+              />
+            </Grid>
+          ))}
+        </Grid>
+      </DialogContent>
+
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleAddAliment} variant="contained" color="primary">
+          Add Aliment
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
