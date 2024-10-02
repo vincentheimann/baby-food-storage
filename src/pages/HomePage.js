@@ -1,52 +1,48 @@
 // /src/pages/HomePage.js
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useAlimentsAndTrays } from "../context/AlimentsAndTraysContext";
 import AddAlimentModal from "../components/AddAlimentModal";
 import EditAlimentModal from "../components/EditAlimentModal";
 import AddTrayModal from "../components/AddTrayModal";
 import EditTrayModal from "../components/EditTrayModal";
+import TrayOverview from "../components/TrayOverview";
 import {
   Typography,
   Button,
   CircularProgress,
-  Card,
-  CardContent,
-  CardActions,
-  LinearProgress,
-  Chip,
-  IconButton,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Card,
+  CardContent,
+  Chip,
+  LinearProgress,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import { Delete as DeleteIcon, Edit as EditIcon } from "@mui/icons-material";
-import { useFetchAlimentsAndTrays } from "../hooks/useFetchAlimentsAndTrays";
-import { deleteTray } from "../services/trayService"; // Import deleteTray function
+import { deleteTray } from "../services/trayService";
 
 const HomePage = () => {
   const { currentUser } = useAuth();
-  const { aliments, trays, loading } = useFetchAlimentsAndTrays(
-    currentUser?.uid
-  );
+  const { aliments, trays, loading } = useAlimentsAndTrays();
 
-  // Modal state management
+  // Modal state management with a unified approach
   const [modalState, setModalState] = useState({
     open: false,
     type: null,
-    item: null,
+    data: null,
   });
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); // State to manage delete dialog
-  const [trayToDelete, setTrayToDelete] = useState(null); // Tray selected for deletion
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [trayToDelete, setTrayToDelete] = useState(null);
 
-  const openModal = (type, item = null) => {
-    setModalState({ open: true, type, item });
+  const openModal = (type, data = null) => {
+    setModalState({ open: true, type, data });
   };
 
   const closeModal = () => {
-    setModalState({ open: false, type: null, item: null });
+    setModalState({ open: false, type: null, data: null });
   };
 
   const openDeleteDialog = (tray) => {
@@ -62,7 +58,7 @@ const HomePage = () => {
   const handleDeleteTray = async () => {
     if (currentUser?.uid && trayToDelete?.id) {
       try {
-        await deleteTray(currentUser.uid, trayToDelete.id); // Call the delete tray service
+        await deleteTray(currentUser.uid, trayToDelete.id);
         closeDeleteDialog();
       } catch (error) {
         console.error("Error deleting tray:", error);
@@ -172,51 +168,13 @@ const HomePage = () => {
         </Button>
       </Grid>
 
-      {/* Trays Section */}
+      {/* Tray Overview Section */}
       <Grid item xs={12}>
-        <Typography variant="h5" component="h3">
-          Your Trays
-        </Typography>
-
-        {trays.length === 0 ? (
-          <Typography>No trays added yet.</Typography>
-        ) : (
-          <Grid container spacing={2}>
-            {trays.map((tray) => (
-              <Grid item key={tray.id} xs={12} sm={6} md={4}>
-                <Card>
-                  <CardContent>
-                    <Typography variant="h6" component="div">
-                      {tray.name}
-                    </Typography>
-                    <Typography variant="body2">
-                      {tray.used}/{tray.capacity} cubes used
-                    </Typography>
-                    <LinearProgress
-                      variant="determinate"
-                      value={(tray.used / tray.capacity) * 100 || 0}
-                      sx={{ mt: 1, mb: 1 }}
-                    />
-                  </CardContent>
-                  <CardActions>
-                    <IconButton
-                      aria-label="edit tray"
-                      onClick={() => openModal("editTray", tray)}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      aria-label="delete tray"
-                      onClick={() => openDeleteDialog(tray)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        )}
+        <TrayOverview
+          trays={trays}
+          onEdit={(tray) => openModal("editTray", tray)}
+          onDelete={openDeleteDialog}
+        />
       </Grid>
 
       {/* Add Tray Button */}
@@ -236,14 +194,14 @@ const HomePage = () => {
       )}
       {modalState.open &&
         modalState.type === "editAliment" &&
-        modalState.item && (
-          <EditAlimentModal aliment={modalState.item} onClose={closeModal} />
+        modalState.data && (
+          <EditAlimentModal aliment={modalState.data} onClose={closeModal} />
         )}
       {modalState.open && modalState.type === "addTray" && (
         <AddTrayModal onClose={closeModal} />
       )}
-      {modalState.open && modalState.type === "editTray" && modalState.item && (
-        <EditTrayModal tray={modalState.item} onClose={closeModal} />
+      {modalState.open && modalState.type === "editTray" && modalState.data && (
+        <EditTrayModal tray={modalState.data} onClose={closeModal} />
       )}
 
       {/* Delete Tray Confirmation Dialog */}
