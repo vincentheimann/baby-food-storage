@@ -4,8 +4,9 @@ import { fetchAliments } from "../services/alimentService";
 import { fetchTrays } from "../services/trayService";
 
 export const useFetchAlimentsAndTrays = (userId) => {
-  const [aliments, setAliments] = useState([]);
+  const [aliments, setAliments] = useState([]); // Ensure it's initialized as an empty array
   const [trayMap, setTrayMap] = useState({});
+  const [trays, setTrays] = useState([]); // Ensure it's initialized as an empty array
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,7 +21,8 @@ export const useFetchAlimentsAndTrays = (userId) => {
             return map;
           }, {});
 
-          setAliments(alimentData);
+          setAliments(alimentData || []); // Ensure aliments is never undefined
+          setTrays(trayData || []); // Ensure trays is never undefined
           setTrayMap(trayMapData);
         } finally {
           setLoading(false);
@@ -31,5 +33,5 @@ export const useFetchAlimentsAndTrays = (userId) => {
     loadData();
   }, [userId]);
 
-  return { aliments, trayMap, loading };
+  return { aliments, trayMap, trays, loading };
 };

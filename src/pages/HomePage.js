@@ -1,26 +1,33 @@
 // /src/pages/HomePage.js
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import TrayOverview from "../components/TrayOverview"; // Shows tray usage
 import AddAlimentModal from "../components/AddAlimentModal"; // Modal for adding aliment
 import EditAlimentModal from "../components/EditAlimentModal"; // Modal for editing aliment
-import { useNavigate } from "react-router-dom";
-import { useFetchAlimentsAndTrays } from "../hooks/useFetchAlimentsAndTrays"; // Custom hook for fetching aliments and trays
+import AddTrayModal from "../components/AddTrayModal"; // Modal for adding a new tray
+import EditTrayModal from "../components/EditTrayModal"; // Modal for editing a tray
 import {
   Typography,
   Button,
   CircularProgress,
   Card,
   CardContent,
+  CardActions,
   LinearProgress,
   Chip,
-  Grid,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
+import Grid from "@mui/material/Grid2";
+import { Delete as DeleteIcon, Edit as EditIcon } from "@mui/icons-material";
+import { useFetchAlimentsAndTrays } from "../hooks/useFetchAlimentsAndTrays"; // Custom hook for fetching aliments and trays
 
 const HomePage = () => {
   const { currentUser } = useAuth();
-  const navigate = useNavigate();
-  const { aliments, trayMap, loading } = useFetchAlimentsAndTrays(
+  const { aliments, trays, loading } = useFetchAlimentsAndTrays(
     currentUser?.uid
   );
 
@@ -28,17 +35,34 @@ const HomePage = () => {
   const [modalState, setModalState] = useState({
     open: false,
     type: null,
-    aliment: null,
+    item: null,
   });
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); // State to manage delete dialog
+  const [trayToDelete, setTrayToDelete] = useState(null); // Tray selected for deletion
 
-  const goToTrayManagement = () => navigate("/trays");
-
-  const openModal = (type, aliment = null) => {
-    setModalState({ open: true, type, aliment });
+  const openModal = (type, item = null) => {
+    setModalState({ open: true, type, item });
   };
 
   const closeModal = () => {
-    setModalState({ open: false, type: null, aliment: null });
+    setModalState({ open: false, type: null, item: null });
+  };
+
+  const openDeleteDialog = (tray) => {
+    setTrayToDelete(tray);
+    setDeleteDialogOpen(true);
+  };
+
+  const closeDeleteDialog = () => {
+    setDeleteDialogOpen(false);
+    setTrayToDelete(null);
+  };
+
+  const handleDeleteTray = () => {
+    // Implement the delete tray functionality
+    console.log("Delete tray", trayToDelete.id);
+    // You can call the delete tray service here
+    closeDeleteDialog();
   };
 
   if (loading) {
@@ -66,18 +90,12 @@ const HomePage = () => {
         </Typography>
       </Grid>
 
-      {/* Tray Overview */}
-      <Grid item xs={12}>
-        <TrayOverview />
-      </Grid>
-
-      {/* Aliment Summary */}
+      {/* Aliment Section */}
       <Grid item xs={12}>
         <Typography variant="h5" component="h3">
           Your Aliments
         </Typography>
 
-        {/* Handle empty state */}
         {aliments.length === 0 ? (
           <Typography>No food items added yet.</Typography>
         ) : (
@@ -98,10 +116,10 @@ const HomePage = () => {
                       <Typography
                         variant="h6"
                         component="div"
-                        onClick={() => openModal("edit", aliment)}
+                        onClick={() => openModal("editAliment", aliment)}
                         sx={{ cursor: "pointer", color: "primary.main" }}
-                        aria-label={`Edit ${aliment.name}`} // Accessibility label
-                        role="button" // Role as button
+                        aria-label={`Edit ${aliment.name}`}
+                        role="button"
                       >
                         {aliment.name} ({aliment.type})
                       </Typography>
@@ -138,37 +156,120 @@ const HomePage = () => {
         )}
       </Grid>
 
-      {/* Manage Trays Button */}
-      <Grid item xs={12}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={goToTrayManagement}
-        >
-          Manage Trays
-        </Button>
-      </Grid>
-
       {/* Add New Aliment Button */}
       <Grid item xs={12}>
         <Button
           variant="contained"
           color="secondary"
-          onClick={() => openModal("add")}
+          onClick={() => openModal("addAliment")}
         >
           Add A New Food Item
         </Button>
       </Grid>
 
+      {/* Trays Section */}
+      <Grid item xs={12}>
+        <Typography variant="h5" component="h3">
+          Your Trays
+        </Typography>
+
+        {trays.length === 0 ? (
+          <Typography>No trays added yet.</Typography>
+        ) : (
+          <Grid container spacing={2}>
+            {trays.map((tray) => (
+              <Grid item key={tray.id} xs={12} sm={6} md={4}>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6" component="div">
+                      {tray.name}
+                    </Typography>
+                    <Typography variant="body2">
+                      {tray.used}/{tray.capacity} cubes used
+                    </Typography>
+                    <LinearProgress
+                      variant="determinate"
+                      value={(tray.used / tray.capacity) * 100 || 0}
+                      sx={{ mt: 1, mb: 1 }}
+                    />
+                  </CardContent>
+                  <CardActions>
+                    <IconButton
+                      aria-label="edit tray"
+                      onClick={() => openModal("editTray", tray)}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      aria-label="delete tray"
+                      onClick={() => openDeleteDialog(tray)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        )}
+      </Grid>
+
+      {/* Add Tray Button */}
+      <Grid item xs={12}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => openModal("addTray")}
+        >
+          Add A New Tray
+        </Button>
+      </Grid>
+
       {/* Add Aliment Modal */}
-      {modalState.open && modalState.type === "add" && (
+      {modalState.open && modalState.type === "addAliment" && (
         <AddAlimentModal onClose={closeModal} />
       )}
 
       {/* Edit Aliment Modal */}
-      {modalState.open && modalState.type === "edit" && modalState.aliment && (
-        <EditAlimentModal aliment={modalState.aliment} onClose={closeModal} />
+      {modalState.open &&
+        modalState.type === "editAliment" &&
+        modalState.item && (
+          <EditAlimentModal aliment={modalState.item} onClose={closeModal} />
+        )}
+
+      {/* Add Tray Modal */}
+      {modalState.open && modalState.type === "addTray" && (
+        <AddTrayModal onClose={closeModal} />
       )}
+
+      {/* Edit Tray Modal */}
+      {modalState.open && modalState.type === "editTray" && modalState.item && (
+        <EditTrayModal tray={modalState.item} onClose={closeModal} />
+      )}
+
+      {/* Delete Tray Confirmation Dialog */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={closeDeleteDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Delete Tray"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete the tray "{trayToDelete?.name}"?
+            This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeDeleteDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteTray} color="error" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Grid>
   );
 };

@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { Button, Typography, Grid, Card, CardContent } from "@mui/material";
+import { Button, Typography, Card, CardContent } from "@mui/material";
 import BackgroundImage from "../assets/images/login-background.jpg"; // Import a background image
 import GoogleIcon from "@mui/icons-material/Google"; // Import the Google icon
 

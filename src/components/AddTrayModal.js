@@ -10,8 +10,8 @@ import {
   TextField,
   Button,
   Typography,
-  Grid,
 } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 
 const AddTrayModal = ({ onClose }) => {
   const { currentUser } = useAuth();

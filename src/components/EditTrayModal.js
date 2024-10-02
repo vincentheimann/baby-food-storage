@@ -9,8 +9,8 @@ import {
   TextField,
   Typography,
   Button,
-  Grid,
 } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 
 const EditTrayModal = ({ tray, onClose }) => {
   const [trayName, setTrayName] = useState(tray.name || "");

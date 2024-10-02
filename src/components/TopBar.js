@@ -55,16 +55,13 @@ const TopBar = () => {
 
         {/* App Title */}
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          Baby Food Storage App
+          Baby Food Storage
         </Typography>
 
         {/* Navigation Links */}
         <nav>
           <Button color="inherit" component={NavLink} to="/" exact>
             Home
-          </Button>
-          <Button color="inherit" component={NavLink} to="/trays">
-            Tray Management
           </Button>
         </nav>
 

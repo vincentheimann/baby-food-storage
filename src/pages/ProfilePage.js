@@ -3,7 +3,7 @@ import React from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Button, Typography, Card, CardContent } from "@mui/material";
-import Grid from "@mui/material/Grid2"; // Correct import for Grid2
+import Grid from "@mui/material/Grid2";
 
 const ProfilePage = () => {
   const { currentUser, logout } = useAuth();
