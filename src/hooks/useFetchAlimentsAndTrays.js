@@ -1,37 +1,43 @@
 // /src/hooks/useFetchAlimentsAndTrays.js
-import { useState, useEffect } from "react";
-import { fetchAliments } from "../services/alimentService";
-import { fetchTrays } from "../services/trayService";
+import { useEffect, useState } from "react";
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "../services/firebase";
 
 export const useFetchAlimentsAndTrays = (userId) => {
-  const [aliments, setAliments] = useState([]); // Ensure it's initialized as an empty array
-  const [trayMap, setTrayMap] = useState({});
-  const [trays, setTrays] = useState([]); // Ensure it's initialized as an empty array
+  const [aliments, setAliments] = useState([]);
+  const [trays, setTrays] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadData = async () => {
-      if (userId) {
-        try {
-          const alimentData = await fetchAliments(userId);
-          const trayData = await fetchTrays(userId);
+    if (!userId) return;
 
-          const trayMapData = trayData.reduce((map, tray) => {
-            map[tray.id] = tray.name;
-            return map;
-          }, {});
+    // Fetch aliments in real time
+    const alimentCollection = collection(db, `users/${userId}/aliments`);
+    const alimentUnsubscribe = onSnapshot(alimentCollection, (snapshot) => {
+      const alimentData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setAliments(alimentData);
+    });
 
-          setAliments(alimentData || []); // Ensure aliments is never undefined
-          setTrays(trayData || []); // Ensure trays is never undefined
-          setTrayMap(trayMapData);
-        } finally {
-          setLoading(false);
-        }
-      }
+    // Fetch trays in real time
+    const trayCollection = collection(db, `users/${userId}/trays`);
+    const trayUnsubscribe = onSnapshot(trayCollection, (snapshot) => {
+      const trayData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setTrays(trayData);
+      setLoading(false);
+    });
+
+    // Cleanup on component unmount
+    return () => {
+      alimentUnsubscribe();
+      trayUnsubscribe();
     };
-
-    loadData();
   }, [userId]);
 
-  return { aliments, trayMap, trays, loading };
+  return { aliments, trays, loading };
 };

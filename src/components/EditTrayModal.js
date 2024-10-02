@@ -1,5 +1,6 @@
 // /src/components/EditTrayModal.js
 import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext"; // Import to get current user ID
 import { updateTray } from "../services/trayService"; // A function to update the tray in Firestore
 import {
   Dialog,
@@ -13,14 +14,17 @@ import {
 import Grid from "@mui/material/Grid2";
 
 const EditTrayModal = ({ tray, onClose }) => {
-  const [trayName, setTrayName] = useState(tray.name || "");
-  const [trayCapacity, setTrayCapacity] = useState(tray.capacity || 0);
-  const [trayColor, setTrayColor] = useState(tray.color || "#ffffff");
+  const { currentUser } = useAuth(); // Get the current user's ID
+  const [trayName, setTrayName] = useState(tray?.name ?? "");
+  const [trayCapacity, setTrayCapacity] = useState(tray?.capacity ?? 0);
+  const [trayColor, setTrayColor] = useState(tray?.color ?? "#ffffff");
   const [error, setError] = useState("");
 
   const handleUpdateTray = async () => {
-    if (!trayName || trayCapacity <= 0) {
-      setError("Please provide valid tray name and capacity.");
+    if (!trayName.trim() || trayCapacity <= 0) {
+      setError(
+        "Please provide a valid tray name and capacity greater than zero."
+      );
       return;
     }
 
@@ -32,8 +36,15 @@ const EditTrayModal = ({ tray, onClose }) => {
     };
 
     try {
-      await updateTray(tray.id, updatedTrayData); // Update the tray in Firestore
-      onClose(); // Close the modal after update
+      // Ensure the currentUser.uid and tray.id are passed to the updateTray function
+      if (currentUser?.uid && tray?.id) {
+        await updateTray(currentUser.uid, tray.id, updatedTrayData);
+        onClose(); // Close the modal after update
+      } else {
+        setError(
+          "Could not determine user or tray information. Please try again."
+        );
+      }
     } catch (error) {
       console.error("Error updating tray:", error);
       setError("Error updating tray. Please try again.");
@@ -52,8 +63,8 @@ const EditTrayModal = ({ tray, onClose }) => {
               value={trayName}
               onChange={(e) => setTrayName(e.target.value)}
               required
-              error={!!error && !trayName}
-              helperText={!trayName && error}
+              error={!!error && !trayName.trim()}
+              helperText={!trayName.trim() && error}
             />
           </Grid>
 

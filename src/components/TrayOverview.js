@@ -41,9 +41,19 @@ const TrayOverview = () => {
     setIsEditTrayModalOpen(true); // Open the modal
   };
 
+  const closeEditModal = () => {
+    setIsEditTrayModalOpen(false);
+    setSelectedTray(null);
+  };
+
   if (loading) {
     return (
-      <Grid container justifyContent="center" alignItems="center">
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        style={{ minHeight: "100vh" }}
+      >
         <CircularProgress />
         <Typography variant="body1" sx={{ mt: 2 }}>
           Loading trays...
@@ -58,7 +68,10 @@ const TrayOverview = () => {
         <Typography variant="h5">Your Trays</Typography>
       </Grid>
       {trays.map((tray) => {
-        const progressPercentage = (tray.used / tray.capacity) * 100 || 0;
+        // Ensure that default values are used if data is missing
+        const used = tray.used ?? 0;
+        const capacity = tray.capacity ?? 1; // Avoid division by zero, default to 1 if missing
+        const progressPercentage = Math.min((used / capacity) * 100, 100); // Avoid exceeding 100%
 
         return (
           <Grid item key={tray.id} xs={12} sm={6} md={4}>
@@ -72,7 +85,7 @@ const TrayOverview = () => {
                   {tray.name}
                 </Typography>
                 <Typography variant="body2">
-                  {tray.used}/{tray.capacity} cubes used
+                  {used}/{capacity} cubes used
                 </Typography>
                 <LinearProgress
                   variant="determinate"
@@ -87,10 +100,7 @@ const TrayOverview = () => {
 
       {/* Edit Tray Modal */}
       {isEditTrayModalOpen && selectedTray && (
-        <EditTrayModal
-          tray={selectedTray}
-          onClose={() => setIsEditTrayModalOpen(false)}
-        />
+        <EditTrayModal tray={selectedTray} onClose={closeEditModal} />
       )}
     </Grid>
   );

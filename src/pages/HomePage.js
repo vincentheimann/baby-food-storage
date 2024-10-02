@@ -1,10 +1,10 @@
 // /src/pages/HomePage.js
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import AddAlimentModal from "../components/AddAlimentModal"; // Modal for adding aliment
-import EditAlimentModal from "../components/EditAlimentModal"; // Modal for editing aliment
-import AddTrayModal from "../components/AddTrayModal"; // Modal for adding a new tray
-import EditTrayModal from "../components/EditTrayModal"; // Modal for editing a tray
+import AddAlimentModal from "../components/AddAlimentModal";
+import EditAlimentModal from "../components/EditAlimentModal";
+import AddTrayModal from "../components/AddTrayModal";
+import EditTrayModal from "../components/EditTrayModal";
 import {
   Typography,
   Button,
@@ -23,7 +23,8 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { Delete as DeleteIcon, Edit as EditIcon } from "@mui/icons-material";
-import { useFetchAlimentsAndTrays } from "../hooks/useFetchAlimentsAndTrays"; // Custom hook for fetching aliments and trays
+import { useFetchAlimentsAndTrays } from "../hooks/useFetchAlimentsAndTrays";
+import { deleteTray } from "../services/trayService"; // Import deleteTray function
 
 const HomePage = () => {
   const { currentUser } = useAuth();
@@ -58,11 +59,15 @@ const HomePage = () => {
     setTrayToDelete(null);
   };
 
-  const handleDeleteTray = () => {
-    // Implement the delete tray functionality
-    console.log("Delete tray", trayToDelete.id);
-    // You can call the delete tray service here
-    closeDeleteDialog();
+  const handleDeleteTray = async () => {
+    if (currentUser?.uid && trayToDelete?.id) {
+      try {
+        await deleteTray(currentUser.uid, trayToDelete.id); // Call the delete tray service
+        closeDeleteDialog();
+      } catch (error) {
+        console.error("Error deleting tray:", error);
+      }
+    }
   };
 
   if (loading) {
@@ -225,24 +230,18 @@ const HomePage = () => {
         </Button>
       </Grid>
 
-      {/* Add Aliment Modal */}
+      {/* Modals */}
       {modalState.open && modalState.type === "addAliment" && (
         <AddAlimentModal onClose={closeModal} />
       )}
-
-      {/* Edit Aliment Modal */}
       {modalState.open &&
         modalState.type === "editAliment" &&
         modalState.item && (
           <EditAlimentModal aliment={modalState.item} onClose={closeModal} />
         )}
-
-      {/* Add Tray Modal */}
       {modalState.open && modalState.type === "addTray" && (
         <AddTrayModal onClose={closeModal} />
       )}
-
-      {/* Edit Tray Modal */}
       {modalState.open && modalState.type === "editTray" && modalState.item && (
         <EditTrayModal tray={modalState.item} onClose={closeModal} />
       )}
